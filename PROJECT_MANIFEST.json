@@ -1,0 +1,50 @@
+{
+  "project": "Web Empire Zero",
+  "version": "3.0.0",
+  "domain": "https://webempire.site",
+  "date": "2026-07-06",
+  "source_file_count": 108,
+  "engines_enabled": [
+    "formula",
+    "text_transform",
+    "ai_text",
+    "ai_structured",
+    "http_api",
+    "webhook",
+    "workflow"
+  ],
+  "engines_disabled": [
+    "custom_runtime"
+  ],
+  "ai_adapters": [
+    "openai_responses",
+    "anthropic_messages",
+    "gemini_generate_content",
+    "openai_compatible",
+    "custom_http"
+  ],
+  "billing_adapters": [
+    "stripe_checkout"
+  ],
+  "core": [
+    "visual_tool_builder",
+    "runtime_connections",
+    "workflow_engine",
+    "skills",
+    "credits",
+    "plans",
+    "plan_limits",
+    "billing",
+    "subscriptions",
+    "localization",
+    "country_router",
+    "visual_identity",
+    "supabase_vault",
+    "rls"
+  ],
+  "migrations": [
+    "202607060001_web_empire_zero.sql",
+    "202607060002_localization_visual_engine.sql",
+    "202607060003_tool_builder_runtime_billing.sql"
+  ]
+}
