@@ -1,0 +1,5 @@
+import { Tabs } from "expo-router";
+import { Text } from "react-native";
+import { useEmpire } from "@/contexts/empire";
+import { useEmpireTheme } from "@/contexts/theme";
+export default function TabsLayout(){const {direction}=useEmpire();const {colors}=useEmpireTheme();const ar=direction==="rtl";return <Tabs screenOptions={{headerShown:false,tabBarActiveTintColor:colors.primary,tabBarInactiveTintColor:colors.muted,tabBarStyle:{backgroundColor:colors.surface,borderTopColor:colors.border,height:68,paddingBottom:8,paddingTop:6}}}><Tabs.Screen name="index" options={{title:ar?"الرئيسية":"Home",tabBarIcon:({color})=><Text style={{color,fontSize:20}}>⌂</Text>}}/><Tabs.Screen name="tools" options={{title:ar?"الأدوات":"Tools",tabBarIcon:({color})=><Text style={{color,fontSize:19}}>◈</Text>}}/><Tabs.Screen name="wallet" options={{title:ar?"رصيدي":"Wallet",tabBarIcon:({color})=><Text style={{color,fontSize:19}}>◉</Text>}}/><Tabs.Screen name="settings" options={{title:ar?"الإعدادات":"Settings",tabBarIcon:({color})=><Text style={{color,fontSize:19}}>⚙</Text>}}/></Tabs>}

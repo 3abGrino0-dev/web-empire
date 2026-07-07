@@ -195,6 +195,7 @@ export async function runTool(
   slug: string,
   input: Record<string, unknown>,
   localeCode = "en",
+  userIdOverride?: string,
 ): Promise<ToolRunResponse> {
   const tool = await getToolRuntimeBySlug(slug);
   if (!tool) throw new Error("TOOL_NOT_FOUND");
@@ -204,7 +205,7 @@ export async function runTool(
     throw new Error(JSON.stringify({ code: "VALIDATION_ERROR", errors }));
   }
 
-  const userId = await getCurrentUserId();
+  const userId = userIdOverride ?? (await getCurrentUserId());
   const access = await enforceToolAccess(tool, userId);
   const pointsPerSar = await getPointsPerSar();
   const runId = await createRun(tool, userId, input);

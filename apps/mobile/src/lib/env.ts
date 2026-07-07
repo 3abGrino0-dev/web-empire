@@ -1,0 +1,2 @@
+function required(name:string,value:string|undefined):string { if(!value) throw new Error(`Missing mobile environment variable: ${name}`); return value; }
+export const mobileEnv={ apiUrl:(process.env.EXPO_PUBLIC_API_URL??"https://webempire.site").replace(/\/$/,""), get supabaseUrl(){return required("EXPO_PUBLIC_SUPABASE_URL",process.env.EXPO_PUBLIC_SUPABASE_URL)}, get supabasePublishableKey(){return required("EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY",process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY)} };

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createBillingCheckout } from "@/billing/service";
-import { getCurrentUserId } from "@/lib/auth";
+import { getRequestUserId } from "@/lib/request-auth";
 import { getLocaleByCode } from "@/localization/repository";
 
 const requestSchema = z.object({
@@ -12,7 +12,7 @@ const requestSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const userId = await getCurrentUserId();
+    const userId = await getRequestUserId(request);
     if (!userId) return NextResponse.json({ error: "LOGIN_REQUIRED" }, { status: 401 });
 
     const body = requestSchema.parse(await request.json());

@@ -1,0 +1,11 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext,useContext,useEffect,useMemo,useState } from "react";
+import { useColorScheme } from "react-native";
+import { useEmpire } from "@/contexts/empire";
+import type { ColorMode } from "@/types/api";
+const MODE_KEY="web-empire-mobile-color-mode";
+export interface EmpireColors{background:string;surface:string;text:string;muted:string;primary:string;accent:string;border:string;danger:string;success:string;}
+interface ThemeContextValue{mode:ColorMode;resolvedMode:"light"|"dark";colors:EmpireColors;radius:number;setMode(mode:ColorMode):Promise<void>;}
+const ThemeContext=createContext<ThemeContextValue|null>(null);
+export function EmpireThemeProvider({children}:{children:React.ReactNode}){const systemMode=useColorScheme();const {bootstrap}=useEmpire();const [mode,setModeState]=useState<ColorMode>("system");useEffect(()=>{AsyncStorage.getItem(MODE_KEY).then(value=>{if(value==="light"||value==="dark"||value==="system")setModeState(value);else if(bootstrap?.appearance.defaultColorMode)setModeState(bootstrap.appearance.defaultColorMode);});},[bootstrap?.appearance.defaultColorMode]);const value=useMemo<ThemeContextValue>(()=>{const appearance=bootstrap?.appearance;const resolvedMode=mode==="system"?(systemMode==="dark"?"dark":"light"):mode;const dark=resolvedMode==="dark";return{mode,resolvedMode,radius:appearance?.borderRadius??20,colors:{background:dark?appearance?.darkBackgroundColor??"#050B16":appearance?.backgroundColor??"#F5F7FB",surface:dark?appearance?.darkSurfaceColor??"#0B1628":appearance?.surfaceColor??"#FFFFFF",text:dark?appearance?.darkInkColor??"#F8FAFC":appearance?.inkColor??"#0B1324",muted:dark?"#9FB0CA":"#667085",primary:appearance?.primaryColor??"#7C3AED",accent:appearance?.accentColor??"#06B6D4",border:dark?"#1F2D44":"#DFE5EF",danger:"#DC2626",success:"#0D9488"},async setMode(nextMode){setModeState(nextMode);await AsyncStorage.setItem(MODE_KEY,nextMode);}}},[bootstrap?.appearance,mode,systemMode]);return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>}
+export function useEmpireTheme(){const value=useContext(ThemeContext);if(!value)throw new Error("useEmpireTheme must be used inside EmpireThemeProvider");return value;}

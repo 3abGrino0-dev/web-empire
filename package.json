@@ -1,13 +1,17 @@
 {
   "name": "web-empire-zero",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "mobile:install": "npm --prefix apps/mobile ci",
+    "mobile:start": "npm --prefix apps/mobile start",
+    "mobile:typecheck": "npm --prefix apps/mobile run typecheck",
+    "mobile:lint": "npm --prefix apps/mobile run lint"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

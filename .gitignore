@@ -4,3 +4,10 @@ node_modules
 .env.local
 *.log
 .DS_Store
+apps/mobile/node_modules
+apps/mobile/.expo
+apps/mobile/dist
+*.tsbuildinfo
+WEB_EMPIRE_ZERO_v*.zip
+WEB_EMPIRE_V*_APPLY_CODESPACE.sh
+supabase/.temp/

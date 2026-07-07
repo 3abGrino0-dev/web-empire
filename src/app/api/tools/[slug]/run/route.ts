@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { runTool } from "@/engines/tool-runner";
+import { getRequestUserId } from "@/lib/request-auth";
 
 const MAX_REQUEST_BYTES = 1_000_000;
 
@@ -15,17 +16,28 @@ export async function POST(
     }
 
     const { slug } = await context.params;
+    const userId = await getRequestUserId(request);
+    const hasBearer = /^Bearer\s+/i.test(request.headers.get("authorization") ?? "");
+    if (hasBearer && !userId) {
+      return NextResponse.json({ error: "INVALID_ACCESS_TOKEN" }, { status: 401 });
+    }
+
     const body = (await request.json()) as {
       input?: Record<string, unknown>;
       locale?: string;
     };
 
-    const result = await runTool(slug, body.input ?? {}, body.locale ?? "en");
+    const result = await runTool(
+      slug,
+      body.input ?? {},
+      body.locale ?? "en",
+      userId ?? undefined,
+    );
     return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "TOOL_RUN_FAILED";
     const status =
-      message === "LOGIN_REQUIRED"
+      message === "LOGIN_REQUIRED" || message === "INVALID_ACCESS_TOKEN"
         ? 401
         : message === "INSUFFICIENT_CREDITS"
           ? 402
