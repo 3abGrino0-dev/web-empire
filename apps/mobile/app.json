@@ -8,6 +8,9 @@
     "scheme": "webempire",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "ios": { "supportsTablet": true, "bundleIdentifier": "site.webempire.app" },
     "android": {
       "package": "site.webempire.app",
@@ -19,8 +22,15 @@
       "predictiveBackGestureEnabled": true
     },
     "web": { "output": "static", "favicon": "./assets/images/favicon.png" },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "url": "https://u.expo.dev/9b2c5e0b-6a58-4d4b-a92d-9f9bdb4aad13"
+    },
     "plugins": [
       "expo-router",
+      "expo-updates",
       ["expo-splash-screen", { "backgroundColor": "#061329", "image": "./assets/images/splash-icon.png", "imageWidth": 120 }],
       ["expo-secure-store", { "configureAndroidBackup": true, "faceIDPermission": "Allow Web Empire to securely access your session." }],
       "expo-localization"

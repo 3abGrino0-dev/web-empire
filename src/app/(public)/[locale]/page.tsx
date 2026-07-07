@@ -61,7 +61,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      <section className="section">
+      <section className="section-shell">
         <div className="container">
           <div className="section-head">
             <div>
@@ -82,7 +82,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      <section className="section section-muted">
+      <section className="section-shell section-muted">
         <div className="container">
           <div className="feature-grid">
             <div className="feature"><h3>Any AI Provider</h3><p>Provider adapters are separated from tools and models.</p></div>

@@ -46,22 +46,26 @@ export default async function ToolPage({
   if (!tool) notFound();
 
   return (
-    <main className="section">
+    <main className="section-shell">
       <div className="container">
-        <div className="section-head">
-          <div>
-            <div className="eyebrow">{tool.engine_type}</div>
-            <h2>{tool.title}</h2>
+        <section className="tool-hero ui-card">
+          <div className="tool-hero-content">
+            <div className="ui-badge">{tool.engine_type}</div>
+            <h1>{tool.title}</h1>
             <p>{tool.localizedDescription}</p>
+            <div className="tool-hero-meta">
+              <span className="ui-badge">{tool.pricing_mode === "free" ? translate(messages, "common.free") : "Credits"}</span>
+              <span className="tool-price-pill">
+                {tool.pricing_mode === "free"
+                  ? translate(messages, "common.free")
+                  : tool.pricing_mode === "fixed"
+                    ? `${tool.fixed_points} ${translate(messages, "common.points")}`
+                    : `${tool.minimum_points}+ ${translate(messages, "common.points")}`}
+              </span>
+            </div>
           </div>
-          <span className="badge">
-            {tool.pricing_mode === "free"
-              ? translate(messages, "common.free")
-              : tool.pricing_mode === "fixed"
-                ? `${tool.fixed_points} ${translate(messages, "common.points")}`
-                : `${tool.minimum_points}+ ${translate(messages, "common.points")}`}
-          </span>
-        </div>
+          <div className="tool-hero-glow" aria-hidden="true" />
+        </section>
 
         <DynamicToolForm
           slug={tool.slug}

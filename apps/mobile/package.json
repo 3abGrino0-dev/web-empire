@@ -11,7 +11,11 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "export:android": "expo export --platform android",
-    "export:ios": "expo export --platform ios"
+    "export:ios": "expo export --platform ios",
+    "update:preview": "eas update --branch preview --message",
+    "update:production": "eas update --branch production --message",
+    "build:android:preview": "eas build -p android --profile preview",
+    "build:all:production": "eas build --platform all --profile production"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -25,6 +29,7 @@
     "expo-splash-screen": "~57.0.2",
     "expo-status-bar": "~57.0.0",
     "expo-system-ui": "~57.0.0",
+    "expo-updates": "~57.0.6",
     "expo-web-browser": "~57.0.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",

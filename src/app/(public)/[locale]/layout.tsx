@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import { Inter, Tajawal } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import "@/app/globals.css";
@@ -13,6 +14,19 @@ import {
   getSiteIdentity,
   getUiMessages,
 } from "@/localization/repository";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-latin",
+  display: "swap",
+});
+
+const tajawal = Tajawal({
+  subsets: ["arabic"],
+  weight: ["400", "500", "700", "800"],
+  variable: "--font-arabic",
+  display: "swap",
+});
 
 export async function generateMetadata({
   params,
@@ -73,7 +87,7 @@ export default async function LocaleLayout({
   const style = appearanceCssVariables(appearance) as CSSProperties;
 
   return (
-    <html lang={locale.locale_code} dir={locale.direction}>
+    <html lang={locale.locale_code} dir={locale.direction} className={`${inter.variable} ${tajawal.variable}`}>
       <body>
         <div
           className="public-shell"

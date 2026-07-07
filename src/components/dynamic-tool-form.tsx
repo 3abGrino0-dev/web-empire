@@ -51,6 +51,10 @@ export function DynamicToolForm({ slug, locale, schema, messages }: Props) {
   return (
     <div className="runner-grid">
       <form className="panel tool-form" onSubmit={onSubmit}>
+        <div className="tool-form-header">
+          <div className="eyebrow">{translate(messages, "tool.result")}</div>
+          <p>Fill the inputs and run the tool to see the result.</p>
+        </div>
         {schema.fields.map((field) => (
           <label key={field.key} className="field">
             <span>{field.label}</span>
@@ -104,7 +108,10 @@ export function DynamicToolForm({ slug, locale, schema, messages }: Props) {
       </form>
 
       <section className="panel result-panel" aria-live="polite">
-        <div className="eyebrow">{translate(messages, "tool.result")}</div>
+        <div className="result-panel-head">
+          <div className="eyebrow">{translate(messages, "tool.result")}</div>
+          <span className="ui-badge">Live output</span>
+        </div>
         {error ? <div className="error-box">{error}</div> : null}
         {!error && !result ? (
           <div className="empty-result">
@@ -115,10 +122,10 @@ export function DynamicToolForm({ slug, locale, schema, messages }: Props) {
         {result ? (
           <div className="result-content">
             <h2>{result.title}</h2>
-            {result.text ? <pre>{result.text}</pre> : null}
-            {result.data ? <pre>{JSON.stringify(result.data, null, 2)}</pre> : null}
+            {result.text ? <pre className="result-code">{result.text}</pre> : null}
+            {result.data ? <pre className="result-code">{JSON.stringify(result.data, null, 2)}</pre> : null}
             <div className="result-cost">
-              {result.creditsCharged} {translate(messages, "common.points")}
+              {Number(result.creditsCharged ?? 0) === 0 ? "0 نقطة" : `${result.creditsCharged} ${translate(messages, "common.points")}`}
               {typeof result.balanceAfter === "number"
                 ? ` • ${result.balanceAfter}`
                 : ""}

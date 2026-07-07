@@ -36,15 +36,17 @@ export function SiteHeader({
           <Link href={`${prefix}/pricing`}>{translate(messages, "nav.pricing")}</Link>
           <Link href={`${prefix}/dashboard`}>{translate(messages, "nav.dashboard")}</Link>
         </nav>
-        <ColorModeToggle defaultMode={defaultColorMode} />
-        <LanguageSwitcher
-          locales={locales}
-          currentLocale={locale.code}
-          label={translate(messages, "language.label")}
-        />
-        <Link href={`${prefix}/auth/login`} className="button button-ghost">
-          {translate(messages, "nav.login")}
-        </Link>
+        <div className="header-actions">
+          <ColorModeToggle defaultMode={defaultColorMode} />
+          <LanguageSwitcher
+            locales={locales}
+            currentLocale={locale.code}
+            label={translate(messages, "language.label")}
+          />
+          <Link href={`${prefix}/auth/login`} className="button button-ghost header-login-btn">
+            {translate(messages, "nav.login")}
+          </Link>
+        </div>
       </div>
     </header>
   );
