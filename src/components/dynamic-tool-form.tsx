@@ -13,6 +13,20 @@ interface Props {
   messages: UiMessages;
 }
 
+function primaryResult(result: ToolRunResponse | null) {
+  if (!result) return "";
+  if (result.text) return result.text;
+
+  if (result.data && typeof result.data === "object" && !Array.isArray(result.data) && "result" in result.data) {
+    const value = result.data.result;
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+  }
+
+  return result.title;
+}
+
 export function DynamicToolForm({ slug, locale, schema, messages }: Props) {
   const [result, setResult] = useState<ToolRunResponse | null>(null);
   const [error, setError] = useState<string>("");
@@ -48,13 +62,19 @@ export function DynamicToolForm({ slug, locale, schema, messages }: Props) {
     }
   }
 
+  const displayResult = primaryResult(result);
+  const longResult = displayResult.length > 90;
+  const isArabic = locale === "ar";
+
   return (
-    <div className="runner-grid">
+    <div className="runner-grid editorial-runner">
       <form className="panel tool-form" onSubmit={onSubmit}>
-        <div className="tool-form-header">
-          <div className="eyebrow">{translate(messages, "tool.result")}</div>
-          <p>Fill the inputs and run the tool to see the result.</p>
+        <div className="editorial-runner-head">
+          <small>{isArabic ? "المدخلات" : "INPUT"}</small>
+          <h2>{isArabic ? "ابدأ بالمعلومة." : "Start with the input."}</h2>
+          <p>{isArabic ? "املأ الحقول ثم شغّل الأداة. المنطق الحالي للأداة لم يتغير." : "Complete the fields and run the tool. The existing tool runtime stays intact."}</p>
         </div>
+
         {schema.fields.map((field) => (
           <label key={field.key} className="field">
             <span>{field.label}</span>
@@ -103,32 +123,44 @@ export function DynamicToolForm({ slug, locale, schema, messages }: Props) {
         ))}
 
         <button className="button button-primary" disabled={pending}>
-          {pending ? "…" : schema.submitLabel}
+          {pending ? (isArabic ? "جاري التشغيل…" : "Running…") : schema.submitLabel}
         </button>
       </form>
 
       <section className="panel result-panel" aria-live="polite">
-        <div className="result-panel-head">
-          <div className="eyebrow">{translate(messages, "tool.result")}</div>
-          <span className="ui-badge">Live output</span>
+        <div className="editorial-result-head">
+          <small>{translate(messages, "tool.result")}</small>
+          <span className="editorial-result-live">{pending ? "RUNNING" : "LIVE OUTPUT"}</span>
         </div>
+
         {error ? <div className="error-box">{error}</div> : null}
+
         {!error && !result ? (
           <div className="empty-result">
-            <span>✦</span>
+            <span aria-hidden="true">✦</span>
             <p>{translate(messages, "tool.empty")}</p>
           </div>
         ) : null}
+
         {result ? (
-          <div className="result-content">
-            <h2>{result.title}</h2>
-            {result.text ? <pre className="result-code">{result.text}</pre> : null}
-            {result.data ? <pre className="result-code">{JSON.stringify(result.data, null, 2)}</pre> : null}
+          <div className="editorial-result-content">
+            <p className="editorial-result-title">{result.title}</p>
+            <pre className={`editorial-primary-result ${longResult ? "is-long" : ""}`}>
+              {displayResult}
+            </pre>
+
+            {result.data ? (
+              <details className="editorial-raw-output">
+                <summary>{isArabic ? "عرض البيانات الخام" : "View raw data"}</summary>
+                <pre>{JSON.stringify(result.data, null, 2)}</pre>
+              </details>
+            ) : null}
+
             <div className="result-cost">
-              {Number(result.creditsCharged ?? 0) === 0 ? "0 نقطة" : `${result.creditsCharged} ${translate(messages, "common.points")}`}
-              {typeof result.balanceAfter === "number"
-                ? ` • ${result.balanceAfter}`
-                : ""}
+              {Number(result.creditsCharged ?? 0) === 0
+                ? isArabic ? "0 نقطة" : "0 credits"
+                : `${result.creditsCharged} ${translate(messages, "common.points")}`}
+              {typeof result.balanceAfter === "number" ? ` • ${result.balanceAfter}` : ""}
             </div>
           </div>
         ) : null}

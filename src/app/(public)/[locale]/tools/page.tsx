@@ -20,21 +20,24 @@ export default async function ToolsPage({
   ]);
 
   return (
-    <main className="section">
-      <div className="container">
-        <div className="section-head">
+    <main className="editorial-page">
+      <section className="editorial-page-hero">
+        <div className="container editorial-page-hero-grid">
           <div>
-            <div className="eyebrow">TOOL FACTORY</div>
-            <h2>{translate(messages, "tools.title")}</h2>
-            <p>{translate(messages, "tools.description")}</p>
+            <p className="empire-section-kicker">TOOL FACTORY / {tools.length}</p>
+            <h1 className="editorial-page-title">{translate(messages, "tools.title")}</h1>
           </div>
+          <p className="editorial-page-intro">{translate(messages, "tools.description")}</p>
         </div>
-        <div className="tools-grid">
+      </section>
+
+      <section className="editorial-tools-wrap">
+        <div className="container editorial-tools-grid">
           {tools.map((tool) => (
             <ToolCard key={tool.id} tool={tool} locale={locale.code} messages={messages} />
           ))}
         </div>
-      </div>
+      </section>
     </main>
   );
 }

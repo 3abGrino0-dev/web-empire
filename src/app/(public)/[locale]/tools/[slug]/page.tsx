@@ -17,6 +17,7 @@ export async function generateMetadata({
     getActiveLocales(),
   ]);
   if (!tool) return {};
+
   return {
     title: tool.seoTitle,
     description: tool.seoDescription,
@@ -45,35 +46,38 @@ export default async function ToolPage({
   ]);
   if (!tool) notFound();
 
-  return (
-    <main className="section-shell">
-      <div className="container">
-        <section className="tool-hero ui-card">
-          <div className="tool-hero-content">
-            <div className="ui-badge">{tool.engine_type}</div>
-            <h1>{tool.title}</h1>
-            <p>{tool.localizedDescription}</p>
-            <div className="tool-hero-meta">
-              <span className="ui-badge">{tool.pricing_mode === "free" ? translate(messages, "common.free") : "Credits"}</span>
-              <span className="tool-price-pill">
-                {tool.pricing_mode === "free"
-                  ? translate(messages, "common.free")
-                  : tool.pricing_mode === "fixed"
-                    ? `${tool.fixed_points} ${translate(messages, "common.points")}`
-                    : `${tool.minimum_points}+ ${translate(messages, "common.points")}`}
-              </span>
-            </div>
-          </div>
-          <div className="tool-hero-glow" aria-hidden="true" />
-        </section>
+  const pricing =
+    tool.pricing_mode === "free"
+      ? translate(messages, "common.free")
+      : tool.pricing_mode === "fixed"
+        ? `${tool.fixed_points} ${translate(messages, "common.points")}`
+        : `${tool.minimum_points}+ ${translate(messages, "common.points")}`;
 
+  return (
+    <main className="editorial-tool-page">
+      <section className="editorial-tool-hero">
+        <div className="container editorial-tool-hero-grid">
+          <div>
+            <p className="empire-section-kicker">{tool.engine_type.replaceAll("_", " ")}</p>
+            <h1 className="editorial-tool-title">{tool.title}</h1>
+            <p className="editorial-tool-description">{tool.localizedDescription}</p>
+          </div>
+
+          <div className="editorial-tool-meta">
+            <span><b>ENGINE</b><em>{tool.engine_type}</em></span>
+            <span><b>PRICE</b><em>{pricing}</em></span>
+          </div>
+        </div>
+      </section>
+
+      <section className="container editorial-runner-wrap">
         <DynamicToolForm
           slug={tool.slug}
           locale={locale.code}
           schema={tool.localizedInputSchema}
           messages={messages}
         />
-      </div>
+      </section>
     </main>
   );
 }

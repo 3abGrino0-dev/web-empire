@@ -13,31 +13,48 @@ export default async function LoginPage({
   const [{ locale: localeCode }, { error }] = await Promise.all([params, searchParams]);
   const locale = await getLocaleByCode(localeCode);
   if (!locale) notFound();
+
   const identity = await getSiteIdentity(locale);
+  const isArabic = locale.code === "ar";
 
   return (
-    <main className="auth-shell">
-      <div className="auth-card">
-        <div className="eyebrow">{identity.siteName}</div>
-        <h1>{locale.code === "ar" ? "الدخول أو إنشاء حساب" : "Sign in or create an account"}</h1>
+    <main className="editorial-auth">
+      <section className="editorial-auth-story">
+        <p className="empire-section-kicker">{identity.siteName}</p>
+        <h1>{isArabic ? "مساحتك داخل الإمبراطورية." : "Your space inside the Empire."}</h1>
         <p>{identity.tagline}</p>
+      </section>
+
+      <section className="editorial-auth-form">
+        <p className="empire-section-kicker">{isArabic ? "الحساب" : "ACCOUNT"}</p>
+        <h2>{isArabic ? "ادخل أو ابدأ من الصفر." : "Sign in or start from zero."}</h2>
+        <p>{isArabic ? "نفس حساب Supabase الحالي. غيّرنا التجربة البصرية فقط." : "The same Supabase account flow. Only the public experience has changed."}</p>
+
         {error ? <div className="error-box">{error}</div> : null}
+
         <form>
           <input type="hidden" name="locale" value={locale.code} />
+
           <label className="field">
-            <span>{locale.code === "ar" ? "البريد الإلكتروني" : "Email"}</span>
-            <input name="email" type="email" required />
+            <span>{isArabic ? "البريد الإلكتروني" : "Email"}</span>
+            <input name="email" type="email" required autoComplete="email" />
           </label>
+
           <label className="field">
-            <span>{locale.code === "ar" ? "كلمة المرور" : "Password"}</span>
-            <input name="password" type="password" required minLength={8} />
+            <span>{isArabic ? "كلمة المرور" : "Password"}</span>
+            <input name="password" type="password" required minLength={8} autoComplete="current-password" />
           </label>
-          <div className="hero-actions">
-            <button formAction={signIn} className="button button-primary">{locale.code === "ar" ? "تسجيل الدخول" : "Sign in"}</button>
-            <button formAction={signUp} className="button button-dark">{locale.code === "ar" ? "إنشاء حساب" : "Create account"}</button>
+
+          <div className="editorial-auth-actions">
+            <button formAction={signIn} className="button button-primary">
+              {isArabic ? "تسجيل الدخول" : "Sign in"}
+            </button>
+            <button formAction={signUp} className="button button-ghost">
+              {isArabic ? "إنشاء حساب" : "Create account"}
+            </button>
           </div>
         </form>
-      </div>
+      </section>
     </main>
   );
 }
