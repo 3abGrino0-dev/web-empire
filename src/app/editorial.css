@@ -1964,6 +1964,53 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
 .editorial-auth-form > p:not(.empire-section-kicker) { color: rgba(255,255,255,.6); margin: 0 0 34px; }
 .editorial-auth-form form { display: grid; gap: 20px; }
 .editorial-auth-form .field input { color: #fff; border-color: rgba(255,255,255,.65); }
+.editorial-auth-social { display: grid; gap: 12px; }
+.editorial-auth-social > p { margin: 0; color: rgba(255,255,255,.7); font-size: .92rem; }
+.editorial-auth-social-list { display: grid; gap: 10px; }
+.editorial-auth-social-list form { margin: 0; }
+.editorial-auth-provider {
+  width: 100%;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding-inline: 16px;
+  border-color: rgba(255,255,255,.55);
+  color: #fff;
+}
+.editorial-auth-provider:hover { background: rgba(255,255,255,.08); }
+.editorial-auth-provider:focus-visible { outline: 3px solid var(--empire-lime); outline-offset: 2px; }
+.editorial-auth-provider-mark {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: .86rem;
+  font-family: var(--font-mono), monospace;
+}
+.editorial-auth-divider {
+  margin: 14px 0 2px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255,255,255,.68);
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.editorial-auth-divider::before,
+.editorial-auth-divider::after {
+  content: "";
+  height: 1px;
+  background: rgba(255,255,255,.32);
+}
+.editorial-auth-email { margin-top: 0; }
+.editorial-auth-email > p { margin: 0; color: rgba(255,255,255,.7); font-size: .92rem; }
 .editorial-auth-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
 
 /* FOOTER */
@@ -2504,6 +2551,7 @@ html[dir="rtl"] .empire-archive-link:focus-visible .empire-archive-open {
   .editorial-primary-result { font-size: clamp(4.3rem, 20vw, 8rem); }
   .editorial-auth-story, .editorial-auth-form { padding: 48px 24px; }
   .editorial-auth-story { min-height: 520px; }
+  .editorial-auth-provider { min-height: 50px; }
   .editorial-auth-actions { grid-template-columns: 1fr; }
   .empire-footer-shell { min-height: auto; }
   .empire-footer-brand b { position: static; display: block; margin-top: 12px; transform: none; }
