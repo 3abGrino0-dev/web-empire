@@ -2,14 +2,23 @@
 
 import { useState } from "react";
 
+type SubscribePlanLabels = {
+  freePlan: string;
+  subscribe: string;
+  openingCheckout: string;
+  checkoutError: string;
+};
+
 export function SubscribePlanButton({
   planId,
   locale,
   disabled,
+  labels,
 }: {
   planId: string;
   locale: string;
   disabled?: boolean;
+  labels: SubscribePlanLabels;
 }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -30,18 +39,18 @@ export function SubscribePlanButton({
         window.location.href = `/${locale}/auth/login`;
         return;
       }
-      if (!response.ok || !payload.url) throw new Error(payload.error ?? "تعذر بدء الدفع");
+      if (!response.ok || !payload.url) throw new Error(payload.error ?? labels.checkoutError);
       window.location.href = payload.url;
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "تعذر بدء الدفع");
+      setError(caught instanceof Error ? caught.message : labels.checkoutError);
       setPending(false);
     }
   }
 
   return (
-    <div className="subscribe-action">
+    <div className="subscribe-action" aria-live="polite">
       <button type="button" className="button button-primary" onClick={checkout} disabled={pending || disabled}>
-        {disabled ? "الخطة المجانية" : pending ? "جاري فتح الدفع..." : "اشترك الآن"}
+        {disabled ? labels.freePlan : pending ? labels.openingCheckout : labels.subscribe}
       </button>
       {error ? <small className="error-text">{error}</small> : null}
     </div>
