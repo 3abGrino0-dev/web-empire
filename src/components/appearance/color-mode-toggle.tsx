@@ -23,25 +23,28 @@ export function ColorModeToggle({ defaultMode }: { defaultMode: ColorMode }) {
     applyMode(initial);
   }, [defaultMode]);
 
-  function chooseMode(mode: ColorMode) {
-    window.localStorage.setItem("web-empire-color-mode", mode);
-    applyMode(mode);
+  function chooseNextMode() {
+    const order: ColorMode[] = ["light", "dark", "system"];
+    const saved = window.localStorage.getItem("web-empire-color-mode") as ColorMode | null;
+    const currentMode = modes.some((item) => item.mode === saved) && saved ? saved : defaultMode;
+    const currentIndex = order.indexOf(currentMode);
+    const nextMode = order[(currentIndex + 1) % order.length] ?? "system";
+
+    window.localStorage.setItem("web-empire-color-mode", nextMode);
+    applyMode(nextMode);
   }
 
   return (
     <div className="mode-toggle-group" aria-label="Color mode">
-      {modes.map((item) => (
-        <button
-          key={item.mode}
-          type="button"
-          className="mode-toggle"
-          onClick={() => chooseMode(item.mode)}
-          aria-label={item.label}
-          title={item.label}
-        >
-          {item.icon}
-        </button>
-      ))}
+      <button
+        type="button"
+        className="mode-toggle"
+        onClick={chooseNextMode}
+        aria-label="Color mode"
+        title="Color mode"
+      >
+        ◐
+      </button>
     </div>
   );
 }
