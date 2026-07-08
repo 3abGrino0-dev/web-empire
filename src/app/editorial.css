@@ -428,19 +428,131 @@ html[dir="rtl"] .empire-capability-copy h3 { line-height: 1.02; letter-spacing: 
 .motif-connect span { min-height: 48px; border: 1px solid currentColor; border-radius: 12px; display: grid; place-items: center; font-family: var(--font-mono), monospace; font-size: .74rem; padding: 0 8px; }
 .motif-connect b { height: 1px; background: currentColor; opacity: .86; }
 
-/* PROCESS */
-.empire-process { background: var(--empire-dark); color: #fff; }
-.empire-process-title { max-width: 1150px; margin-bottom: clamp(54px, 8vw, 110px); }
-.empire-process-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid rgba(255,255,255,.35); border-bottom: 1px solid rgba(255,255,255,.35); }
-.empire-step { min-height: 410px; padding: clamp(28px, 3vw, 46px); border-inline-end: 1px solid rgba(255,255,255,.35); display: flex; flex-direction: column; justify-content: space-between; }
-.empire-step:last-child { border-inline-end: 0; }
-.empire-step-number { font-family: var(--font-latin), sans-serif; font-size: clamp(4rem, 7vw, 8rem); line-height: .8; letter-spacing: -.08em; font-weight: 900; color: var(--empire-lime); }
-.empire-step:nth-child(2) .empire-step-number { color: var(--empire-pink); }
-.empire-step:nth-child(3) .empire-step-number { color: var(--empire-blue); }
-.empire-step:nth-child(4) .empire-step-number { color: var(--empire-orange); }
-.empire-step:nth-child(5) .empire-step-number { color: #a993ff; }
-.empire-step h3 { margin: 0 0 12px; font-size: clamp(1.8rem, 3vw, 3.8rem); line-height: .95; letter-spacing: -.05em; }
-.empire-step p { margin: 0; color: rgba(255,255,255,.58); line-height: 1.7; }
+/* TOOL JOURNEY */
+.empire-journey {
+  background: var(--empire-paper);
+  color: var(--empire-ink);
+  padding-block: clamp(100px, 12vw, 190px);
+  border-top: 1px solid var(--empire-line);
+}
+.empire-journey-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(240px, .5fr);
+  gap: clamp(24px, 6vw, 120px);
+  align-items: end;
+  margin-bottom: clamp(50px, 8vw, 120px);
+}
+.empire-journey-title {
+  margin: 0;
+  max-width: 980px;
+  font-size: clamp(3.8rem, 10vw, 10.5rem);
+  line-height: .84;
+  letter-spacing: -.08em;
+  font-weight: 900;
+  text-wrap: balance;
+}
+html[dir="rtl"] .empire-journey-title { line-height: 1; letter-spacing: -.055em; }
+.empire-journey-note {
+  margin: 0;
+  max-width: 420px;
+  color: rgba(17,17,15,.68);
+  line-height: 1.85;
+  font-size: clamp(1rem, 1.2vw, 1.1rem);
+}
+
+.empire-journey-track {
+  position: relative;
+  display: grid;
+  gap: 0;
+}
+.empire-journey-track::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: clamp(40px, 7vw, 120px);
+  width: 1px;
+  background: rgba(17,17,15,.24);
+  pointer-events: none;
+}
+
+.empire-journey-step {
+  position: relative;
+  min-height: 320px;
+  padding: clamp(26px, 3vw, 50px) clamp(18px, 2.8vw, 34px);
+  padding-inline-start: clamp(88px, 10vw, 180px);
+  border-top: 1px solid rgba(17,17,15,.18);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, .78fr);
+  gap: clamp(16px, 3vw, 46px);
+  align-items: center;
+}
+.empire-journey-step:last-child { border-bottom: 1px solid rgba(17,17,15,.18); }
+.empire-journey-step:nth-child(even) { grid-template-columns: minmax(240px, .78fr) minmax(0, 1fr); }
+.empire-journey-step:nth-child(even) .empire-journey-copy { order: 2; }
+.empire-journey-step:nth-child(even) .empire-journey-visual { order: 1; }
+
+.journey-step-1 { background: #f6f3ec; }
+.journey-step-2 { background: #ffd9c9; }
+.journey-step-3 { background: #11110f; color: #fff; }
+.journey-step-4 { background: #ccecff; }
+.journey-step-5 { background: #d9ceff; }
+
+.empire-journey-number {
+  position: absolute;
+  inset-inline-start: clamp(10px, 2.2vw, 26px);
+  inset-block-start: clamp(18px, 2.5vw, 30px);
+  font-family: var(--font-latin), sans-serif;
+  font-size: clamp(7rem, 18vw, 20rem);
+  line-height: .76;
+  letter-spacing: -.1em;
+  font-weight: 900;
+  color: rgba(17,17,15,.16);
+  pointer-events: none;
+}
+.journey-step-3 .empire-journey-number { color: rgba(255,255,255,.16); }
+
+.empire-journey-copy { position: relative; z-index: 1; max-width: 700px; }
+.empire-journey-copy small { display: block; margin-bottom: 10px; font-size: .68rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; opacity: .72; }
+.empire-journey-copy h3 {
+  margin: 0 0 12px;
+  font-size: clamp(2.2rem, 4.2vw, 5.8rem);
+  line-height: .9;
+  letter-spacing: -.06em;
+  font-weight: 900;
+}
+html[dir="rtl"] .empire-journey-copy h3 { line-height: 1.02; letter-spacing: -.04em; }
+.empire-journey-copy p { margin: 0; max-width: 560px; line-height: 1.75; opacity: .82; overflow-wrap: anywhere; }
+
+.empire-journey-visual {
+  position: relative;
+  z-index: 1;
+  min-height: 140px;
+  border: 1px solid currentColor;
+  border-radius: 18px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+  padding: 16px;
+  display: grid;
+}
+.journey-step-3 .empire-journey-visual { background: rgba(255,255,255,.08); }
+
+.empire-journey-motif { width: 100%; height: 100%; }
+.motif-choose { display: grid; gap: 8px; }
+.motif-choose span { min-height: 34px; border: 1px solid currentColor; border-radius: 999px; padding-inline: 12px; display: inline-flex; align-items: center; font-size: .78rem; font-weight: 850; }
+.motif-choose .is-selected { background: var(--empire-lime); color: #111; border-color: #111; }
+.motif-input { display: grid; gap: 10px; align-content: center; }
+.motif-input span { min-height: 38px; border: 1px solid currentColor; border-radius: 10px; padding-inline: 12px; display: inline-flex; align-items: center; font-family: var(--font-mono), monospace; }
+.motif-run { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px; align-items: center; }
+.motif-run span { min-height: 44px; border: 1px solid currentColor; border-radius: 10px; display: grid; place-items: center; font-size: .74rem; font-weight: 900; }
+.motif-run b { height: 1px; background: currentColor; opacity: .75; animation: journey-pulse 2.2s ease-in-out infinite; }
+.motif-review { display: grid; align-content: center; gap: 8px; }
+.motif-review small { font-family: var(--font-mono), monospace; opacity: .74; }
+.motif-review strong { font-size: clamp(2rem, 3.4vw, 4.2rem); line-height: .9; letter-spacing: -.07em; color: var(--empire-purple); }
+.motif-review p { margin: 0; font-size: .72rem; font-weight: 900; letter-spacing: .08em; }
+.motif-finish { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.motif-finish span { min-width: 72px; min-height: 40px; border: 1px solid currentColor; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 900; }
+.motif-finish span:last-child { transform: translateX(8px); }
+
+@keyframes journey-pulse { 0%,100% { opacity: .25; } 50% { opacity: .9; } }
 
 /* ENGINE STORY */
 .empire-engine-section { background: var(--empire-paper); color: var(--empire-ink); }
@@ -559,6 +671,15 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-section-head { grid-template-columns: 1fr; }
   .empire-showcase-intro { grid-template-columns: 1fr; gap: 20px; }
   .empire-capability-intro { grid-template-columns: 1fr; gap: 22px; }
+  .empire-journey-intro { grid-template-columns: 1fr; gap: 18px; }
+  .empire-journey-step,
+  .empire-journey-step:nth-child(even) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .empire-journey-step:nth-child(even) .empire-journey-copy,
+  .empire-journey-step:nth-child(even) .empire-journey-visual { order: initial; }
+  .empire-journey-visual { max-width: 560px; }
   .empire-capability-row,
   .empire-capability-row:nth-child(odd),
   .empire-capability-row:nth-child(even) {
@@ -609,6 +730,18 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-proof-item { min-height: 175px; border-bottom: 1px solid rgba(255,255,255,.18); }
   .empire-display, .editorial-page-title, .editorial-tool-title, .editorial-auth-story h1 { font-size: clamp(3.5rem, 15vw, 6.8rem); }
   .empire-showcase-title { font-size: clamp(3rem, 13vw, 6.8rem); }
+  .empire-journey-title { font-size: clamp(3rem, 14vw, 7rem); }
+  .empire-journey-track::before { inset-inline-start: 42px; }
+  .empire-journey-step,
+  .empire-journey-step:nth-child(even) {
+    min-height: 280px;
+    padding: 24px;
+    padding-inline-start: 88px;
+  }
+  .empire-journey-number { font-size: clamp(5.3rem, 16vw, 9rem); inset-inline-start: 6px; }
+  .empire-journey-copy h3 { font-size: clamp(2rem, 9vw, 3.9rem); }
+  .empire-journey-visual { min-height: 120px; }
+  .motif-finish span:last-child { transform: translateX(0); }
   .empire-capability-section { padding-block: 94px; }
   .empire-capability-title { font-size: clamp(3rem, 14vw, 6.9rem); }
   .empire-capability-row,
@@ -659,6 +792,21 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .public-shell .site-header .language-switcher { padding-inline: 9px; }
   .public-shell .site-header .language-switcher select { max-width: 74px; font-size: .78rem; }
   .public-shell .site-header .mode-toggle { width: 32px; height: 32px; }
+  .empire-journey-title { font-size: clamp(2.6rem, 15vw, 5.2rem); }
+  .empire-journey-track::before { inset-inline-start: 28px; }
+  .empire-journey-step,
+  .empire-journey-step:nth-child(even) {
+    min-height: 250px;
+    padding: 20px;
+    padding-inline-start: 58px;
+  }
+  .empire-journey-number { font-size: clamp(4rem, 19vw, 6.7rem); inset-inline-start: 2px; }
+  .empire-journey-copy small { font-size: .62rem; }
+  .empire-journey-copy h3 { font-size: clamp(1.8rem, 11vw, 3rem); }
+  .empire-journey-visual { min-height: 104px; padding: 12px; }
+  .motif-run { grid-template-columns: 1fr; gap: 6px; }
+  .motif-run b { height: 10px; width: 1px; justify-self: center; }
+  .motif-finish { display: grid; grid-template-columns: 1fr; }
   .empire-hero-title { font-size: clamp(3.65rem, 21vw, 6rem); }
   .empire-hero-title span:last-child { margin-inline-start: 18px; }
   .empire-hero-statement { width: min(100%, 320px); }

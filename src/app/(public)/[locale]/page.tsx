@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { CapabilitiesShowcase } from "@/components/public/capabilities-showcase";
 import { FeaturedToolShowcase } from "@/components/public/featured-tool-showcase";
+import { ToolJourney } from "@/components/public/tool-journey";
 import { translate } from "@/localization/messages";
 import {
   getActiveLocales,
@@ -430,17 +431,11 @@ export default async function HomePage({
         }}
       />
 
-      <section id="empire-process" className="empire-section empire-process">
-        <div className="container">
-          <p className="empire-section-kicker">{copy.processKicker}</p>
-          <h2 className="empire-display empire-process-title">{copy.processTitle}</h2>
-          <div className="empire-process-grid">
-            {copy.steps.map(([number, title, description]) => (
-              <article className="empire-step" key={number}><span className="empire-step-number">{number}</span><div><h3>{title}</h3><p>{description}</p></div></article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ToolJourney
+        kicker={copy.processKicker}
+        title={copy.processTitle}
+        steps={copy.steps}
+      />
 
       <section className="empire-section empire-engine-section">
         <div className="container empire-engine-layout">
