@@ -11,100 +11,266 @@ import {
 } from "@/localization/repository";
 import { getActivePlans, getActiveTools } from "@/repositories/catalog";
 
-const copyByLocale = {
+const homeCopy = {
   ar: {
-    heroTop: "منصة أدوات، وليست قالب SaaS آخر",
-    heroLineOne: "إمبراطورية",
-    heroLineTwo: "الويب",
-    heroStatement: "أدوات ذكية. نتائج حقيقية.",
-    heroBody: "مكان واحد للحساب، والتحويل، والتحليل، والأتمتة، والذكاء الاصطناعي. اختر أداة، أدخل ما لديك، وخذ نتيجة قابلة للاستخدام.",
-    seeHow: "شاهد كيف تعمل",
+    kicker: "منصة أدوات رقمية تعمل فعلًا",
+    titleOne: "إمبراطورية",
+    titleTwo: "الويب",
+    statement: "أداة واحدة قد تختصر ساعات.",
+    description:
+      "اختر ما تريد إنجازه: احسب، حوّل، حلّل، اربط أو شغّل سير عمل. إمبراطورية الويب تجمع الأدوات داخل تجربة واحدة واضحة.",
+    processLink: "شاهد الرحلة",
     toolsMetric: "أداة منشورة",
-    enginesMetric: "محركات تشغيل",
-    localesMetric: "لغات متاحة",
-    plansMetric: "خطط فعالة",
-    showcaseKicker: "أدوات حقيقية",
-    showcaseTitle: "شاهد ما تستطيع الإمبراطورية فعله.",
-    showcaseBody: "كل بطاقة تقود إلى أداة تعمل داخل نفس المنصة. لا عروض وهمية ولا أرقام عملاء مختلقة.",
-    allTools: "عرض كل الأدوات",
-    capabilityKicker: "قدرات المنصة",
-    capabilityTitle: "إمبراطورية واحدة. قدرات بلا حدود.",
-    capabilityBody: "ليست كل أداة ذكاء اصطناعي. المحرك يتغير حسب المهمة، والنتيجة هي ما يهم.",
-    processKicker: "رحلة الاستخدام",
-    processTitle: "خمس خطوات بينك وبين النتيجة.",
-    engineKicker: "داخل المحرك",
-    engineTitle: "ليس كل ما نفعله ذكاءً اصطناعيًا.",
-    engineBody: "نستخدم الحساب عندما تكفي المعادلة، والتحويل عندما يكفي النص، والاتصال عندما تحتاج خدمة خارجية، والـAI عندما يكون هو الأداة الصحيحة فعلًا.",
-    pricingKicker: "النقاط والخطط",
-    pricingTitle: "ابدأ صغيرًا. وسّع استخدامك عندما تحتاج.",
-    pricingBody: "الخطط الحقيقية من نظام إمبراطورية الويب، مع رصيد نقاط واضح للأدوات المدفوعة.",
-    pricingLink: "شاهد كل الخطط",
-    finalTitle: "مستعد تنجز أكثر؟",
-    finalBody: "ابدأ من أداة واحدة.",
-    enter: "ادخل الإمبراطورية",
+    enginesMetric: "محركات مستخدمة",
+    localesMetric: "لغات نشطة",
+    plansMetric: "خطط متاحة",
+    showcaseKicker: "من داخل الإمبراطورية",
+    showcaseTitle: "أدوات تُعرض مثل الأعمال. وتعمل مثل المنتجات.",
+    showcaseBody:
+      "هذه الأدوات مأخوذة من كتالوج المنصة نفسه. افتح أي أداة وانتقل مباشرة إلى تجربة التشغيل.",
+    allTools: "كل الأدوات",
+    capabilityKicker: "ما وراء الواجهة",
+    capabilityTitle: "المهمة تحدد المحرك. لا العكس.",
+    capabilityBody:
+      "الحساب لا يحتاج ذكاءً اصطناعيًا دائمًا. وبعض المهام تحتاج API أو Webhook أو Workflow. لهذا بُنيت المنصة بعدة محركات.",
+    processKicker: "كيف تعمل",
+    processTitle: "خمس حركات. من الفكرة إلى الناتج.",
+    engineKicker: "المحركات",
+    engineTitle: "من معادلة بسيطة إلى سير عمل كامل.",
+    engineBody:
+      "محرك التنفيذ يبقى خلف الكواليس. أمامك حقل واضح، زر واحد، ونتيجة قابلة للاستخدام.",
+    pricingKicker: "الخطط والنقاط",
+    pricingTitle: "استخدم المجاني. ووسّع رصيدك عندما تحتاج.",
+    pricingBody:
+      "الخطط المعروضة تأتي من نظام الخطط الفعلي داخل المنصة، بدون أرقام تسويقية مختلقة.",
+    pricingLink: "تفاصيل الخطط",
+    finalKicker: "ابدأ من هنا",
+    finalTitle: "عندك مهمة؟ غالبًا عندنا أداة لها.",
+    finalBody: "ادخل، اختر، وشغّل.",
+    enter: "استكشف الإمبراطورية",
     steps: [
-      ["01", "اختر", "اختر الأداة المناسبة للمهمة."],
-      ["02", "أدخل", "قدّم البيانات أو المحتوى الذي تحتاجه."],
-      ["03", "شغّل", "دع المحرك المناسب ينفذ المهمة."],
-      ["04", "راجع", "اقرأ النتيجة وتأكد أنها تخدم هدفك."],
-      ["05", "أنجز", "استخدم الناتج مباشرة في عملك."],
+      ["01", "اختر", "ابدأ من الأداة الأقرب للمهمة."],
+      ["02", "أدخل", "أضف النص أو الأرقام أو البيانات المطلوبة."],
+      ["03", "شغّل", "المحرك المناسب يتولى التنفيذ."],
+      ["04", "راجع", "النتيجة تظهر في مساحة واضحة وقابلة للفحص."],
+      ["05", "استخدم", "خذ الناتج وكمل شغلك."],
     ],
-    capabilities: [
-      ["CALCULATE", "احسب", "معادلات وأدوات رقمية سريعة ودقيقة."],
-      ["CREATE", "أنشئ", "توليد محتوى ومخرجات منظمة عند الحاجة."],
-      ["TRANSFORM", "حوّل", "إعادة تشكيل النصوص والبيانات إلى صيغة أفضل."],
-      ["ANALYZE", "حلّل", "استخراج معنى أو بنية أو نتيجة قابلة للمراجعة."],
-      ["AUTOMATE", "أتمت", "سير عمل متعدد الخطوات بدل العمل المتكرر."],
-      ["CONNECT", "اتصل", "ربط APIs وWebhooks عبر اتصالات موثوقة."],
-    ],
+    engines: {
+      formula: ["FORMULA", "احسب", "نتائج حتمية عندما تكون المعادلة هي الحل الصحيح."],
+      text_transform: ["TEXT", "حوّل", "إعادة تشكيل النصوص بقواعد واضحة ومتوقعة."],
+      ai_text: ["AI TEXT", "اكتب", "نماذج لغوية للمهام التي تحتاج توليدًا مرنًا."],
+      ai_structured: ["AI DATA", "نظّم", "مخرجات منظمة عندما تحتاج بنية قابلة للمعالجة."],
+      http_api: ["API", "اتصل", "استدعاء خدمات خارجية عبر اتصالات موثوقة."],
+      webhook: ["WEBHOOK", "أرسل", "تسليم الأحداث والبيانات إلى نقاط اتصال محددة."],
+      workflow: ["WORKFLOW", "أتمت", "عدة خطوات تعمل كسلسلة تنفيذ واحدة."],
+    },
   },
   en: {
-    heroTop: "A tool platform, not another SaaS template",
-    heroLineOne: "WEB",
-    heroLineTwo: "EMPIRE",
-    heroStatement: "Smart tools. Real outcomes.",
-    heroBody: "One place to calculate, transform, analyze, automate and use AI. Pick a tool, provide the input and leave with an output you can use.",
-    seeHow: "See how it works",
+    kicker: "A digital tool platform that actually runs",
+    titleOne: "WEB",
+    titleTwo: "EMPIRE",
+    statement: "One tool can save hours.",
+    description:
+      "Choose the job: calculate, transform, analyze, connect or run a workflow. Web Empire brings useful tools into one clear experience.",
+    processLink: "See the journey",
     toolsMetric: "published tools",
-    enginesMetric: "runtime engines",
-    localesMetric: "available locales",
-    plansMetric: "active plans",
-    showcaseKicker: "Real tools",
-    showcaseTitle: "A taste of what the Empire can do.",
-    showcaseBody: "Every card leads to a working tool inside the same platform. No fake customer numbers and no demo-only promises.",
-    allTools: "Explore all tools",
-    capabilityKicker: "Platform capabilities",
-    capabilityTitle: "One Empire. Many capabilities.",
-    capabilityBody: "Not every tool is AI. The engine changes with the job; the useful outcome is what matters.",
-    processKicker: "The experience",
-    processTitle: "Five steps between you and the result.",
-    engineKicker: "Inside the engine",
-    engineTitle: "Not everything we do is AI.",
-    engineBody: "We calculate when a formula is enough, transform when text rules are enough, connect when an external service is needed and use AI when AI is actually the right tool.",
-    pricingKicker: "Credits and plans",
-    pricingTitle: "Start small. Scale when the work asks for more.",
-    pricingBody: "Real Web Empire plans with a clear credit balance for paid tools.",
-    pricingLink: "See all plans",
-    finalTitle: "Ready to do more?",
-    finalBody: "Start with one tool.",
-    enter: "Enter the Empire",
+    enginesMetric: "engines in use",
+    localesMetric: "active locales",
+    plansMetric: "available plans",
+    showcaseKicker: "Inside the Empire",
+    showcaseTitle: "Tools presented like work. Built like products.",
+    showcaseBody:
+      "These tools come directly from the platform catalog. Open one and move straight into the live runner.",
+    allTools: "All tools",
+    capabilityKicker: "Behind the interface",
+    capabilityTitle: "The job chooses the engine. Not the other way around.",
+    capabilityBody:
+      "A calculation does not always need AI. Some jobs need an API, webhook or workflow. That is why the platform supports multiple runtimes.",
+    processKicker: "How it works",
+    processTitle: "Five moves. From intent to output.",
+    engineKicker: "Runtime engines",
+    engineTitle: "From a simple formula to a complete workflow.",
+    engineBody:
+      "The runtime stays behind the scenes. You get a clear input, one action and an output you can use.",
+    pricingKicker: "Plans and credits",
+    pricingTitle: "Use free tools. Add more capacity when you need it.",
+    pricingBody:
+      "Plans are read from the live plan catalog. No invented marketing numbers.",
+    pricingLink: "Plan details",
+    finalKicker: "Start here",
+    finalTitle: "Have a task? There is probably a tool for it.",
+    finalBody: "Enter, choose and run.",
+    enter: "Explore the Empire",
     steps: [
-      ["01", "Choose", "Pick the tool that matches the job."],
-      ["02", "Input", "Provide the data or content you have."],
-      ["03", "Run", "Let the right runtime engine do the work."],
-      ["04", "Review", "Read the result and check the outcome."],
-      ["05", "Finish", "Use the output directly in your work."],
+      ["01", "Choose", "Start with the tool closest to the job."],
+      ["02", "Input", "Add the text, numbers or data the tool needs."],
+      ["03", "Run", "The appropriate runtime engine executes the task."],
+      ["04", "Review", "The output appears in a clear reviewable canvas."],
+      ["05", "Use", "Take the result and continue your work."],
     ],
-    capabilities: [
-      ["CALCULATE", "Calculate", "Fast, deterministic numeric tools and formulas."],
-      ["CREATE", "Create", "Generate structured content and outputs when needed."],
-      ["TRANSFORM", "Transform", "Reshape text and data into a more useful form."],
-      ["ANALYZE", "Analyze", "Extract meaning, structure or a reviewable result."],
-      ["AUTOMATE", "Automate", "Multi-step workflows instead of repetitive work."],
-      ["CONNECT", "Connect", "Trusted API and webhook connections."],
+    engines: {
+      formula: ["FORMULA", "Calculate", "Deterministic results when a formula is the right answer."],
+      text_transform: ["TEXT", "Transform", "Reshape text with clear and predictable rules."],
+      ai_text: ["AI TEXT", "Write", "Language models for flexible generation tasks."],
+      ai_structured: ["AI DATA", "Structure", "Structured output when the result needs a schema."],
+      http_api: ["API", "Connect", "Call external services through trusted connections."],
+      webhook: ["WEBHOOK", "Send", "Deliver events and data to configured endpoints."],
+      workflow: ["WORKFLOW", "Automate", "Multiple steps executed as one coordinated run."],
+    },
+  },
+  fr: {
+    kicker: "Une plateforme d’outils numériques qui fonctionne vraiment",
+    titleOne: "WEB",
+    titleTwo: "EMPIRE",
+    statement: "Un outil peut faire gagner des heures.",
+    description:
+      "Calculez, transformez, analysez, connectez ou lancez un workflow. Web Empire réunit des outils utiles dans une expérience claire.",
+    processLink: "Voir le parcours",
+    toolsMetric: "outils publiés",
+    enginesMetric: "moteurs utilisés",
+    localesMetric: "langues actives",
+    plansMetric: "offres disponibles",
+    showcaseKicker: "Dans l’Empire",
+    showcaseTitle: "Des outils présentés comme des créations. Construits comme des produits.",
+    showcaseBody: "Les outils proviennent directement du catalogue actif de la plateforme.",
+    allTools: "Tous les outils",
+    capabilityKicker: "Derrière l’interface",
+    capabilityTitle: "La tâche choisit le moteur. Pas l’inverse.",
+    capabilityBody: "Calcul, texte, IA, API, webhook ou workflow: le moteur dépend du besoin réel.",
+    processKicker: "Comment ça marche",
+    processTitle: "Cinq gestes. De l’intention au résultat.",
+    engineKicker: "Moteurs",
+    engineTitle: "D’une formule simple à un workflow complet.",
+    engineBody: "Le moteur reste en coulisses. Vous voyez une saisie claire, une action et un résultat exploitable.",
+    pricingKicker: "Offres et crédits",
+    pricingTitle: "Commencez gratuitement. Ajoutez de la capacité quand il le faut.",
+    pricingBody: "Les offres affichées viennent du catalogue réel de la plateforme.",
+    pricingLink: "Voir les offres",
+    finalKicker: "Commencez ici",
+    finalTitle: "Une tâche à faire? Il existe probablement un outil pour elle.",
+    finalBody: "Entrez, choisissez, lancez.",
+    enter: "Explorer l’Empire",
+    steps: [
+      ["01", "Choisir", "Choisissez l’outil le plus proche de votre tâche."],
+      ["02", "Saisir", "Ajoutez le texte, les chiffres ou les données nécessaires."],
+      ["03", "Lancer", "Le moteur approprié exécute la tâche."],
+      ["04", "Vérifier", "Le résultat apparaît dans un espace clair."],
+      ["05", "Utiliser", "Prenez le résultat et continuez votre travail."],
     ],
+    engines: {
+      formula: ["FORMULA", "Calculer", "Résultats déterministes quand une formule suffit."],
+      text_transform: ["TEXT", "Transformer", "Transformer le texte avec des règles prévisibles."],
+      ai_text: ["AI TEXT", "Écrire", "Modèles de langage pour la génération flexible."],
+      ai_structured: ["AI DATA", "Structurer", "Sorties structurées selon un schéma."],
+      http_api: ["API", "Connecter", "Appeler des services externes via des connexions fiables."],
+      webhook: ["WEBHOOK", "Envoyer", "Transmettre événements et données à un endpoint."],
+      workflow: ["WORKFLOW", "Automatiser", "Plusieurs étapes dans une seule exécution."],
+    },
+  },
+  tr: {
+    kicker: "Gerçekten çalışan dijital araç platformu",
+    titleOne: "WEB",
+    titleTwo: "EMPIRE",
+    statement: "Tek bir araç saatler kazandırabilir.",
+    description: "Hesapla, dönüştür, analiz et, bağlan veya bir iş akışı çalıştır. Web Empire araçları tek ve net bir deneyimde toplar.",
+    processLink: "Akışı gör",
+    toolsMetric: "yayındaki araç",
+    enginesMetric: "kullanılan motor",
+    localesMetric: "aktif dil",
+    plansMetric: "mevcut plan",
+    showcaseKicker: "İmparatorluğun içinde",
+    showcaseTitle: "İş gibi sergilenen, ürün gibi çalışan araçlar.",
+    showcaseBody: "Bu araçlar doğrudan aktif platform kataloğundan gelir.",
+    allTools: "Tüm araçlar",
+    capabilityKicker: "Arayüzün arkasında",
+    capabilityTitle: "Motoru iş seçer. Tersi değil.",
+    capabilityBody: "Her görev yapay zekâ gerektirmez. Formül, metin, API, webhook ve workflow farklı ihtiyaçlar içindir.",
+    processKicker: "Nasıl çalışır",
+    processTitle: "Beş hareket. Niyetten çıktıya.",
+    engineKicker: "Motorlar",
+    engineTitle: "Basit bir formülden tam bir iş akışına.",
+    engineBody: "Çalışma motoru arka planda kalır. Önünüzde net bir giriş, tek aksiyon ve kullanılabilir sonuç vardır.",
+    pricingKicker: "Planlar ve krediler",
+    pricingTitle: "Ücretsiz başla. Gerektiğinde kapasiteyi artır.",
+    pricingBody: "Gösterilen planlar platformun gerçek plan kataloğundan gelir.",
+    pricingLink: "Plan detayları",
+    finalKicker: "Buradan başla",
+    finalTitle: "Bir görevin mi var? Büyük ihtimalle bir aracı vardır.",
+    finalBody: "Gir, seç ve çalıştır.",
+    enter: "İmparatorluğu keşfet",
+    steps: [
+      ["01", "Seç", "Göreve en yakın aracı seç."],
+      ["02", "Gir", "Gerekli metin, sayı veya veriyi ekle."],
+      ["03", "Çalıştır", "Uygun motor görevi uygular."],
+      ["04", "İncele", "Sonucu net bir alanda kontrol et."],
+      ["05", "Kullan", "Çıktıyı al ve işine devam et."],
+    ],
+    engines: {
+      formula: ["FORMULA", "Hesapla", "Formülün doğru çözüm olduğu görevler."],
+      text_transform: ["TEXT", "Dönüştür", "Metni öngörülebilir kurallarla yeniden şekillendir."],
+      ai_text: ["AI TEXT", "Yaz", "Esnek üretim görevleri için dil modelleri."],
+      ai_structured: ["AI DATA", "Yapılandır", "Şemalı ve yapılandırılmış çıktılar."],
+      http_api: ["API", "Bağlan", "Güvenilir bağlantılarla dış servisleri çağır."],
+      webhook: ["WEBHOOK", "Gönder", "Olay ve verileri yapılandırılmış uç noktalara ilet."],
+      workflow: ["WORKFLOW", "Otomatize et", "Birden çok adımı tek çalıştırmada yürüt."],
+    },
+  },
+  ur: {
+    kicker: "ایک ڈیجیٹل ٹول پلیٹ فارم جو واقعی کام کرتا ہے",
+    titleOne: "WEB",
+    titleTwo: "EMPIRE",
+    statement: "ایک ٹول کئی گھنٹے بچا سکتا ہے۔",
+    description: "حساب کریں، تبدیل کریں، تجزیہ کریں، کنیکٹ کریں یا ورک فلو چلائیں۔ Web Empire مفید ٹولز کو ایک واضح تجربے میں جمع کرتا ہے۔",
+    processLink: "طریقہ دیکھیں",
+    toolsMetric: "شائع شدہ ٹولز",
+    enginesMetric: "استعمال شدہ انجن",
+    localesMetric: "فعال زبانیں",
+    plansMetric: "دستیاب پلانز",
+    showcaseKicker: "ایمپائر کے اندر",
+    showcaseTitle: "ٹولز جو کام کی طرح دکھتے اور پروڈکٹ کی طرح چلتے ہیں۔",
+    showcaseBody: "یہ ٹولز براہ راست فعال پلیٹ فارم کیٹلاگ سے آتے ہیں۔",
+    allTools: "تمام ٹولز",
+    capabilityKicker: "انٹرفیس کے پیچھے",
+    capabilityTitle: "کام انجن چنتا ہے۔ الٹا نہیں۔",
+    capabilityBody: "ہر کام کے لیے AI ضروری نہیں۔ فارمولا، متن، API، webhook اور workflow مختلف ضرورتوں کے لیے ہیں۔",
+    processKicker: "یہ کیسے کام کرتا ہے",
+    processTitle: "پانچ قدم۔ ارادے سے نتیجے تک۔",
+    engineKicker: "رن ٹائم انجن",
+    engineTitle: "سادہ فارمولے سے مکمل ورک فلو تک۔",
+    engineBody: "انجن پس منظر میں رہتا ہے۔ آپ کو واضح ان پٹ، ایک ایکشن اور قابل استعمال نتیجہ ملتا ہے۔",
+    pricingKicker: "پلان اور کریڈٹس",
+    pricingTitle: "مفت شروع کریں۔ ضرورت پر صلاحیت بڑھائیں۔",
+    pricingBody: "دکھائے گئے پلان پلیٹ فارم کے حقیقی پلان کیٹلاگ سے آتے ہیں۔",
+    pricingLink: "پلان کی تفصیل",
+    finalKicker: "یہاں سے شروع کریں",
+    finalTitle: "کوئی کام ہے؟ غالباً اس کے لیے ایک ٹول موجود ہے۔",
+    finalBody: "داخل ہوں، چنیں اور چلائیں۔",
+    enter: "ایمپائر دریافت کریں",
+    steps: [
+      ["01", "چنیں", "اپنے کام کے قریب ترین ٹول سے شروع کریں۔"],
+      ["02", "داخل کریں", "ضروری متن، اعداد یا ڈیٹا شامل کریں۔"],
+      ["03", "چلائیں", "مناسب انجن کام مکمل کرتا ہے۔"],
+      ["04", "جائزہ لیں", "نتیجہ واضح جگہ پر دیکھیں۔"],
+      ["05", "استعمال کریں", "آؤٹ پٹ لیں اور اپنا کام جاری رکھیں۔"],
+    ],
+    engines: {
+      formula: ["FORMULA", "حساب", "جب فارمولا درست حل ہو تو متعین نتائج۔"],
+      text_transform: ["TEXT", "تبدیل", "واضح قواعد کے ساتھ متن کی تبدیلی۔"],
+      ai_text: ["AI TEXT", "لکھیں", "لچکدار تخلیقی کاموں کے لیے زبان ماڈلز۔"],
+      ai_structured: ["AI DATA", "منظم", "اسکیما کے مطابق منظم نتائج۔"],
+      http_api: ["API", "کنیکٹ", "قابل اعتماد کنکشن کے ذریعے بیرونی سروسز۔"],
+      webhook: ["WEBHOOK", "بھیجیں", "ایونٹس اور ڈیٹا مقررہ اینڈ پوائنٹس تک۔"],
+      workflow: ["WORKFLOW", "خودکار", "متعدد مراحل ایک مربوط رن میں۔"],
+    },
   },
 } as const;
+
+type HomeCopy = (typeof homeCopy)[keyof typeof homeCopy];
+type EngineCopyKey = keyof HomeCopy["engines"];
+
+function resolveCopy(localeCode: string): HomeCopy {
+  return homeCopy[localeCode as keyof typeof homeCopy] ?? homeCopy.en;
+}
 
 export default async function HomePage({
   params,
@@ -123,33 +289,36 @@ export default async function HomePage({
     getSiteIdentity(locale),
   ]);
 
-  const copy = locale.code === "ar" ? copyByLocale.ar : copyByLocale.en;
+  const copy = resolveCopy(locale.code);
   const featuredTools = tools.filter((tool) => tool.is_featured);
-  const showcase = (featuredTools.length ? featuredTools : tools).slice(0, 6);
-  const engineCount = new Set(tools.map((tool) => tool.engine_type)).size;
+  const showcase = (featuredTools.length ? featuredTools : tools).slice(0, 7);
+  const usedEngines = Array.from(new Set(tools.map((tool) => tool.engine_type))).filter(
+    (engine): engine is EngineCopyKey => engine !== "custom_runtime" && engine in copy.engines,
+  );
   const previewPlans = plans.slice(0, 3);
+  const percentageTool = tools.find((tool) => tool.slug === "percentage-calculator");
 
   return (
     <main className="empire-home">
       <section className="empire-hero">
         <div className="container empire-hero-grid">
           <div className="empire-hero-copy">
-            <p className="empire-kicker">{copy.heroTop}</p>
+            <p className="empire-kicker">{copy.kicker}</p>
             <h1 className="empire-hero-title" aria-label={identity.siteName}>
-              <span>{copy.heroLineOne}</span>
-              <span>{copy.heroLineTwo}</span>
+              <span>{copy.titleOne}</span>
+              <span>{copy.titleTwo}</span>
             </h1>
 
             <div className="empire-hero-summary">
-              <p className="empire-hero-statement">{copy.heroStatement}</p>
+              <p className="empire-hero-statement">{copy.statement}</p>
               <div>
-                <p className="empire-hero-description">{copy.heroBody}</p>
+                <p className="empire-hero-description">{copy.description}</p>
                 <div className="empire-actions">
                   <Link href={`/${locale.code}/tools`} className="button button-primary">
                     {translate(messages, "home.explore")}
                   </Link>
                   <a href="#empire-process" className="button button-ghost">
-                    {copy.seeHow}
+                    {copy.processLink}
                   </a>
                 </div>
               </div>
@@ -157,31 +326,21 @@ export default async function HomePage({
           </div>
 
           <div className="empire-hero-collage" aria-hidden="true">
-            <div className="empire-demo-card empire-demo-main">
-              <small>FORMULA / LIVE TOOL</small>
-              <h3>{locale.code === "ar" ? "حاسبة النسبة المئوية" : "Percentage calculator"}</h3>
+            <div className="empire-window empire-window-main">
+              <div className="empire-window-bar"><span /><span /><span /></div>
+              <small>FORMULA · LIVE</small>
+              <h3>{percentageTool?.title ?? (locale.code === "ar" ? "حاسبة النسبة المئوية" : "Percentage calculator")}</h3>
               <div className="empire-demo-equation">
-                <span>25</span>
-                <b>÷</b>
-                <span>200</span>
+                <span>25</span><b>÷</b><span>200</span>
               </div>
               <div className="empire-demo-result">
                 <small>{locale.code === "ar" ? "النتيجة" : "RESULT"}</small>
-                <strong>12.5%</strong>
+                <strong>12.5</strong>
               </div>
             </div>
-            <div className="empire-demo-card empire-mini-card empire-mini-ai">
-              <small>AI</small>
-              <strong>{locale.code === "ar" ? "مخرجات منظمة" : "Structured output"}</strong>
-            </div>
-            <div className="empire-demo-card empire-mini-card empire-mini-flow">
-              <small>WORKFLOW</small>
-              <strong>{locale.code === "ar" ? "خطوات مترابطة" : "Connected steps"}</strong>
-            </div>
-            <div className="empire-demo-card empire-mini-card empire-mini-credit">
-              <small>CREDITS</small>
-              <strong>0 / FREE</strong>
-            </div>
+            <div className="empire-window empire-window-ai"><small>AI DATA</small><strong>{locale.code === "ar" ? "مخرجات منظمة" : "Structured output"}</strong><span>{"{ }"}</span></div>
+            <div className="empire-window empire-window-flow"><small>WORKFLOW</small><strong>01 → 02 → 03</strong><span>{locale.code === "ar" ? "خطوات مترابطة" : "Connected steps"}</span></div>
+            <div className="empire-sticker">WEB<br />EMPIRE</div>
           </div>
         </div>
       </section>
@@ -189,7 +348,7 @@ export default async function HomePage({
       <section className="empire-proof" aria-label="Platform facts">
         <div className="container empire-proof-grid">
           <div className="empire-proof-item"><strong>{tools.length}</strong><span>{copy.toolsMetric}</span></div>
-          <div className="empire-proof-item"><strong>{engineCount}</strong><span>{copy.enginesMetric}</span></div>
+          <div className="empire-proof-item"><strong>{usedEngines.length}</strong><span>{copy.enginesMetric}</span></div>
           <div className="empire-proof-item"><strong>{locales.length}</strong><span>{copy.localesMetric}</span></div>
           <div className="empire-proof-item"><strong>{plans.length}</strong><span>{copy.plansMetric}</span></div>
         </div>
@@ -198,47 +357,22 @@ export default async function HomePage({
       <section className="empire-section empire-section-light">
         <div className="container">
           <div className="empire-section-head">
-            <div>
-              <p className="empire-section-kicker">{copy.showcaseKicker}</p>
-              <h2 className="empire-display">{copy.showcaseTitle}</h2>
-            </div>
-            <div>
-              <p>{copy.showcaseBody}</p>
-              <Link href={`/${locale.code}/tools`} className="empire-section-link">
-                {copy.allTools} <span aria-hidden="true">↗</span>
-              </Link>
-            </div>
+            <div><p className="empire-section-kicker">{copy.showcaseKicker}</p><h2 className="empire-display">{copy.showcaseTitle}</h2></div>
+            <div><p>{copy.showcaseBody}</p><Link href={`/${locale.code}/tools`} className="empire-section-link">{copy.allTools}<span aria-hidden="true">↗</span></Link></div>
           </div>
-
           <div className="empire-showcase-grid">
-            {showcase.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} locale={locale.code} messages={messages} />
-            ))}
+            {showcase.map((tool) => <ToolCard key={tool.id} tool={tool} locale={locale.code} messages={messages} />)}
           </div>
         </div>
       </section>
 
-      <section className="empire-section empire-section-dark">
+      <section className="empire-section empire-capability-section">
         <div className="container">
-          <div className="empire-section-head">
-            <div>
-              <p className="empire-section-kicker">{copy.capabilityKicker}</p>
-              <h2 className="empire-display">{copy.capabilityTitle}</h2>
-            </div>
+          <div className="empire-section-head empire-section-head-light">
+            <div><p className="empire-section-kicker">{copy.capabilityKicker}</p><h2 className="empire-display">{copy.capabilityTitle}</h2></div>
             <p>{copy.capabilityBody}</p>
           </div>
-
-          <div className="empire-capabilities">
-            {copy.capabilities.map(([code, title, description]) => (
-              <article className="empire-capability" key={code}>
-                <span className="empire-capability-code">{code}</span>
-                <div>
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+          <div className="empire-runtime-ribbon" aria-hidden="true"><span>FORMULA</span><span>TEXT</span><span>AI</span><span>API</span><span>WEBHOOK</span><span>WORKFLOW</span></div>
         </div>
       </section>
 
@@ -248,90 +382,48 @@ export default async function HomePage({
           <h2 className="empire-display empire-process-title">{copy.processTitle}</h2>
           <div className="empire-process-grid">
             {copy.steps.map(([number, title, description]) => (
-              <article className="empire-step" key={number}>
-                <strong className="empire-step-number">{number}</strong>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
+              <article className="empire-step" key={number}><span className="empire-step-number">{number}</span><div><h3>{title}</h3><p>{description}</p></div></article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="empire-section empire-section-dark">
+      <section className="empire-section empire-engine-section">
         <div className="container empire-engine-layout">
-          <div className="empire-engine-copy">
-            <p className="empire-section-kicker">{copy.engineKicker}</p>
-            <h2 className="empire-display">{copy.engineTitle}</h2>
-            <p>{copy.engineBody}</p>
-          </div>
-
+          <div className="empire-engine-copy"><p className="empire-section-kicker">{copy.engineKicker}</p><h2 className="empire-display">{copy.engineTitle}</h2><p>{copy.engineBody}</p></div>
           <div className="empire-engine-stack">
-            {[
-              ["01", "FORMULA", "DETERMINISTIC"],
-              ["02", "TEXT TRANSFORM", "RULE BASED"],
-              ["03", "AI TEXT", "PROVIDER ENGINE"],
-              ["04", "AI STRUCTURED", "SCHEMA OUTPUT"],
-              ["05", "HTTP / WEBHOOK", "CONNECTED"],
-              ["06", "WORKFLOW", "MULTI STEP"],
-            ].map(([number, title, label]) => (
-              <div className="empire-engine-row" key={title}>
-                <span>{number}</span>
-                <strong>{title}</strong>
-                <em>{label}</em>
-              </div>
-            ))}
+            {(usedEngines.length ? usedEngines : (["formula"] as EngineCopyKey[])).map((engine, index) => {
+              const [code, title, description] = copy.engines[engine];
+              return <article className="empire-engine-row" key={engine}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{title}</strong><p>{description}</p></div><em>{code}</em></article>;
+            })}
           </div>
         </div>
       </section>
 
-      <section className="empire-section empire-section-light">
-        <div className="container">
-          <div className="empire-section-head">
-            <div>
-              <p className="empire-section-kicker">{copy.pricingKicker}</p>
-              <h2 className="empire-display">{copy.pricingTitle}</h2>
+      {previewPlans.length ? (
+        <section className="empire-section empire-pricing-section">
+          <div className="container">
+            <div className="empire-section-head empire-section-head-light">
+              <div><p className="empire-section-kicker">{copy.pricingKicker}</p><h2 className="empire-display">{copy.pricingTitle}</h2></div>
+              <div><p>{copy.pricingBody}</p><Link href={`/${locale.code}/pricing`} className="empire-section-link">{copy.pricingLink}<span aria-hidden="true">↗</span></Link></div>
             </div>
-            <div>
-              <p>{copy.pricingBody}</p>
-              <Link href={`/${locale.code}/pricing`} className="empire-section-link">
-                {copy.pricingLink} <span aria-hidden="true">↗</span>
-              </Link>
+            <div className="empire-pricing-grid">
+              {previewPlans.map((plan) => (
+                <article className={`empire-plan ${plan.slug === "pro" ? "is-featured" : ""}`} key={plan.id}>
+                  <div className="empire-plan-label"><span>{plan.slug}</span><span>{Number(plan.monthly_credits).toLocaleString(locale.locale_code)} {translate(messages, "common.points")}</span></div>
+                  <h3>{plan.localizedName}</h3><p>{plan.localizedDescription}</p>
+                  <div className="empire-plan-price"><strong>{plan.price_sar}</strong><span>SAR</span></div>
+                </article>
+              ))}
             </div>
           </div>
-
-          <div className="empire-pricing-grid">
-            {previewPlans.map((plan) => (
-              <article
-                className={`empire-plan ${plan.slug === "pro" ? "is-featured" : ""}`}
-                key={plan.id}
-              >
-                <div className="empire-plan-label">
-                  <span>{plan.slug}</span>
-                  <span>{Number(plan.monthly_credits).toLocaleString(locale.locale_code)} {translate(messages, "common.points")}</span>
-                </div>
-                <h3>{plan.localizedName}</h3>
-                <p>{plan.localizedDescription}</p>
-                <div className="empire-plan-price">
-                  <strong>{plan.price_sar}</strong>
-                  <span>SAR</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="empire-final">
         <div className="container empire-final-inner">
-          <div>
-            <p className="empire-section-kicker">{copy.finalBody}</p>
-            <h2>{copy.finalTitle}</h2>
-          </div>
-          <div className="empire-actions">
-            <Link href={`/${locale.code}/tools`} className="button button-primary">{copy.enter}</Link>
-            <Link href={`/${locale.code}/pricing`} className="button button-ghost">{translate(messages, "home.plans")}</Link>
-          </div>
+          <div><p className="empire-section-kicker">{copy.finalKicker}</p><h2>{copy.finalTitle}</h2><p>{copy.finalBody}</p></div>
+          <Link href={`/${locale.code}/tools`} className="button button-dark">{copy.enter}</Link>
         </div>
       </section>
     </main>

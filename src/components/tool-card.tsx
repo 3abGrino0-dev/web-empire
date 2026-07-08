@@ -23,21 +23,11 @@ export function ToolCard({
   return (
     <Link href={`/${locale}/tools/${tool.slug}`} className="tool-card empire-tool-card">
       <div className="tool-card-top">
-        <span className="tool-card-engine">
-          {tool.engine_type.startsWith("ai_") ? "AI" : tool.engine_type}
-        </span>
+        <span className="tool-card-engine">{tool.engine_type.startsWith("ai_") ? "AI" : tool.engine_type.replaceAll("_", " ")}</span>
         <span className="tool-card-arrow" aria-hidden="true">↗</span>
       </div>
-
-      <div className="tool-card-copy">
-        <h3>{tool.title}</h3>
-        <p>{tool.localizedDescription}</p>
-      </div>
-
-      <div className="tool-card-meta">
-        <span>{tool.engine_type.replaceAll("_", " ")}</span>
-        <span>{pricing}</span>
-      </div>
+      <div className="tool-card-copy"><h3>{tool.title}</h3><p>{tool.localizedDescription}</p></div>
+      <div className="tool-card-meta"><span>{tool.slug.replaceAll("-", " ")}</span><span>{pricing}</span></div>
     </Link>
   );
 }
