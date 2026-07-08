@@ -317,16 +317,116 @@ html[dir="rtl"] .featured-tool:hover .featured-tool-open i { transform: rotate(3
 .ft-preview-runtime span { font-family: var(--font-mono), monospace; font-size: 1.6rem; font-weight: 800; }
 .ft-preview-runtime b { font-size: 3rem; line-height: .9; letter-spacing: -.07em; }
 
-/* CAPABILITY RIBBON */
-.empire-capability-section { background: var(--empire-white); color: var(--empire-ink); }
-.empire-runtime-ribbon { display: flex; gap: 0; overflow: hidden; border-block: 1px solid #111; }
-.empire-runtime-ribbon span { flex: 1 0 auto; min-width: 220px; padding: clamp(28px, 4vw, 54px) 30px; border-inline-end: 1px solid #111; font-family: var(--font-latin), sans-serif; font-size: clamp(1.6rem, 3vw, 3.7rem); font-weight: 900; letter-spacing: -.05em; text-align: center; }
-.empire-runtime-ribbon span:nth-child(1) { background: var(--empire-lime); }
-.empire-runtime-ribbon span:nth-child(2) { background: var(--empire-pink); }
-.empire-runtime-ribbon span:nth-child(3) { background: var(--empire-purple); color: #fff; }
-.empire-runtime-ribbon span:nth-child(4) { background: var(--empire-blue); }
-.empire-runtime-ribbon span:nth-child(5) { background: var(--empire-orange); }
-.empire-runtime-ribbon span:nth-child(6) { background: #fff; }
+/* CAPABILITIES MANIFESTO */
+.empire-capability-section {
+  background: var(--empire-dark);
+  color: #fff;
+  padding-block: clamp(110px, 14vw, 210px);
+}
+.empire-capability-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr);
+  gap: clamp(28px, 6vw, 120px);
+  align-items: end;
+  margin-bottom: clamp(46px, 7vw, 110px);
+}
+.empire-capability-title {
+  margin: 0;
+  max-width: 1100px;
+  font-size: clamp(3.6rem, 10vw, 11rem);
+  line-height: .84;
+  letter-spacing: -.08em;
+  font-weight: 900;
+  text-wrap: balance;
+}
+html[dir="rtl"] .empire-capability-title { line-height: 1; letter-spacing: -.055em; }
+.empire-capability-body {
+  margin: 0;
+  color: rgba(255,255,255,.74);
+  line-height: 1.85;
+  font-size: clamp(1rem, 1.22vw, 1.12rem);
+  max-width: 440px;
+}
+
+.empire-capability-rows {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,.28);
+}
+.empire-capability-row {
+  min-height: 260px;
+  display: grid;
+  grid-template-columns: minmax(84px, .22fr) minmax(0, .85fr) minmax(180px, .93fr);
+  gap: clamp(16px, 2.3vw, 28px);
+  align-items: center;
+  padding: clamp(28px, 3.4vw, 52px);
+  border-bottom: 1px solid rgba(17,17,15,.22);
+  color: #111;
+}
+.empire-capability-row:nth-child(odd) { grid-template-columns: minmax(84px, .22fr) minmax(0, .95fr) minmax(180px, .83fr); }
+.empire-capability-row:nth-child(even) { grid-template-columns: minmax(84px, .22fr) minmax(180px, .83fr) minmax(0, .95fr); }
+.empire-capability-row:nth-child(even) .empire-capability-copy { order: 3; }
+.empire-capability-row:nth-child(even) .empire-capability-visual { order: 2; }
+
+.capability-row-1 { background: var(--empire-lime); }
+.capability-row-2 { background: var(--empire-orange); }
+.capability-row-3 { background: var(--empire-purple); color: #fff; }
+.capability-row-4 { background: var(--empire-blue); }
+.capability-row-5 { background: #111; color: #fff; }
+.capability-row-6 { background: var(--empire-pink); }
+
+.empire-capability-number {
+  font-family: var(--font-latin), sans-serif;
+  font-size: clamp(3.5rem, 8vw, 9rem);
+  line-height: .78;
+  letter-spacing: -.08em;
+  font-weight: 900;
+  opacity: .9;
+}
+.empire-capability-copy { display: grid; gap: 10px; max-width: 720px; }
+.empire-capability-copy small { font-size: .68rem; letter-spacing: .12em; font-weight: 900; text-transform: uppercase; opacity: .72; }
+.empire-capability-copy h3 {
+  margin: 0;
+  font-size: clamp(2.15rem, 4vw, 5rem);
+  line-height: .9;
+  letter-spacing: -.06em;
+  font-weight: 900;
+}
+html[dir="rtl"] .empire-capability-copy h3 { line-height: 1.02; letter-spacing: -.04em; }
+.empire-capability-copy p { margin: 0; max-width: 560px; line-height: 1.72; opacity: .84; overflow-wrap: anywhere; }
+.empire-capability-visual {
+  justify-self: stretch;
+  min-height: 132px;
+  border: 1px solid currentColor;
+  border-radius: 18px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  padding: 16px;
+  display: grid;
+}
+.capability-row-3 .empire-capability-visual,
+.capability-row-5 .empire-capability-visual { background: rgba(255,255,255,.1); }
+
+.capability-motif { width: 100%; height: 100%; }
+.motif-calculate { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 9px; }
+.motif-calculate span { min-height: 48px; border: 1px solid currentColor; border-radius: 12px; display: grid; place-items: center; font-size: clamp(1.2rem, 2vw, 2rem); font-weight: 900; }
+.motif-calculate b { font-size: 1.2rem; font-weight: 900; }
+.motif-calculate strong { grid-column: 1 / -1; font-size: clamp(1.4rem, 2.2vw, 2.7rem); line-height: 1; letter-spacing: -.05em; }
+.motif-create { display: grid; gap: 9px; }
+.motif-create p { margin: 0; min-height: 36px; border: 1px solid currentColor; border-radius: 10px; padding: 8px 10px; font-family: var(--font-mono), monospace; font-size: .84rem; }
+.motif-transform { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 11px; }
+.motif-transform span { min-height: 56px; border: 1px solid currentColor; border-radius: 10px; display: grid; place-items: center; font-size: clamp(1.4rem, 2.4vw, 2.4rem); font-weight: 900; }
+.motif-transform b { font-size: clamp(1.4rem, 2vw, 2.2rem); }
+.motif-analyze { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-items: end; }
+.motif-analyze i { height: 46%; border-radius: 999px; background: currentColor; opacity: .82; }
+.motif-analyze i:nth-child(2) { height: 76%; }
+.motif-analyze i:nth-child(3) { height: 60%; }
+.motif-analyze i:nth-child(4) { height: 88%; }
+.motif-automate { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.motif-automate span { width: 48px; height: 48px; border: 1px solid currentColor; border-radius: 50%; display: grid; place-items: center; font-size: .82rem; font-weight: 900; }
+.motif-automate b { font-size: 1rem; }
+.motif-connect { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.motif-connect span { min-height: 48px; border: 1px solid currentColor; border-radius: 12px; display: grid; place-items: center; font-family: var(--font-mono), monospace; font-size: .74rem; padding: 0 8px; }
+.motif-connect b { height: 1px; background: currentColor; opacity: .86; }
 
 /* PROCESS */
 .empire-process { background: var(--empire-dark); color: #fff; }
@@ -458,6 +558,15 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-hero-collage { min-height: 540px; width: min(650px, 100%); margin: -20px auto 0; }
   .empire-section-head { grid-template-columns: 1fr; }
   .empire-showcase-intro { grid-template-columns: 1fr; gap: 20px; }
+  .empire-capability-intro { grid-template-columns: 1fr; gap: 22px; }
+  .empire-capability-row,
+  .empire-capability-row:nth-child(odd),
+  .empire-capability-row:nth-child(even) {
+    grid-template-columns: minmax(84px, .24fr) minmax(0, 1fr);
+  }
+  .empire-capability-row:nth-child(even) .empire-capability-copy,
+  .empire-capability-row:nth-child(even) .empire-capability-visual { order: initial; }
+  .empire-capability-visual { grid-column: 1 / -1; }
   .empire-process-grid { grid-template-columns: repeat(2, 1fr); }
   .empire-step:nth-child(2n) { border-inline-end: 0; }
   .empire-step:last-child { grid-column: 1 / -1; }
@@ -500,6 +609,20 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-proof-item { min-height: 175px; border-bottom: 1px solid rgba(255,255,255,.18); }
   .empire-display, .editorial-page-title, .editorial-tool-title, .editorial-auth-story h1 { font-size: clamp(3.5rem, 15vw, 6.8rem); }
   .empire-showcase-title { font-size: clamp(3rem, 13vw, 6.8rem); }
+  .empire-capability-section { padding-block: 94px; }
+  .empire-capability-title { font-size: clamp(3rem, 14vw, 6.9rem); }
+  .empire-capability-row,
+  .empire-capability-row:nth-child(odd),
+  .empire-capability-row:nth-child(even) {
+    grid-template-columns: minmax(72px, .22fr) 1fr;
+    min-height: 240px;
+    gap: 12px;
+    padding: 24px;
+  }
+  .empire-capability-number { font-size: clamp(3rem, 13vw, 6rem); }
+  .empire-capability-copy h3 { font-size: clamp(2rem, 9vw, 3.5rem); }
+  .empire-capability-visual { min-height: 110px; }
+  .motif-automate span { width: 42px; height: 42px; }
   .empire-showcase-grid .tool-card, .empire-showcase-grid .tool-card:nth-child(n), .editorial-tools-grid .tool-card, .editorial-tools-grid .tool-card:nth-child(n) { grid-column: 1 / -1; min-height: 420px; }
   .featured-tool,
   .featured-tool:nth-child(6n + 1),
@@ -512,7 +635,6 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .featured-tool-meta { flex-direction: column; align-items: flex-start; }
   .ft-preview-workflow span { width: 58px; height: 58px; }
   .public-shell .tool-card h3 { font-size: clamp(2.5rem, 10vw, 4.5rem); }
-  .empire-runtime-ribbon { overflow-x: auto; }
   .empire-process-grid { grid-template-columns: 1fr; }
   .empire-step, .empire-step:nth-child(2n) { min-height: 300px; border-inline-end: 0; border-bottom: 1px solid rgba(255,255,255,.35); }
   .empire-step:last-child { grid-column: auto; }
@@ -549,6 +671,18 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-proof-item strong { font-size: 3.4rem; }
   .empire-section, .editorial-tools-wrap { padding-block: 84px; }
   .empire-display, .editorial-page-title, .editorial-tool-title, .editorial-auth-story h1 { font-size: clamp(3.2rem, 17vw, 5.4rem); }
+  .empire-capability-title { font-size: clamp(2.7rem, 15vw, 5.1rem); }
+  .empire-capability-row,
+  .empire-capability-row:nth-child(odd),
+  .empire-capability-row:nth-child(even) {
+    grid-template-columns: 1fr;
+    min-height: 220px;
+    padding: 20px;
+  }
+  .empire-capability-number { font-size: clamp(2.8rem, 15vw, 4.7rem); }
+  .empire-capability-copy small { font-size: .62rem; }
+  .empire-capability-copy h3 { font-size: clamp(1.9rem, 10vw, 2.9rem); }
+  .empire-capability-visual { min-height: 100px; }
   .featured-tool { padding: 20px; border-radius: 22px; min-height: 430px; }
   .featured-tool-content h3 { font-size: clamp(2rem, 10vw, 3.1rem); }
   .featured-tool-surface { min-height: 180px; }

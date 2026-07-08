@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CapabilitiesShowcase } from "@/components/public/capabilities-showcase";
 import { FeaturedToolShowcase } from "@/components/public/featured-tool-showcase";
 import { translate } from "@/localization/messages";
 import {
@@ -33,6 +34,14 @@ const homeCopy = {
     capabilityTitle: "المهمة تحدد المحرك. لا العكس.",
     capabilityBody:
       "الحساب لا يحتاج ذكاءً اصطناعيًا دائمًا. وبعض المهام تحتاج API أو Webhook أو Workflow. لهذا بُنيت المنصة بعدة محركات.",
+    capabilities: [
+      { title: "احسب", description: "نتيجة دقيقة عندما تكون المعادلة هي الطريق الأقصر.", motif: "calculate" },
+      { title: "أنشئ", description: "صياغة محتوى واضح للمهام التي تبدأ من فكرة.", motif: "create" },
+      { title: "حوّل", description: "تغيير الشكل أو النمط بقواعد يمكن الوثوق بها.", motif: "transform" },
+      { title: "حلّل", description: "قراءة البيانات واستخراج ما يهم لاتخاذ القرار.", motif: "analyze" },
+      { title: "أتمت", description: "ربط خطوات متعددة في تدفق واحد قابل للتكرار.", motif: "automate" },
+      { title: "اربط", description: "وصل مهامك بخدمات ونقاط نهاية خارجية بثبات.", motif: "connect" },
+    ],
     processKicker: "كيف تعمل",
     processTitle: "خمس حركات. من الفكرة إلى الناتج.",
     engineKicker: "المحركات",
@@ -86,6 +95,14 @@ const homeCopy = {
     capabilityTitle: "The job chooses the engine. Not the other way around.",
     capabilityBody:
       "A calculation does not always need AI. Some jobs need an API, webhook or workflow. That is why the platform supports multiple runtimes.",
+    capabilities: [
+      { title: "Calculate", description: "Use deterministic logic when precision is the requirement.", motif: "calculate" },
+      { title: "Create", description: "Generate first drafts and structured writing from intent.", motif: "create" },
+      { title: "Transform", description: "Reshape content into the format your workflow needs.", motif: "transform" },
+      { title: "Analyze", description: "Inspect text or data and surface clear decision signals.", motif: "analyze" },
+      { title: "Automate", description: "Chain repeatable steps into one reliable execution path.", motif: "automate" },
+      { title: "Connect", description: "Route tasks to APIs, webhooks and external systems safely.", motif: "connect" },
+    ],
     processKicker: "How it works",
     processTitle: "Five moves. From intent to output.",
     engineKicker: "Runtime engines",
@@ -137,6 +154,14 @@ const homeCopy = {
     capabilityKicker: "Derrière l’interface",
     capabilityTitle: "La tâche choisit le moteur. Pas l’inverse.",
     capabilityBody: "Calcul, texte, IA, API, webhook ou workflow: le moteur dépend du besoin réel.",
+    capabilities: [
+      { title: "Calculer", description: "Des résultats fiables lorsque la précision est prioritaire.", motif: "calculate" },
+      { title: "Créer", description: "Produire du contenu initial à partir d’une intention claire.", motif: "create" },
+      { title: "Transformer", description: "Adapter la forme d’un contenu à votre contexte réel.", motif: "transform" },
+      { title: "Analyser", description: "Lire les données et faire ressortir les signaux utiles.", motif: "analyze" },
+      { title: "Automatiser", description: "Enchaîner plusieurs étapes dans un flux exécutable.", motif: "automate" },
+      { title: "Connecter", description: "Relier les tâches aux API et endpoints externes.", motif: "connect" },
+    ],
     processKicker: "Comment ça marche",
     processTitle: "Cinq gestes. De l’intention au résultat.",
     engineKicker: "Moteurs",
@@ -185,6 +210,14 @@ const homeCopy = {
     capabilityKicker: "Arayüzün arkasında",
     capabilityTitle: "Motoru iş seçer. Tersi değil.",
     capabilityBody: "Her görev yapay zekâ gerektirmez. Formül, metin, API, webhook ve workflow farklı ihtiyaçlar içindir.",
+    capabilities: [
+      { title: "Hesapla", description: "Kesinliğin gerekli olduğu yerde deterministik sonuçlar al.", motif: "calculate" },
+      { title: "Oluştur", description: "Fikirden başlayıp kullanılabilir ilk metni üret.", motif: "create" },
+      { title: "Donustur", description: "Icerigi ihtiyaca uygun bicime guvenli sekilde cevir.", motif: "transform" },
+      { title: "Analiz et", description: "Veriyi okuyup karar icin net sinyaller cikar.", motif: "analyze" },
+      { title: "Otomatize et", description: "Tekrarlanan adimlari tek bir akista birlestir.", motif: "automate" },
+      { title: "Baglan", description: "Gorevleri API ve webhook noktalarina istikrarla ulastir.", motif: "connect" },
+    ],
     processKicker: "Nasıl çalışır",
     processTitle: "Beş hareket. Niyetten çıktıya.",
     engineKicker: "Motorlar",
@@ -233,6 +266,14 @@ const homeCopy = {
     capabilityKicker: "انٹرفیس کے پیچھے",
     capabilityTitle: "کام انجن چنتا ہے۔ الٹا نہیں۔",
     capabilityBody: "ہر کام کے لیے AI ضروری نہیں۔ فارمولا، متن، API، webhook اور workflow مختلف ضرورتوں کے لیے ہیں۔",
+    capabilities: [
+      { title: "حساب", description: "جب درستگی لازم ہو تو متعین نتیجہ حاصل کریں۔", motif: "calculate" },
+      { title: "تخلیق", description: "ارادے سے آغاز کر کے مفید ابتدائی مواد تیار کریں۔", motif: "create" },
+      { title: "تبدیل", description: "مواد کو مطلوبہ شکل میں واضح قواعد سے بدلیں۔", motif: "transform" },
+      { title: "تجزیہ", description: "ڈیٹا پڑھ کر فیصلے کے لیے اہم اشارے نکالیں۔", motif: "analyze" },
+      { title: "خودکار", description: "متعدد اقدامات کو ایک قابلِ تکرار بہاؤ میں جوڑیں۔", motif: "automate" },
+      { title: "ربط", description: "کام کو API اور webhook پوائنٹس سے قابلِ اعتماد طور پر ملائیں۔", motif: "connect" },
+    ],
     processKicker: "یہ کیسے کام کرتا ہے",
     processTitle: "پانچ قدم۔ ارادے سے نتیجے تک۔",
     engineKicker: "رن ٹائم انجن",
@@ -380,15 +421,14 @@ export default async function HomePage({
         </div>
       </section>
 
-      <section className="empire-section empire-capability-section">
-        <div className="container">
-          <div className="empire-section-head empire-section-head-light">
-            <div><p className="empire-section-kicker">{copy.capabilityKicker}</p><h2 className="empire-display">{copy.capabilityTitle}</h2></div>
-            <p>{copy.capabilityBody}</p>
-          </div>
-          <div className="empire-runtime-ribbon" aria-hidden="true"><span>FORMULA</span><span>TEXT</span><span>AI</span><span>API</span><span>WEBHOOK</span><span>WORKFLOW</span></div>
-        </div>
-      </section>
+      <CapabilitiesShowcase
+        copy={{
+          capabilityKicker: copy.capabilityKicker,
+          capabilityTitle: copy.capabilityTitle,
+          capabilityBody: copy.capabilityBody,
+          capabilities: copy.capabilities,
+        }}
+      />
 
       <section id="empire-process" className="empire-section empire-process">
         <div className="container">
