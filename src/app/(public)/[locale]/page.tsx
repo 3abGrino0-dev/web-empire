@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CapabilitiesShowcase } from "@/components/public/capabilities-showcase";
 import { EngineStory } from "@/components/public/engine-story";
 import { FeaturedToolShowcase } from "@/components/public/featured-tool-showcase";
+import { PricingPreview } from "@/components/public/pricing-preview";
 import { ToolJourney } from "@/components/public/tool-journey";
 import { translate } from "@/localization/messages";
 import {
@@ -349,6 +350,15 @@ export default async function HomePage({
     };
   });
   const previewPlans = plans.slice(0, 3);
+  const previewPlanItems = previewPlans.map((plan) => ({
+    key: String(plan.id),
+    slug: plan.slug,
+    name: plan.localizedName,
+    description: plan.localizedDescription,
+    monthlyCredits: Number(plan.monthly_credits),
+    priceSar: Number(plan.price_sar),
+    featured: plan.slug === "pro",
+  }));
   const percentageTool = tools.find((tool) => tool.slug === "percentage-calculator");
 
   return (
@@ -455,24 +465,16 @@ export default async function HomePage({
         engines={engineItems}
       />
 
-      {previewPlans.length ? (
-        <section className="empire-section empire-pricing-section">
-          <div className="container">
-            <div className="empire-section-head empire-section-head-light">
-              <div><p className="empire-section-kicker">{copy.pricingKicker}</p><h2 className="empire-display">{copy.pricingTitle}</h2></div>
-              <div><p>{copy.pricingBody}</p><Link href={`/${locale.code}/pricing`} className="empire-section-link">{copy.pricingLink}<span aria-hidden="true">↗</span></Link></div>
-            </div>
-            <div className="empire-pricing-grid">
-              {previewPlans.map((plan) => (
-                <article className={`empire-plan ${plan.slug === "pro" ? "is-featured" : ""}`} key={plan.id}>
-                  <div className="empire-plan-label"><span>{plan.slug}</span><span>{Number(plan.monthly_credits).toLocaleString(locale.locale_code)} {translate(messages, "common.points")}</span></div>
-                  <h3>{plan.localizedName}</h3><p>{plan.localizedDescription}</p>
-                  <div className="empire-plan-price"><strong>{plan.price_sar}</strong><span>SAR</span></div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+      {previewPlanItems.length ? (
+        <PricingPreview
+          kicker={copy.pricingKicker}
+          title={copy.pricingTitle}
+          body={copy.pricingBody}
+          linkLabel={copy.pricingLink}
+          locale={locale.locale_code}
+          pointsLabel={translate(messages, "common.points")}
+          plans={previewPlanItems}
+        />
       ) : null}
 
       <section className="empire-final">
