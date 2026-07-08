@@ -2,9 +2,18 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DynamicToolForm } from "@/components/dynamic-tool-form";
+import { ToolDetailHero } from "@/components/public/tool-detail-hero";
 import { translate } from "@/localization/messages";
 import { getActiveLocales, getLocaleByCode, getUiMessages } from "@/localization/repository";
 import { getToolBySlug } from "@/repositories/catalog";
+
+const detailCopy: Record<string, { access: string; workflowInput: string; workflowRun: string; workflowResult: string }> = {
+  ar: { access: "الوصول", workflowInput: "إدخال", workflowRun: "تشغيل", workflowResult: "نتيجة" },
+  en: { access: "Access", workflowInput: "Input", workflowRun: "Run", workflowResult: "Result" },
+  fr: { access: "Acces", workflowInput: "Entree", workflowRun: "Execution", workflowResult: "Resultat" },
+  tr: { access: "Erisim", workflowInput: "Girdi", workflowRun: "Calistir", workflowResult: "Sonuc" },
+  ur: { access: "رسائی", workflowInput: "ان پٹ", workflowRun: "رن", workflowResult: "نتیجہ" },
+};
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -26,13 +35,33 @@ export default async function ToolPage({ params }: { params: Promise<{ locale: s
   if (!locale) notFound();
   const [tool, messages] = await Promise.all([getToolBySlug(slug, locale.code), getUiMessages(locale)]);
   if (!tool) notFound();
+  const copy = detailCopy[locale.code] ?? detailCopy.en;
 
-  const pricing = tool.pricing_mode === "free" ? translate(messages, "common.free") : tool.pricing_mode === "fixed" ? `${tool.fixed_points} ${translate(messages, "common.points")}` : `${tool.minimum_points}+ ${translate(messages, "common.points")}`;
+  const pricing =
+    tool.pricing_mode === "free"
+      ? translate(messages, "common.free")
+      : tool.pricing_mode === "fixed"
+        ? `${Number(tool.fixed_points).toLocaleString(locale.locale_code)} ${translate(messages, "common.points")}`
+        : `${Number(tool.minimum_points).toLocaleString(locale.locale_code)}+ ${translate(messages, "common.points")}`;
 
   return (
     <main className="editorial-tool-page">
-      <section className="editorial-tool-hero"><div className="container editorial-tool-hero-grid"><div><p className="empire-section-kicker">{tool.engine_type.replaceAll("_", " ")}</p><h1 className="editorial-tool-title">{tool.title}</h1><p className="editorial-tool-description">{tool.localizedDescription}</p></div><div className="editorial-tool-meta"><span><small>ENGINE</small><b>{tool.engine_type}</b></span><span><small>ACCESS</small><b>{pricing}</b></span></div></div></section>
-      <section className="container editorial-runner-wrap"><DynamicToolForm slug={tool.slug} locale={locale.code} schema={tool.localizedInputSchema} messages={messages} /></section>
+      <ToolDetailHero
+        engineCode={tool.engine_type}
+        title={tool.title}
+        description={tool.localizedDescription}
+        accessLabel={copy.access}
+        pricing={pricing}
+        copy={{
+          workflowInput: copy.workflowInput,
+          workflowRun: copy.workflowRun,
+          workflowResult: copy.workflowResult,
+        }}
+      />
+
+      <section className="container editorial-runner-wrap">
+        <DynamicToolForm slug={tool.slug} locale={locale.code} schema={tool.localizedInputSchema} messages={messages} />
+      </section>
     </main>
   );
 }
