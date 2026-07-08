@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { CapabilitiesShowcase } from "@/components/public/capabilities-showcase";
 import { EngineStory } from "@/components/public/engine-story";
+import { FinalEmpireCta } from "@/components/public/final-empire-cta";
 import { FeaturedToolShowcase } from "@/components/public/featured-tool-showcase";
 import { PricingPreview } from "@/components/public/pricing-preview";
 import { ToolJourney } from "@/components/public/tool-journey";
@@ -477,12 +478,13 @@ export default async function HomePage({
         />
       ) : null}
 
-      <section className="empire-final">
-        <div className="container empire-final-inner">
-          <div><p className="empire-section-kicker">{copy.finalKicker}</p><h2>{copy.finalTitle}</h2><p>{copy.finalBody}</p></div>
-          <Link href={`/${locale.code}/tools`} className="button button-dark">{copy.enter}</Link>
-        </div>
-      </section>
+      <FinalEmpireCta
+        kicker={copy.finalKicker}
+        title={copy.finalTitle}
+        body={copy.finalBody}
+        actionLabel={copy.enter}
+        href={`/${locale.code}/tools`}
+      />
     </main>
   );
 }
