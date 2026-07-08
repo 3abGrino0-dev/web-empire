@@ -310,9 +310,19 @@ export default async function HomePage({
             </h1>
 
             <div className="empire-hero-summary">
-              <p className="empire-hero-statement">{copy.statement}</p>
-              <div>
+              <div className="empire-hero-support">
                 <p className="empire-hero-description">{copy.description}</p>
+                <p className="empire-hero-statement">
+                  {locale.code === "ar" ? (
+                    <>
+                      أداة واحدة قد
+                      <br />
+                      تختصر ساعات.
+                    </>
+                  ) : (
+                    copy.statement
+                  )}
+                </p>
                 <div className="empire-actions">
                   <Link href={`/${locale.code}/tools`} className="button button-primary">
                     {translate(messages, "home.explore")}

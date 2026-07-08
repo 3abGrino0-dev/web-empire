@@ -46,12 +46,12 @@ export function SiteHeader({
         </nav>
 
         <div className="header-actions empire-header-actions">
-          <div className="empire-utility-controls">
-            <ColorModeToggle defaultMode={defaultColorMode} />
-            <LanguageSwitcher locales={locales} currentLocale={locale.code} label={translate(messages, "language.label")} />
-          </div>
+          <LanguageSwitcher locales={locales} currentLocale={locale.code} label={translate(messages, "language.label")} />
           <Link href={`${prefix}/auth/login`} className="button button-ghost header-login-btn">{translate(messages, "nav.login")}</Link>
           <Link href={`${prefix}/tools`} className="button button-primary empire-header-cta">{translate(messages, "home.explore")}</Link>
+          <div className="empire-utility-controls" aria-label="Display controls">
+            <ColorModeToggle defaultMode={defaultColorMode} />
+          </div>
         </div>
       </div>
     </header>
