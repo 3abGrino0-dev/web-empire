@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ToolCard } from "@/components/tool-card";
+import { FeaturedToolShowcase } from "@/components/public/featured-tool-showcase";
 import { translate } from "@/localization/messages";
 import {
   getActiveLocales,
@@ -291,7 +291,7 @@ export default async function HomePage({
 
   const copy = resolveCopy(locale.code);
   const featuredTools = tools.filter((tool) => tool.is_featured);
-  const showcase = (featuredTools.length ? featuredTools : tools).slice(0, 7);
+  const showcase = (featuredTools.length ? featuredTools : tools).slice(0, 6);
   const usedEngines = Array.from(new Set(tools.map((tool) => tool.engine_type))).filter(
     (engine): engine is EngineCopyKey => engine !== "custom_runtime" && engine in copy.engines,
   );
@@ -366,13 +366,17 @@ export default async function HomePage({
 
       <section className="empire-section empire-section-light">
         <div className="container">
-          <div className="empire-section-head">
-            <div><p className="empire-section-kicker">{copy.showcaseKicker}</p><h2 className="empire-display">{copy.showcaseTitle}</h2></div>
-            <div><p>{copy.showcaseBody}</p><Link href={`/${locale.code}/tools`} className="empire-section-link">{copy.allTools}<span aria-hidden="true">↗</span></Link></div>
-          </div>
-          <div className="empire-showcase-grid">
-            {showcase.map((tool) => <ToolCard key={tool.id} tool={tool} locale={locale.code} messages={messages} />)}
-          </div>
+          <FeaturedToolShowcase
+            tools={showcase}
+            locale={locale.code}
+            messages={messages}
+            copy={{
+              showcaseKicker: copy.showcaseKicker,
+              showcaseTitle: copy.showcaseTitle,
+              showcaseBody: copy.showcaseBody,
+              allTools: copy.allTools,
+            }}
+          />
         </div>
       </section>
 
