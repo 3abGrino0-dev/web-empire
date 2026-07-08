@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CapabilitiesShowcase } from "@/components/public/capabilities-showcase";
+import { EngineStory } from "@/components/public/engine-story";
 import { FeaturedToolShowcase } from "@/components/public/featured-tool-showcase";
 import { ToolJourney } from "@/components/public/tool-journey";
 import { translate } from "@/localization/messages";
@@ -337,6 +338,16 @@ export default async function HomePage({
   const usedEngines = Array.from(new Set(tools.map((tool) => tool.engine_type))).filter(
     (engine): engine is EngineCopyKey => engine !== "custom_runtime" && engine in copy.engines,
   );
+  const engineItems = (usedEngines.length ? usedEngines : (["formula"] as EngineCopyKey[])).map((engine) => {
+    const [code, title, description] = copy.engines[engine];
+
+    return {
+      key: engine,
+      code,
+      title,
+      description,
+    };
+  });
   const previewPlans = plans.slice(0, 3);
   const percentageTool = tools.find((tool) => tool.slug === "percentage-calculator");
 
@@ -437,17 +448,12 @@ export default async function HomePage({
         steps={copy.steps}
       />
 
-      <section className="empire-section empire-engine-section">
-        <div className="container empire-engine-layout">
-          <div className="empire-engine-copy"><p className="empire-section-kicker">{copy.engineKicker}</p><h2 className="empire-display">{copy.engineTitle}</h2><p>{copy.engineBody}</p></div>
-          <div className="empire-engine-stack">
-            {(usedEngines.length ? usedEngines : (["formula"] as EngineCopyKey[])).map((engine, index) => {
-              const [code, title, description] = copy.engines[engine];
-              return <article className="empire-engine-row" key={engine}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{title}</strong><p>{description}</p></div><em>{code}</em></article>;
-            })}
-          </div>
-        </div>
-      </section>
+      <EngineStory
+        kicker={copy.engineKicker}
+        title={copy.engineTitle}
+        body={copy.engineBody}
+        engines={engineItems}
+      />
 
       {previewPlans.length ? (
         <section className="empire-section empire-pricing-section">

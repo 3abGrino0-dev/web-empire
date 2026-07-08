@@ -555,16 +555,317 @@ html[dir="rtl"] .empire-journey-copy h3 { line-height: 1.02; letter-spacing: -.0
 @keyframes journey-pulse { 0%,100% { opacity: .25; } 50% { opacity: .9; } }
 
 /* ENGINE STORY */
-.empire-engine-section { background: var(--empire-paper); color: var(--empire-ink); }
-.empire-engine-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(430px, 1.1fr); gap: clamp(50px, 9vw, 160px); align-items: start; }
-.empire-engine-copy { position: sticky; top: 124px; }
-.empire-engine-copy > p:last-child { max-width: 560px; color: rgba(17,17,15,.62); line-height: 1.8; }
-.empire-engine-stack { border-top: 1px solid #111; }
-.empire-engine-row { min-height: 150px; display: grid; grid-template-columns: 64px 1fr auto; gap: 22px; align-items: center; border-bottom: 1px solid #111; }
-.empire-engine-row > span { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid #111; border-radius: 50%; font-size: .8rem; font-family: var(--font-latin), sans-serif; }
-.empire-engine-row strong { display: block; font-size: clamp(1.7rem, 3vw, 3.8rem); line-height: 1; letter-spacing: -.055em; }
-.empire-engine-row p { margin: 12px 0 0; color: rgba(17,17,15,.58); line-height: 1.65; }
-.empire-engine-row em { font-style: normal; color: var(--empire-purple); font-size: .7rem; font-weight: 900; letter-spacing: .1em; }
+.empire-runtime-story {
+  background: var(--empire-dark);
+  color: var(--empire-paper);
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #111;
+}
+.empire-runtime-shell { display: grid; gap: clamp(34px, 5vw, 78px); }
+.empire-runtime-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, .38fr);
+  column-gap: clamp(24px, 4vw, 62px);
+  row-gap: clamp(20px, 2.4vw, 34px);
+  align-items: end;
+}
+.empire-runtime-intro .empire-section-kicker { grid-column: 1 / -1; margin-bottom: 0; }
+.empire-runtime-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: clamp(4rem, 10vw, 11rem);
+  line-height: .83;
+  letter-spacing: -.082em;
+  font-weight: 900;
+  text-wrap: balance;
+}
+html[dir="rtl"] .empire-runtime-title { line-height: .98; letter-spacing: -.05em; }
+.empire-runtime-body {
+  margin: 0;
+  max-width: 520px;
+  opacity: .86;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.empire-runtime-flow {
+  margin: 0;
+  justify-self: end;
+  align-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 999px;
+  font-family: var(--font-mono), monospace;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+html[dir="rtl"] .empire-runtime-flow { justify-self: start; }
+
+.empire-runtime-rail {
+  margin: 0;
+  border-block: 1px solid rgba(255,255,255,.25);
+  padding-block: 12px;
+  display: flex;
+  gap: 40px;
+  overflow: hidden;
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(1.15rem, 2.2vw, 2.3rem);
+  letter-spacing: .08em;
+  white-space: nowrap;
+  color: rgba(255,255,255,.66);
+}
+.empire-runtime-rail span {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+  animation: runtime-rail 22s linear infinite;
+}
+
+.empire-runtime-list {
+  display: grid;
+  gap: clamp(16px, 2.4vw, 26px);
+}
+
+.empire-runtime-item {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(20px, 2.5vw, 38px);
+  border: 1px solid rgba(17,17,15,.8);
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: minmax(80px, .14fr) minmax(0, .64fr) minmax(160px, .22fr);
+  grid-template-areas:
+    "number copy code"
+    "visual visual visual";
+  gap: clamp(14px, 2vw, 24px);
+  min-height: clamp(280px, 30vw, 460px);
+}
+.empire-runtime-item.rhythm-1 {
+  grid-template-columns: minmax(80px, .18fr) minmax(0, .52fr) minmax(210px, .3fr);
+}
+.empire-runtime-item.rhythm-2 {
+  grid-template-columns: minmax(80px, .16fr) minmax(0, .58fr) minmax(170px, .26fr);
+}
+
+.empire-runtime-number {
+  grid-area: number;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 8rem);
+  line-height: .84;
+  letter-spacing: -.08em;
+  font-weight: 900;
+  font-family: var(--font-mono), monospace;
+}
+.empire-runtime-copy { grid-area: copy; align-self: start; }
+.empire-runtime-copy h3 {
+  margin: 0;
+  font-size: clamp(2.1rem, 4.5vw, 5.8rem);
+  line-height: .87;
+  letter-spacing: -.06em;
+  font-weight: 900;
+}
+html[dir="rtl"] .empire-runtime-copy h3 { line-height: .98; }
+.empire-runtime-copy p {
+  margin: 14px 0 0;
+  max-width: 60ch;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.empire-runtime-code {
+  grid-area: code;
+  align-self: start;
+  justify-self: end;
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(1.1rem, 2.7vw, 2.8rem);
+  line-height: .95;
+  letter-spacing: .08em;
+  font-weight: 900;
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+html[dir="rtl"] .empire-runtime-code { justify-self: start; text-align: start; }
+
+.empire-runtime-visual {
+  grid-area: visual;
+  min-height: clamp(120px, 16vw, 210px);
+  border-top: 1px solid currentColor;
+  padding-top: clamp(16px, 2vw, 26px);
+}
+
+.runtime-formula { background: var(--empire-lime); color: #111; }
+.runtime-text-transform { background: var(--empire-paper); color: #111; }
+.runtime-ai-text { background: var(--empire-purple); color: #fff; }
+.runtime-ai-structured { background: var(--empire-pink); color: #111; }
+.runtime-http-api { background: var(--empire-blue); color: #111; }
+.runtime-webhook { background: var(--empire-orange); color: #111; }
+.runtime-workflow { background: #111; color: var(--empire-lime); border-color: var(--empire-lime); }
+
+.empire-runtime-item.rhythm-1 .empire-runtime-copy { margin-top: clamp(10px, 1.6vw, 20px); }
+.empire-runtime-item.rhythm-1 .empire-runtime-visual { margin-inline-start: clamp(20px, 5vw, 120px); }
+.empire-runtime-item.rhythm-2 .empire-runtime-code { align-self: end; }
+.empire-runtime-item.rhythm-2 .empire-runtime-visual { margin-inline-end: clamp(20px, 4vw, 90px); }
+
+.empire-runtime-visual-formula {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  gap: clamp(10px, 1.8vw, 18px);
+  align-items: center;
+  justify-content: start;
+  font-family: var(--font-mono), monospace;
+}
+.empire-runtime-visual-formula span,
+.empire-runtime-visual-formula strong {
+  min-width: clamp(58px, 7vw, 90px);
+  min-height: clamp(48px, 5vw, 68px);
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  font-size: clamp(1.2rem, 2.2vw, 2.8rem);
+}
+.empire-runtime-visual-formula b { font-size: clamp(1.5rem, 2.8vw, 3rem); }
+
+.empire-runtime-visual-transform {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: clamp(10px, 1.8vw, 20px);
+  align-items: center;
+}
+.empire-runtime-visual-transform div {
+  border: 1px solid currentColor;
+  min-height: 96px;
+  padding: 14px;
+}
+.empire-runtime-visual-transform small {
+  font-family: var(--font-mono), monospace;
+  font-size: .68rem;
+  letter-spacing: .09em;
+}
+.empire-runtime-visual-transform p {
+  margin: 8px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+.empire-runtime-visual-transform > span { font-family: var(--font-mono), monospace; font-size: 1.1rem; font-weight: 900; }
+
+.empire-runtime-visual-ai-text {
+  height: 100%;
+  border: 1px solid currentColor;
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+  align-content: center;
+  font-family: var(--font-mono), monospace;
+}
+.empire-runtime-visual-ai-text small { font-size: .7rem; letter-spacing: .08em; }
+.empire-runtime-visual-ai-text p { margin: 0; border-bottom: 1px solid currentColor; padding-bottom: 6px; }
+
+.empire-runtime-visual-ai-structured {
+  height: 100%;
+  border: 1px solid currentColor;
+  padding: 14px;
+  font-family: var(--font-mono), monospace;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+.empire-runtime-visual-ai-structured span { font-size: 1.2rem; font-weight: 900; }
+.empire-runtime-visual-ai-structured p { margin: 0; overflow-wrap: anywhere; }
+
+.empire-runtime-visual-http {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  font-family: var(--font-mono), monospace;
+}
+.empire-runtime-visual-http p {
+  margin: 0;
+  border: 1px solid currentColor;
+  min-height: 66px;
+  padding-inline: 14px;
+  display: inline-flex;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.empire-runtime-visual-http strong {
+  min-width: 74px;
+  min-height: 66px;
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  font-size: clamp(1.2rem, 2.2vw, 2rem);
+}
+
+.empire-runtime-visual-webhook {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(40px, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono), monospace;
+}
+.empire-runtime-visual-webhook small {
+  min-height: 56px;
+  padding-inline: 16px;
+  border: 1px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 800;
+}
+.empire-runtime-visual-webhook b {
+  height: 1px;
+  background: currentColor;
+  position: relative;
+  animation: runtime-pulse 2.4s ease-in-out infinite;
+}
+.empire-runtime-visual-webhook b::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: -4px;
+  border: 5px solid transparent;
+  border-inline-start-color: currentColor;
+}
+
+.empire-runtime-visual-workflow,
+.empire-runtime-visual-generic {
+  height: 100%;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  align-items: center;
+  gap: 8px;
+  justify-content: start;
+  font-family: var(--font-mono), monospace;
+}
+.empire-runtime-visual-workflow span,
+.empire-runtime-visual-generic span {
+  min-width: 58px;
+  min-height: 58px;
+  border: 1px solid currentColor;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+.empire-runtime-visual-workflow b,
+.empire-runtime-visual-generic b { opacity: .74; }
+
+@keyframes runtime-rail {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 40px)); }
+}
+@keyframes runtime-pulse {
+  0%, 100% { opacity: .35; }
+  50% { opacity: .95; }
+}
 
 /* PRICING */
 .empire-pricing-grid, .editorial-pricing-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
@@ -666,7 +967,7 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
 @media (max-width: 1180px) {
   .public-shell .header-inner { grid-template-columns: minmax(170px, 1fr) auto auto; }
   .public-shell .main-nav { justify-content: center; gap: clamp(12px, 2vw, 24px); }
-  .empire-hero-grid, .editorial-page-hero-grid, .editorial-tool-hero-grid, .empire-engine-layout { grid-template-columns: 1fr; }
+  .empire-hero-grid, .editorial-page-hero-grid, .editorial-tool-hero-grid { grid-template-columns: 1fr; }
   .empire-hero-collage { min-height: 540px; width: min(650px, 100%); margin: -20px auto 0; }
   .empire-section-head { grid-template-columns: 1fr; }
   .empire-showcase-intro { grid-template-columns: 1fr; gap: 20px; }
@@ -691,7 +992,22 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-process-grid { grid-template-columns: repeat(2, 1fr); }
   .empire-step:nth-child(2n) { border-inline-end: 0; }
   .empire-step:last-child { grid-column: 1 / -1; }
-  .empire-engine-copy { position: static; }
+  .empire-runtime-intro { grid-template-columns: 1fr; }
+  .empire-runtime-flow { justify-self: start; }
+  .empire-runtime-item,
+  .empire-runtime-item.rhythm-1,
+  .empire-runtime-item.rhythm-2 {
+    grid-template-columns: minmax(66px, .16fr) minmax(0, 1fr);
+    grid-template-areas:
+      "number copy"
+      "code code"
+      "visual visual";
+  }
+  .empire-runtime-code { justify-self: start; text-align: start; }
+  .empire-runtime-item.rhythm-1 .empire-runtime-visual,
+  .empire-runtime-item.rhythm-2 .empire-runtime-visual {
+    margin-inline: 0;
+  }
   .empire-showcase-grid .tool-card, .empire-showcase-grid .tool-card:nth-child(n), .editorial-tools-grid .tool-card, .editorial-tools-grid .tool-card:nth-child(n) { grid-column: span 6; min-height: 470px; }
   .featured-tool,
   .featured-tool:nth-child(6n + 1),
@@ -771,8 +1087,44 @@ html[dir="rtl"] .editorial-auth-story h1 { line-height: 1; letter-spacing: -.055
   .empire-process-grid { grid-template-columns: 1fr; }
   .empire-step, .empire-step:nth-child(2n) { min-height: 300px; border-inline-end: 0; border-bottom: 1px solid rgba(255,255,255,.35); }
   .empire-step:last-child { grid-column: auto; }
-  .empire-engine-row { grid-template-columns: 56px 1fr; padding-block: 18px; }
-  .empire-engine-row em { grid-column: 2; }
+  .empire-runtime-title { font-size: clamp(3.4rem, 13vw, 8.4rem); }
+  .empire-runtime-flow { width: 100%; justify-content: center; }
+  .empire-runtime-rail { font-size: clamp(1rem, 3.2vw, 1.6rem); }
+  .empire-runtime-item { min-height: 250px; border-radius: 16px; }
+  .empire-runtime-copy h3 { font-size: clamp(2rem, 9vw, 4.1rem); }
+  .empire-runtime-visual-transform {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .empire-runtime-visual-transform > span {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+  .empire-runtime-visual-http {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+  .empire-runtime-visual-webhook {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+  .empire-runtime-visual-webhook b {
+    width: 1px;
+    height: 26px;
+  }
+  .empire-runtime-visual-webhook b::after {
+    inset-inline-start: -4px;
+    inset-inline-end: auto;
+    inset-block-start: auto;
+    inset-block-end: 0;
+    border-inline-start-color: transparent;
+    border-top-color: currentColor;
+  }
+  .empire-runtime-visual-workflow,
+  .empire-runtime-visual-generic {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
   .empire-pricing-grid .empire-plan, .empire-pricing-grid .empire-plan.is-featured, .empire-pricing-grid .empire-plan.is-featured + .empire-plan, .editorial-pricing-grid .editorial-price-card, .editorial-pricing-grid .editorial-price-card.featured, .editorial-pricing-grid .editorial-price-card.featured + .editorial-price-card { grid-column: 1 / -1; min-height: 420px; }
   .empire-final { min-height: 640px; }
   .empire-final-inner { grid-template-columns: 1fr; align-items: start; }
