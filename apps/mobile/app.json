@@ -11,7 +11,10 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "ios": { "supportsTablet": true, "bundleIdentifier": "site.webempire.app" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "site.webempire.app"
+    },
     "android": {
       "package": "site.webempire.app",
       "adaptiveIcon": {
@@ -21,20 +24,46 @@
       },
       "predictiveBackGestureEnabled": true
     },
-    "web": { "output": "static", "favicon": "./assets/images/favicon.png" },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0,
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
-      "url": "https://u.expo.dev/9b2c5e0b-6a58-4d4b-a92d-9f9bdb4aad13"
+      "url": "https://u.expo.dev/14357042-04b3-4a69-9616-6754973c95f3"
     },
     "plugins": [
       "expo-router",
       "expo-updates",
-      ["expo-splash-screen", { "backgroundColor": "#061329", "image": "./assets/images/splash-icon.png", "imageWidth": 120 }],
-      ["expo-secure-store", { "configureAndroidBackup": true, "faceIDPermission": "Allow Web Empire to securely access your session." }],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#061329",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow Web Empire to securely access your session."
+        }
+      ],
       "expo-localization"
     ],
-    "experiments": { "typedRoutes": true, "reactCompiler": true }
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "14357042-04b3-4a69-9616-6754973c95f3"
+      }
+    },
+    "owner": "mohammedsk"
   }
 }
