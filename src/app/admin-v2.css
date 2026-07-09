@@ -91,6 +91,13 @@
   gap: 4px;
 }
 
+.adminv2-nav-item-row {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .adminv2-nav-link {
   min-height: 44px;
   border-radius: 10px;
@@ -112,6 +119,24 @@
   background: #232f2b;
   border-color: #2f5f4f;
   color: #eaf7f2;
+}
+
+.adminv2-nav-link.is-coming-soon {
+  background: #1b1d21;
+  border-color: #2b2e34;
+  color: var(--admin-muted);
+  flex: 1;
+}
+
+.adminv2-soon-badge {
+  width: fit-content;
+  border: 1px solid #4b4330;
+  color: #ddc792;
+  background: #2b261b;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  white-space: nowrap;
 }
 
 .adminv2-sidebar-footer {

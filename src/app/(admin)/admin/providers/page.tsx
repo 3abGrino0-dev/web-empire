@@ -19,7 +19,7 @@ export default async function ProvidersPage() {
   recentSince.setDate(recentSince.getDate() - 7);
   const recentSinceIso = recentSince.toISOString();
 
-  const [{ data: providers }, { data: models }, { data: usageRows }] = await Promise.all([
+  const [providersResult, modelsResult, usageResult] = await Promise.all([
     supabase.from("ai_providers").select("*").order("priority"),
     supabase
       .from("ai_models")
@@ -32,11 +32,19 @@ export default async function ProvidersPage() {
       .limit(5000),
   ]);
 
+  const providersAvailable = !providersResult.error;
+  const modelsAvailable = !modelsResult.error;
+  const usageAvailable = !usageResult.error;
+
+  const providers = providersAvailable ? providersResult.data ?? [] : [];
+  const models = modelsAvailable ? modelsResult.data ?? [] : [];
+  const usageRows = usageAvailable ? usageResult.data ?? [] : [];
+
   const providerNameMap = new Map((providers ?? []).map((provider) => [provider.id, provider.name]));
   const modelNameMap = new Map((models ?? []).map((model) => [model.id, model.name]));
 
   const usageMap = new Map<string, { runs: number; cost: number }>();
-  for (const row of usageRows ?? []) {
+  for (const row of usageRows) {
     const key = `${row.provider_id ?? "unknown"}:${row.model_id ?? "unknown"}`;
     const current = usageMap.get(key) ?? { runs: 0, cost: 0 };
     current.runs += 1;
@@ -70,6 +78,7 @@ export default async function ProvidersPage() {
 
       <div className="panel">
         <h2>Providers</h2>
+        {!providersAvailable ? <p className="inline-note">PROVIDERS DATA UNAVAILABLE</p> : null}
         <form action={createProviderAction} className="admin-form">
           <div className="form-grid">
             <label>
@@ -139,7 +148,11 @@ export default async function ProvidersPage() {
               </tr>
             </thead>
             <tbody>
-              {providers?.map((provider) => (
+              {!providersAvailable ? (
+                <tr>
+                  <td colSpan={5}>PROVIDERS DATA UNAVAILABLE</td>
+                </tr>
+              ) : providers.length ? providers.map((provider) => (
                 <tr key={provider.id}>
                   <td>{provider.name}</td>
                   <td>{provider.adapter_type}</td>
@@ -151,7 +164,11 @@ export default async function ProvidersPage() {
                     </span>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={5}>لا توجد مزودات حتى الآن.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -159,12 +176,13 @@ export default async function ProvidersPage() {
 
       <div className="panel" id="models">
         <h2>Models</h2>
+        {!modelsAvailable ? <p className="inline-note">MODELS DATA UNAVAILABLE</p> : null}
         <form action={createModelAction} className="admin-form">
           <div className="form-grid">
             <label>
               المزود
               <select name="provider_id" required>
-                {providers?.map((provider) => (
+                {providers.map((provider) => (
                   <option value={provider.id} key={provider.id}>
                     {provider.name}
                   </option>
@@ -255,7 +273,11 @@ export default async function ProvidersPage() {
               </tr>
             </thead>
             <tbody>
-              {models?.map((model) => (
+              {!modelsAvailable ? (
+                <tr>
+                  <td colSpan={6}>MODELS DATA UNAVAILABLE</td>
+                </tr>
+              ) : models.length ? models.map((model) => (
                 <tr key={model.id}>
                   <td>{model.name}</td>
                   <td>{model.ai_providers?.name}</td>
@@ -268,7 +290,11 @@ export default async function ProvidersPage() {
                     </span>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={6}>لا توجد نماذج حتى الآن.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -296,6 +322,7 @@ export default async function ProvidersPage() {
       <div className="section">
         <h2>Provider Usage Summary</h2>
         <p className="inline-note">آخر 7 أيام</p>
+        {!usageAvailable ? <p className="inline-note">USAGE DATA UNAVAILABLE</p> : null}
       </div>
 
       <div className="table-wrap">
@@ -309,7 +336,11 @@ export default async function ProvidersPage() {
             </tr>
           </thead>
           <tbody>
-            {usageSummary.length ? (
+            {!usageAvailable ? (
+              <tr>
+                <td colSpan={4}>USAGE DATA UNAVAILABLE</td>
+              </tr>
+            ) : usageSummary.length ? (
               usageSummary.map((item) => (
                 <tr key={item.key}>
                   <td>{item.provider}</td>

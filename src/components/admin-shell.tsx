@@ -6,7 +6,8 @@ import { useMemo, useState } from "react";
 
 type NavItem = {
   label: string;
-  href: string;
+  href?: string;
+  status?: "active" | "coming_soon";
 };
 
 type NavGroup = {
@@ -17,62 +18,58 @@ type NavGroup = {
 const navGroups: NavGroup[] = [
   {
     title: "نظرة عامة",
-    items: [{ label: "لوحة التحكم", href: "/admin" }],
+    items: [
+      { label: "لوحة التحكم", href: "/admin", status: "active" },
+      { label: "المستخدمون", status: "coming_soon" },
+      { label: "حالة النظام", href: "/admin#system-status", status: "active" },
+      { label: "الإصدار", href: "/admin#version", status: "active" },
+      { label: "السجلات", status: "coming_soon" },
+    ],
   },
   {
     title: "الأدوات",
     items: [
-      { label: "جميع الأدوات", href: "/admin/tools" },
-      { label: "إضافة أداة", href: "/admin/tools/new" },
-      { label: "التصنيفات", href: "/admin/localization" },
-      { label: "محتوى و SEO", href: "/admin/tools?view=seo" },
-      { label: "الأدوات ذات الصلة", href: "/admin/tools?view=related" },
+      { label: "جميع الأدوات", href: "/admin/tools", status: "active" },
+      { label: "إضافة أداة", href: "/admin/tools/new", status: "active" },
+      { label: "التصنيفات", status: "coming_soon" },
+      { label: "محتوى و SEO", status: "coming_soon" },
+      { label: "الأدوات ذات الصلة", status: "coming_soon" },
     ],
   },
   {
     title: "الذكاء الاصطناعي",
     items: [
-      { label: "المزودون", href: "/admin/providers" },
-      { label: "النماذج", href: "/admin/providers#models" },
-      { label: "AI Routing", href: "/admin/providers#routing" },
-      { label: "استخدام AI", href: "/admin/runs?scope=ai" },
-      { label: "AI Chat", href: "/admin/providers#ai-chat" },
+      { label: "المزودون", href: "/admin/providers", status: "active" },
+      { label: "النماذج", href: "/admin/providers#models", status: "active" },
+      { label: "AI Routing", href: "/admin/providers#routing", status: "active" },
+      { label: "AI Chat", href: "/admin/providers#ai-chat", status: "active" },
+      { label: "استخدام AI المخصص", status: "coming_soon" },
     ],
   },
   {
     title: "التشغيل",
     items: [
-      { label: "عمليات التشغيل", href: "/admin/runs" },
-      { label: "الأخطاء", href: "/admin/runs?status=failed" },
-      { label: "المحركات", href: "/admin/workflows" },
+      { label: "عمليات التشغيل", href: "/admin/runs", status: "active" },
+      { label: "الأخطاء المفلترة", status: "coming_soon" },
+      { label: "المحركات", status: "coming_soon" },
     ],
-  },
-  {
-    title: "المستخدمون",
-    items: [{ label: "ملفات المستخدمين", href: "/admin?view=users" }],
   },
   {
     title: "الخطط والنقاط",
     items: [
-      { label: "الخطط", href: "/admin/plans" },
-      { label: "Credits", href: "/admin/plans?view=credits" },
-      { label: "الفوترة", href: "/admin/billing" },
+      { label: "الخطط", href: "/admin/plans", status: "active" },
+      { label: "Credits", href: "/admin/plans", status: "active" },
+      { label: "الفوترة", href: "/admin/billing", status: "active" },
     ],
   },
   {
-    title: "اللغات والترجمة",
-    items: [{ label: "إدارة اللغات", href: "/admin/localization" }],
-  },
-  {
-    title: "المظهر والهوية",
-    items: [{ label: "الهوية والمظهر", href: "/admin/appearance" }],
-  },
-  {
-    title: "النظام",
+    title: "الإدارة المتقدمة",
     items: [
-      { label: "حالة النظام", href: "/admin?view=system-status" },
-      { label: "الإصدار", href: "/admin?view=version" },
-      { label: "السجلات", href: "/admin/runs?view=logs" },
+      { label: "إدارة اللغات", href: "/admin/localization", status: "active" },
+      { label: "الهوية والمظهر", href: "/admin/appearance", status: "active" },
+      { label: "الاتصالات", href: "/admin/connections", status: "active" },
+      { label: "المهارات", href: "/admin/skills", status: "active" },
+      { label: "سير العمل", href: "/admin/workflows", status: "active" },
     ],
   },
 ];
@@ -103,7 +100,22 @@ function resolveTitle(pathname: string) {
   return crumbLabelMap[last] ?? "لوحة الإدارة";
 }
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+function getPathnameFromHref(href: string) {
+  if (!href.startsWith("/")) return null;
+  try {
+    return new URL(href, "http://localhost").pathname;
+  } catch {
+    return null;
+  }
+}
+
+export function AdminShell({
+  children,
+  productVersion,
+}: {
+  children: React.ReactNode;
+  productVersion: string;
+}) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -151,10 +163,26 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <h2>{group.title}</h2>
               <div className="adminv2-nav-links">
                 {group.items.map((item) => {
-                  const isActive = pathname === item.href;
+                  const targetPathname = item.href ? getPathnameFromHref(item.href) : null;
+                  const hasHashTarget = Boolean(item.href?.includes("#"));
+                  const isActive = Boolean(
+                    targetPathname && !hasHashTarget && item.status !== "coming_soon" && pathname === targetPathname
+                  );
+
+                  if (!item.href || item.status === "coming_soon") {
+                    return (
+                      <div key={`${item.label}-${group.title}`} className="adminv2-nav-item-row">
+                        <span className="adminv2-nav-link is-coming-soon" aria-disabled="true">
+                          {item.label}
+                        </span>
+                        <span className="adminv2-soon-badge">قريبًا</span>
+                      </div>
+                    );
+                  }
+
                   return (
                     <Link
-                      key={item.href + item.label}
+                      key={`${item.href}-${item.label}`}
                       href={item.href}
                       className={`adminv2-nav-link ${isActive ? "is-active" : ""}`}
                       onClick={() => setMobileOpen(false)}
@@ -169,8 +197,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="adminv2-sidebar-footer">
-          <span>Version Area</span>
-          <span className="adminv2-version-pill">D1</span>
+          <span>WEB EMPIRE</span>
+          <span className="adminv2-version-pill" dir="ltr">{productVersion}</span>
           <Link href="/" className="adminv2-back-link" onClick={() => setMobileOpen(false)}>
             العودة للموقع
           </Link>

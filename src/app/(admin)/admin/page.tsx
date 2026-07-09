@@ -1,12 +1,44 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import {
+  PRODUCT_CORE_VERSION,
+  PRODUCT_DESIGN_VERSION,
+  formatProductVersion,
+} from "@/lib/product-version";
 
-const DESIGN_VERSION = 1;
-const CORE_VERSION = 3;
+const RIYADH_TIME_ZONE = "Asia/Riyadh";
+const RIYADH_OFFSET = "+03:00";
 
-function startOfTodayIso() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
+function getRiyadhDateKey(date = new Date()) {
+  const formatter = new Intl.DateTimeFormat("en", {
+    timeZone: RIYADH_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  const parts = formatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value ?? "0000";
+  const month = parts.find((part) => part.type === "month")?.value ?? "01";
+  const day = parts.find((part) => part.type === "day")?.value ?? "01";
+  return `${year}-${month}-${day}`;
+}
+
+function getRiyadhStartOfDayIso(dateKey: string) {
+  return `${dateKey}T00:00:00${RIYADH_OFFSET}`;
+}
+
+function getRecentRiyadhDateKeys(days: number) {
+  const todayKey = getRiyadhDateKey();
+  const todayStart = new Date(getRiyadhStartOfDayIso(todayKey));
+  const keys: string[] = [];
+
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const current = new Date(todayStart);
+    current.setUTCDate(current.getUTCDate() - i);
+    keys.push(getRiyadhDateKey(current));
+  }
+
+  return keys;
 }
 
 function formatNumber(value: number) {
@@ -30,35 +62,28 @@ function statusClass(status: string) {
 
 export default async function AdminPage() {
   const supabase = createSupabaseAdminClient();
-  const todayIso = startOfTodayIso();
-  const recentSince = new Date();
-  recentSince.setDate(recentSince.getDate() - 7);
-  const recentSinceIso = recentSince.toISOString();
+  const todayDateKey = getRiyadhDateKey();
+  const todayLowerBoundIso = getRiyadhStartOfDayIso(todayDateKey);
+  const recentDateKeys = getRecentRiyadhDateKeys(7);
+  const recentLowerBoundIso = getRiyadhStartOfDayIso(recentDateKeys[0] ?? todayDateKey);
 
-  const [
-    { count: activeToolsCount },
-    { count: usersCount },
-    { data: todayRunsRaw },
-    { data: todayProviderUsageRaw },
-    { data: recentRunsRaw },
-    { data: latestRunsRaw },
-  ] = await Promise.all([
+  const [activeToolsResult, usersResult, todayRunsResult, todayProviderUsageResult, recentRunsResult, latestRunsResult] = await Promise.all([
     supabase.from("tools").select("id", { count: "exact", head: true }).eq("is_active", true),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase
       .from("tool_runs")
       .select("id, status, credits_charged, created_at")
-      .gte("created_at", todayIso)
+      .gte("created_at", todayLowerBoundIso)
       .limit(5000),
     supabase
       .from("provider_usage")
       .select("id, estimated_cost_usd, provider_id, model_id, input_tokens, output_tokens, created_at")
-      .gte("created_at", todayIso)
+      .gte("created_at", todayLowerBoundIso)
       .limit(5000),
     supabase
       .from("tool_runs")
       .select("id, status, created_at, tool_id, tools(title_ar, engine_type)")
-      .gte("created_at", recentSinceIso)
+      .gte("created_at", recentLowerBoundIso)
       .limit(5000),
     supabase
       .from("tool_runs")
@@ -67,17 +92,35 @@ export default async function AdminPage() {
       .limit(12),
   ]);
 
-  const userIds = Array.from(new Set((latestRunsRaw ?? []).map((r) => r.user_id).filter(Boolean)));
-  const { data: profileRows } = userIds.length
+  const activeToolsAvailable = !activeToolsResult.error;
+  const usersAvailable = !usersResult.error;
+  const runsTodayAvailable = !todayRunsResult.error;
+  const aiUsageAvailable = !todayProviderUsageResult.error;
+  const recentRunsAvailable = !recentRunsResult.error;
+  const latestRunsAvailable = !latestRunsResult.error;
+
+  const criticalSources = [activeToolsAvailable, usersAvailable, runsTodayAvailable, aiUsageAvailable];
+  const healthyCriticalSources = criticalSources.filter(Boolean).length;
+  const allCriticalHealthy = healthyCriticalSources === criticalSources.length;
+
+  const userIds = Array.from(
+    new Set((latestRunsAvailable ? latestRunsResult.data ?? [] : []).map((r) => r.user_id).filter(Boolean))
+  );
+  const profileRowsResult = userIds.length
     ? await supabase.from("profiles").select("id, display_name").in("id", userIds)
-    : { data: [] as Array<{ id: string; display_name: string | null }> };
-  const profileMap = new Map((profileRows ?? []).map((p) => [p.id, p.display_name]));
+    : {
+      data: [] as Array<{ id: string; display_name: string | null }>,
+      error: null,
+    };
+  const profileMap = new Map((profileRowsResult.data ?? []).map((p) => [p.id, p.display_name]));
 
-  const todayRuns = todayRunsRaw ?? [];
-  const todayProviderUsage = todayProviderUsageRaw ?? [];
-  const recentRuns = recentRunsRaw ?? [];
-  const latestRuns = latestRunsRaw ?? [];
+  const todayRuns = runsTodayAvailable ? todayRunsResult.data ?? [] : [];
+  const todayProviderUsage = aiUsageAvailable ? todayProviderUsageResult.data ?? [] : [];
+  const recentRuns = recentRunsAvailable ? recentRunsResult.data ?? [] : [];
+  const latestRuns = latestRunsAvailable ? latestRunsResult.data ?? [] : [];
 
+  const activeToolsCount = activeToolsAvailable ? activeToolsResult.count ?? 0 : 0;
+  const usersCount = usersAvailable ? usersResult.count ?? 0 : 0;
   const runsToday = todayRuns.length;
   const aiUsageToday = todayProviderUsage.length;
   const estimatedAiCostToday = todayProviderUsage.reduce(
@@ -89,17 +132,19 @@ export default async function AdminPage() {
     0
   );
 
-  const productVersion = `V${DESIGN_VERSION}.${CORE_VERSION}.${activeToolsCount ?? 0}`;
+  const productVersion = activeToolsAvailable
+    ? formatProductVersion(activeToolsCount)
+    : "VERSION UNAVAILABLE";
 
   const runsByDayMap = new Map<string, number>();
+  for (const dayKey of recentDateKeys) {
+    runsByDayMap.set(dayKey, 0);
+  }
   for (const run of recentRuns) {
-    const key = new Date(run.created_at).toISOString().slice(0, 10);
+    const key = getRiyadhDateKey(new Date(run.created_at));
     runsByDayMap.set(key, (runsByDayMap.get(key) ?? 0) + 1);
   }
-  const runsByDay = Array.from(runsByDayMap.entries())
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .slice(-7)
-    .map(([day, total]) => ({ day, total }));
+  const runsByDay = recentDateKeys.map((day) => ({ day, total: runsByDayMap.get(day) ?? 0 }));
   const maxRunsByDay = Math.max(1, ...runsByDay.map((i) => i.total));
 
   const engineUsageMap = new Map<string, number>();
@@ -126,17 +171,17 @@ export default async function AdminPage() {
   const providerIds = Array.from(new Set(todayProviderUsage.map((p) => p.provider_id).filter(Boolean)));
   const modelIds = Array.from(new Set(todayProviderUsage.map((p) => p.model_id).filter(Boolean)));
 
-  const [{ data: providerRows }, { data: modelRows }] = await Promise.all([
+  const [providerRowsResult, modelRowsResult] = await Promise.all([
     providerIds.length
       ? supabase.from("ai_providers").select("id, name").in("id", providerIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; name: string }> }),
+      : Promise.resolve({ data: [] as Array<{ id: string; name: string }>, error: null }),
     modelIds.length
       ? supabase.from("ai_models").select("id, name").in("id", modelIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; name: string }> }),
+      : Promise.resolve({ data: [] as Array<{ id: string; name: string }>, error: null }),
   ]);
 
-  const providerNameMap = new Map((providerRows ?? []).map((p) => [p.id, p.name]));
-  const modelNameMap = new Map((modelRows ?? []).map((m) => [m.id, m.name]));
+  const providerNameMap = new Map((providerRowsResult.data ?? []).map((p) => [p.id, p.name]));
+  const modelNameMap = new Map((modelRowsResult.data ?? []).map((m) => [m.id, m.name]));
 
   const providerUsage = Array.from(providerMap.entries())
     .map(([key, value]) => {
@@ -169,13 +214,16 @@ export default async function AdminPage() {
   const failedRecentRuns = recentRuns.filter((run) => run.status === "failed").length;
   const errorRate = totalRecentRuns > 0 ? (failedRecentRuns / totalRecentRuns) * 100 : 0;
 
+  const systemStatusLabel = allCriticalHealthy ? "ONLINE" : "DEGRADED";
+  const systemStatusClass = allCriticalHealthy ? "ok" : "warn";
+
   const metrics = [
-    { label: "Active Tools", value: formatNumber(activeToolsCount ?? 0), dataSourceMissing: false },
-    { label: "Runs Today", value: formatNumber(runsToday), dataSourceMissing: false },
-    { label: "Users", value: formatNumber(usersCount ?? 0), dataSourceMissing: false },
-    { label: "AI Usage Today", value: formatNumber(aiUsageToday), dataSourceMissing: false },
-    { label: "Estimated AI Cost", value: formatUsd(estimatedAiCostToday), dataSourceMissing: false },
-    { label: "Credits Consumed", value: formatNumber(creditsConsumedToday), dataSourceMissing: false },
+    { label: "Active Tools", value: formatNumber(activeToolsCount), dataSourceMissing: !activeToolsAvailable },
+    { label: "Runs Today", value: formatNumber(runsToday), dataSourceMissing: !runsTodayAvailable },
+    { label: "Users", value: formatNumber(usersCount), dataSourceMissing: !usersAvailable },
+    { label: "AI Usage Today", value: formatNumber(aiUsageToday), dataSourceMissing: !aiUsageAvailable },
+    { label: "Estimated AI Cost", value: formatUsd(estimatedAiCostToday), dataSourceMissing: !aiUsageAvailable },
+    { label: "Credits Consumed", value: formatNumber(creditsConsumedToday), dataSourceMissing: !runsTodayAvailable },
   ];
 
   return (
@@ -189,10 +237,37 @@ export default async function AdminPage() {
       <div className="panel">
         <div className="chip-row">
           <span className="chip">WEB EMPIRE</span>
-          <span className="chip">SYSTEM STATUS</span>
+          <span className="chip">SYSTEM STATUS: {systemStatusLabel}</span>
           <span className="chip">VERSION</span>
           <span className="chip" dir="ltr">{productVersion}</span>
-          <span className="status-pill ok">ONLINE</span>
+          <span className={`status-pill ${systemStatusClass}`}>{systemStatusLabel}</span>
+          <span className="chip">REPORTING TIMEZONE: {RIYADH_TIME_ZONE}</span>
+        </div>
+      </div>
+
+      <div className="panel" id="system-status">
+        <h3>SYSTEM STATUS</h3>
+        <div className="chip-row">
+          <span className={`status-pill ${systemStatusClass}`}>{systemStatusLabel}</span>
+          <span className="chip" dir="ltr">
+            {healthyCriticalSources} / {criticalSources.length} DATA SOURCES HEALTHY
+          </span>
+          <span className="chip" dir="ltr">TOOLS: {activeToolsAvailable ? "OK" : "UNAVAILABLE"}</span>
+          <span className="chip" dir="ltr">PROFILES: {usersAvailable ? "OK" : "UNAVAILABLE"}</span>
+          <span className="chip" dir="ltr">TOOL RUNS: {runsTodayAvailable ? "OK" : "UNAVAILABLE"}</span>
+          <span className="chip" dir="ltr">PROVIDER USAGE: {aiUsageAvailable ? "OK" : "UNAVAILABLE"}</span>
+        </div>
+      </div>
+
+      <div className="panel" id="version">
+        <h3>VERSION</h3>
+        <div className="chip-row">
+          <span className="chip" dir="ltr">DESIGN: {PRODUCT_DESIGN_VERSION}</span>
+          <span className="chip" dir="ltr">CORE: {PRODUCT_CORE_VERSION}</span>
+          <span className="chip" dir="ltr">
+            ACTIVE TOOLS: {activeToolsAvailable ? formatNumber(activeToolsCount) : "DATA SOURCE NOT AVAILABLE"}
+          </span>
+          <span className="chip" dir="ltr">VERSION: {productVersion}</span>
         </div>
       </div>
 
@@ -211,7 +286,7 @@ export default async function AdminPage() {
         <div className="card">
           <h3>RUNS - آخر 7 أيام</h3>
           <div className="bars">
-            {runsByDay.length ? runsByDay.map((item) => (
+            {!recentRunsAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : runsByDay.length ? runsByDay.map((item) => (
               <div className="bar-row" key={item.day}>
                 <div className="bar-row-head">
                   <span dir="ltr">{item.day}</span>
@@ -228,7 +303,7 @@ export default async function AdminPage() {
         <div className="card">
           <h3>ENGINE USAGE</h3>
           <div className="bars">
-            {engineUsage.length ? engineUsage.map((item) => (
+            {!recentRunsAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : engineUsage.length ? engineUsage.map((item) => (
               <div className="bar-row" key={item.engine}>
                 <div className="bar-row-head">
                   <span dir="ltr">{item.engine}</span>
@@ -245,7 +320,7 @@ export default async function AdminPage() {
         <div className="card">
           <h3>AI PROVIDER USAGE / COST - اليوم</h3>
           <div className="bars">
-            {providerUsage.length ? providerUsage.map((item) => (
+            {!aiUsageAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : providerUsage.length ? providerUsage.map((item) => (
               <div className="bar-row" key={item.name}>
                 <div className="bar-row-head">
                   <span>{item.name}</span>
@@ -262,7 +337,7 @@ export default async function AdminPage() {
         <div className="card">
           <h3>TOP TOOLS</h3>
           <div className="bars">
-            {topTools.length ? topTools.map((item) => (
+            {!recentRunsAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : topTools.length ? topTools.map((item) => (
               <div className="bar-row" key={item.name}>
                 <div className="bar-row-head">
                   <span>{item.name}</span>
@@ -279,14 +354,20 @@ export default async function AdminPage() {
 
       <div className="panel">
         <h3>ERROR RATE</h3>
-        <p className="inline-note">آخر 7 أيام</p>
-        <div className="chip-row">
-          <span className={`status-pill ${errorRate >= 15 ? "error" : errorRate > 5 ? "warn" : "ok"}`} dir="ltr">
-            {errorRate.toFixed(2)}%
-          </span>
-          <span className="chip" dir="ltr">{failedRecentRuns} failed</span>
-          <span className="chip" dir="ltr">{totalRecentRuns} total</span>
-        </div>
+        {!recentRunsAvailable ? (
+          <p className="inline-note">DATA SOURCE NOT AVAILABLE</p>
+        ) : (
+          <>
+            <p className="inline-note">آخر 7 أيام</p>
+            <div className="chip-row">
+              <span className={`status-pill ${errorRate >= 15 ? "error" : errorRate > 5 ? "warn" : "ok"}`} dir="ltr">
+                {errorRate.toFixed(2)}%
+              </span>
+              <span className="chip" dir="ltr">{failedRecentRuns} failed</span>
+              <span className="chip" dir="ltr">{totalRecentRuns} total</span>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="section">
@@ -309,7 +390,11 @@ export default async function AdminPage() {
             </tr>
           </thead>
           <tbody>
-            {latestRuns.map((run) => {
+            {!latestRunsAvailable ? (
+              <tr>
+                <td colSpan={8}>DATA SOURCE NOT AVAILABLE</td>
+              </tr>
+            ) : latestRuns.length ? latestRuns.map((run) => {
               const toolRef = Array.isArray(run.tools) ? run.tools[0] : run.tools;
               const providerRef = Array.isArray(run.ai_providers) ? run.ai_providers[0] : run.ai_providers;
               const modelRef = Array.isArray(run.ai_models) ? run.ai_models[0] : run.ai_models;
@@ -334,7 +419,11 @@ export default async function AdminPage() {
                   <td dir="ltr">{new Date(run.created_at).toLocaleString("en-GB", { hour12: false })}</td>
                 </tr>
               );
-            })}
+            }) : (
+              <tr>
+                <td colSpan={8}>لا توجد تشغيلات حديثة.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
