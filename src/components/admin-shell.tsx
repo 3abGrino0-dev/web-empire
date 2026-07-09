@@ -32,8 +32,8 @@ const navGroups: NavGroup[] = [
       { label: "جميع الأدوات", href: "/admin/tools", status: "active" },
       { label: "إضافة أداة", href: "/admin/tools/new", status: "active" },
       { label: "التصنيفات", status: "coming_soon" },
-      { label: "محتوى و SEO", status: "coming_soon" },
-      { label: "الأدوات ذات الصلة", status: "coming_soon" },
+      { label: "محتوى و SEO", href: "/admin/tools/content", status: "active" },
+      { label: "الأدوات ذات الصلة", href: "/admin/tools/related", status: "active" },
     ],
   },
   {
@@ -77,6 +77,8 @@ const navGroups: NavGroup[] = [
 const crumbLabelMap: Record<string, string> = {
   admin: "نظرة عامة",
   tools: "الأدوات",
+  content: "محتوى و SEO",
+  related: "الأدوات ذات الصلة",
   new: "إضافة أداة",
   providers: "الذكاء الاصطناعي",
   runs: "عمليات التشغيل",
