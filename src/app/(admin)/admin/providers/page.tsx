@@ -4,30 +4,72 @@ import {
 } from "@/actions/admin";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
+function formatUsd(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
 export default async function ProvidersPage() {
   const supabase = createSupabaseAdminClient();
+  const recentSince = new Date();
+  recentSince.setDate(recentSince.getDate() - 7);
+  const recentSinceIso = recentSince.toISOString();
 
-  const [{ data: providers }, { data: models }] = await Promise.all([
+  const [{ data: providers }, { data: models }, { data: usageRows }] = await Promise.all([
     supabase.from("ai_providers").select("*").order("priority"),
     supabase
       .from("ai_models")
       .select("*, ai_providers(name)")
-      .order("priority")
+      .order("priority"),
+    supabase
+      .from("provider_usage")
+      .select("provider_id, model_id, estimated_cost_usd, created_at")
+      .gte("created_at", recentSinceIso)
+      .limit(5000),
   ]);
+
+  const providerNameMap = new Map((providers ?? []).map((provider) => [provider.id, provider.name]));
+  const modelNameMap = new Map((models ?? []).map((model) => [model.id, model.name]));
+
+  const usageMap = new Map<string, { runs: number; cost: number }>();
+  for (const row of usageRows ?? []) {
+    const key = `${row.provider_id ?? "unknown"}:${row.model_id ?? "unknown"}`;
+    const current = usageMap.get(key) ?? { runs: 0, cost: 0 };
+    current.runs += 1;
+    current.cost += Number(row.estimated_cost_usd ?? 0);
+    usageMap.set(key, current);
+  }
+
+  const usageSummary = Array.from(usageMap.entries())
+    .map(([key, value]) => {
+      const [providerId, modelId] = key.split(":");
+      return {
+        key,
+        provider: providerNameMap.get(providerId) ?? "Unknown Provider",
+        model: modelNameMap.get(modelId) ?? "Unknown Model",
+        runs: value.runs,
+        cost: value.cost,
+      };
+    })
+    .sort((a, b) => b.runs - a.runs)
+    .slice(0, 12);
 
   return (
     <>
       <div className="admin-head">
-        <div className="eyebrow">UNIVERSAL AI</div>
-        <h1>مزودو الذكاء الاصطناعي</h1>
+        <div className="eyebrow">AI CONTROL SURFACE</div>
+        <h1>المزودون والنماذج</h1>
         <p>
-          المفتاح يخزن في Vault. أضف OpenAI أو Claude أو Gemini أو منصة
-          متوافقة أو HTTP مخصص.
+          إدارة المزود والنموذج والأولوية والتوجيه في الخلفية بدون كشف أي أسرار.
         </p>
       </div>
 
       <div className="panel">
-        <h2>إضافة مزود</h2>
+        <h2>Providers</h2>
         <form action={createProviderAction} className="admin-form">
           <div className="form-grid">
             <label>
@@ -93,6 +135,7 @@ export default async function ProvidersPage() {
                 <th>Adapter</th>
                 <th>Priority</th>
                 <th>Secret</th>
+                <th>الحالة</th>
               </tr>
             </thead>
             <tbody>
@@ -102,6 +145,11 @@ export default async function ProvidersPage() {
                   <td>{provider.adapter_type}</td>
                   <td>{provider.priority}</td>
                   <td>{provider.secret_id ? "Configured" : "Missing"}</td>
+                  <td>
+                    <span className={`status-pill ${provider.is_active ? "ok" : "warn"}`}>
+                      {provider.is_active ? "نشط" : "متوقف"}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -109,8 +157,8 @@ export default async function ProvidersPage() {
         </div>
       </div>
 
-      <div className="panel">
-        <h2>إضافة نموذج</h2>
+      <div className="panel" id="models">
+        <h2>Models</h2>
         <form action={createModelAction} className="admin-form">
           <div className="form-grid">
             <label>
@@ -203,6 +251,7 @@ export default async function ProvidersPage() {
                 <th>Alias</th>
                 <th>Input</th>
                 <th>Output</th>
+                <th>الحالة</th>
               </tr>
             </thead>
             <tbody>
@@ -213,11 +262,69 @@ export default async function ProvidersPage() {
                   <td>{model.alias}</td>
                   <td>{model.input_cost_per_million_usd}</td>
                   <td>{model.output_cost_per_million_usd}</td>
+                  <td>
+                    <span className={`status-pill ${model.is_active ? "ok" : "warn"}`}>
+                      {model.is_active ? "نشط" : "متوقف"}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="panel" id="routing">
+        <h2>AI Routing</h2>
+        <p className="inline-note">
+          إدارة الخلفية: Provider + Model + Priority + Strategy. المستخدم النهائي لا يرى أسماء المزودات أو النماذج.
+        </p>
+        <div className="chip-row">
+          <span className="chip">Provider</span>
+          <span className="chip">Model</span>
+          <span className="chip">Priority</span>
+          <span className="chip">Strategy</span>
+          <span className="chip">Routing</span>
+        </div>
+      </div>
+
+      <div className="panel" id="ai-chat">
+        <h2>AI Chat</h2>
+        <p className="inline-note">متوقف حاليًا حسب توجيه المنتج. محفوظ في فرع WIP منفصل وغير مدموج في الإنتاج.</p>
+      </div>
+
+      <div className="section">
+        <h2>Provider Usage Summary</h2>
+        <p className="inline-note">آخر 7 أيام</p>
+      </div>
+
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Model</th>
+              <th>Runs</th>
+              <th>Estimated Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usageSummary.length ? (
+              usageSummary.map((item) => (
+                <tr key={item.key}>
+                  <td>{item.provider}</td>
+                  <td>{item.model}</td>
+                  <td dir="ltr">{item.runs}</td>
+                  <td dir="ltr">{formatUsd(item.cost)}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4}>لا توجد بيانات استخدام حتى الآن.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </>
   );

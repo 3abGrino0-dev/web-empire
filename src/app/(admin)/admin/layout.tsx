@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import "@/app/admin-v2.css";
 
 import { AdminShell } from "@/components/admin-shell";
 import { requireAdmin } from "@/lib/auth";
