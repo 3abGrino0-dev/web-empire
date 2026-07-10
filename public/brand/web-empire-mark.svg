@@ -1,0 +1,29 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 64 64"
+  fill="none"
+>
+  <title>Web Empire</title>
+
+  <path
+    d="M9 8H55V20H48V15H16V49H48V44H55V56H9V8Z"
+    fill="#F7F5EF"
+  />
+
+  <path
+    d="M18 20H26L32 39L38 20H46L36 46H28L18 20Z"
+    fill="#7138F4"
+  />
+
+  <path
+    d="M41 28H55V35H41V28Z"
+    fill="#23C7E8"
+  />
+
+  <circle
+    cx="52"
+    cy="12"
+    r="3"
+    fill="#D6B56E"
+  />
+</svg>

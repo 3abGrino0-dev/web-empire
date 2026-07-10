@@ -1,0 +1,81 @@
+:root {
+  --empire-black: #050713;
+  --imperial-violet: #7138f4;
+  --crown-gold: #d6b56e;
+  --signal-cyan: #23c7e8;
+  --empire-ivory: #f4f1e8;
+
+  --empire-dark-surface: #0b1022;
+  --empire-light-surface: #fffcf4;
+  --empire-dark-ink: #f7f5ef;
+  --empire-light-ink: #10131f;
+
+  --empire-success: #0d9488;
+  --empire-danger: #dc2626;
+
+  --empire-motion-fast: 160ms;
+  --empire-motion-standard: 220ms;
+  --empire-motion-deliberate: 320ms;
+
+  --empire-icon-grid: 24px;
+  --empire-icon-stroke: 1.75;
+  --empire-tool-glyph: 48px;
+}
+
+.public-shell {
+  --empire-grid-line: color-mix(
+    in srgb,
+    var(--signal-cyan) 12%,
+    transparent
+  );
+  --empire-command-glow: 0 0 0 1px
+      color-mix(in srgb, var(--signal-cyan) 18%, transparent),
+    0 24px 80px
+      color-mix(in srgb, var(--imperial-violet) 20%, transparent);
+  --empire-gold-line: color-mix(
+    in srgb,
+    var(--crown-gold) 48%,
+    transparent
+  );
+}
+
+.empire-grid-surface {
+  background-image:
+    linear-gradient(
+      var(--empire-grid-line) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      var(--empire-grid-line) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+}
+
+.empire-command-kicker {
+  color: var(--crown-gold);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.empire-signal {
+  color: var(--signal-cyan);
+}
+
+.empire-premium {
+  color: var(--crown-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-shell *,
+  .public-shell *::before,
+  .public-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
