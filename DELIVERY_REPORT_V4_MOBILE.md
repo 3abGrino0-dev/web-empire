@@ -1,7 +1,19 @@
 # WEB EMPIRE ZERO v4.0 — MOBILE APP DELIVERY REPORT
 
-Date: 2026-07-07
+Date: 2026-07-10
 Domain: https://webempire.site
+
+## Delivery status
+
+Web Empire v4 mobile production validation is closed for the Android preview
+delivery scope documented in this report.
+
+The merged production source has passed the web/backend production build gate,
+mobile validation gate, Android Expo export gate, and Android EAS preview APK
+build gate.
+
+This report separates confirmed delivery evidence from work that has not been
+claimed or completed.
 
 ## Added in v4
 
@@ -34,8 +46,8 @@ Domain: https://webempire.site
 - `/api/mobile/tools/[slug]`
 - `/api/mobile/me`
 
-The mobile catalog endpoints return sanitized tool/interface data and do not return
-prompt templates, AI secrets or runtime configuration.
+The mobile catalog endpoints return sanitized tool/interface data and do not
+return prompt templates, AI secrets, or runtime configuration.
 
 ## Enabled mobile screens
 
@@ -47,36 +59,154 @@ prompt templates, AI secrets or runtime configuration.
 - Pricing
 - Dynamic Tool screen
 
-## Validation completed on the persistent v4 source
+## Confirmed production validation
 
-### Backend
+The validation below was executed from a clean worktree created from
+`web-empire-v3-production`.
 
-- `npm run typecheck`: PASS — 0 TypeScript errors.
-- `npm run lint`: PASS — 0 ESLint errors.
-- `npm audit --omit=dev`: PASS — 0 vulnerabilities.
-- Next.js Turbopack compile: PASS.
-- Next.js webpack compile: PASS.
-- Both Next.js build attempts reached `Compiled successfully` and entered the
-  internal TypeScript/build phase, but the execution container timed out before
-  `next build` returned its final exit code.
+Production source at validation:
 
-This report therefore does NOT claim a completed v4 Production Build exit code.
+```text
+41e9d6082b34bcc17bf98080ce990b3adad77162
+```
 
-### Mobile
+### Web and backend
 
-- TypeScript/TSX syntax transpile check: PASS — 19 files.
-- Mobile package-lock refresh: PASS.
-- `npm audit --omit=dev`: PASS — 0 vulnerabilities.
-- Secret-value scan: PASS.
-- No `.env` or `.env.local` files are included.
+- `npm ci`: PASS.
+- `npm run typecheck`: PASS.
+- `npm run lint`: PASS.
+- `npm run build`: PASS with final exit code `0`.
 
-Before the execution environment reset, equivalent mobile source had passed the
-full TypeScript and Expo lint commands. After the reset, a fresh Expo dependency
-installation in the artifact workspace repeatedly exceeded the available
-execution window. Therefore this delivery does NOT claim that Android/iOS
-`expo export` or EAS cloud build completed inside this environment.
+The Next.js production build gate is therefore confirmed complete.
 
-## Codespace validation commands
+### Mobile source
+
+- `npm run mobile:install`: PASS.
+- `npm run mobile:typecheck`: PASS.
+- `npm run mobile:lint`: PASS.
+- `CI=1 npx expo install --check`: PASS.
+
+Expo SDK dependency alignment is confirmed for the validated source.
+
+### EAS project configuration
+
+The mobile app is linked to:
+
+```text
+@mohammedsk/web-empire
+```
+
+EAS project ID:
+
+```text
+14357042-04b3-4a69-9616-6754973c95f3
+```
+
+Configured EAS Update URL:
+
+```text
+https://u.expo.dev/14357042-04b3-4a69-9616-6754973c95f3
+```
+
+The EAS project ID and EAS Update URL project ID match.
+
+The following EAS `preview` environment variables were confirmed present
+without printing their values:
+
+- `EXPO_PUBLIC_API_URL`
+- `EXPO_PUBLIC_SUPABASE_URL`
+- `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+
+### Android Expo export
+
+Android production export was executed with the EAS `preview` environment:
+
+```bash
+npx eas-cli@latest env:exec preview \
+  "npx expo export --platform android --output-dir <temporary-output-directory>" \
+  --non-interactive
+```
+
+Result:
+
+- Android Expo export exit code: `0`.
+- Export artifact directory: present and non-empty.
+- Android Expo export gate: PASS.
+
+### Android EAS preview build
+
+A direct-install Android preview APK was built through EAS.
+
+Build evidence:
+
+```text
+Build ID: 075c926d-565f-4d55-8509-fb64d3b9a35d
+Status: FINISHED
+Platform: ANDROID
+Distribution: INTERNAL
+Build profile: preview
+Git commit: dda8c9b6fc22e7a33457ad63070c81370a0118a8
+```
+
+The EAS build artifact URL was present and the APK was downloaded for artifact
+verification.
+
+### Production tree equivalence
+
+The Android EAS build metadata points to PR head commit:
+
+```text
+dda8c9b6fc22e7a33457ad63070c81370a0118a8
+```
+
+PR #2 was squash-merged into production as:
+
+```text
+41e9d6082b34bcc17bf98080ce990b3adad77162
+```
+
+A Git tree comparison confirmed:
+
+```text
+PR_MERGE_TREE_MATCH=YES
+```
+
+Therefore the file tree built by EAS matches the file tree of the squash merge
+present in `web-empire-v3-production` at the validated merge point.
+
+This is a tree-equivalence statement. It does not claim that EAS directly built
+from the squash merge SHA.
+
+### APK artifact verification
+
+The EAS Android artifact was downloaded to a temporary path outside the
+repository.
+
+Validation results:
+
+- APK download: PASS.
+- APK file present and non-empty: PASS.
+- APK ZIP/archive integrity test: PASS.
+- APK artifact verification: PASS.
+
+The Android preview APK build and artifact-integrity delivery gate is confirmed
+complete.
+
+## EAS preview profile
+
+The preview profile is configured for internal distribution and an Android APK:
+
+```json
+{
+  "distribution": "internal",
+  "channel": "preview",
+  "android": {
+    "buildType": "apk"
+  }
+}
+```
+
+## Validation commands
 
 From the repository root:
 
@@ -84,33 +214,75 @@ From the repository root:
 npm ci
 npm run typecheck
 npm run lint
+npm run build
 
 npm run mobile:install
 npm run mobile:typecheck
 npm run mobile:lint
 ```
 
-Then build an installable Android preview:
+From `apps/mobile`:
 
 ```bash
-cd apps/mobile
-npx eas-cli@latest login
-npx eas-cli@latest build:configure
-npx eas-cli@latest build -p android --profile preview
+CI=1 npx expo install --check
+
+npx eas-cli@latest project:info
+
+npx eas-cli@latest env:exec preview \
+  "npx expo export --platform android --output-dir <temporary-output-directory>" \
+  --non-interactive
+
+npx eas-cli@latest build \
+  -p android \
+  --profile preview \
+  --wait
 ```
 
-The preview profile is configured with:
+## Delivery evidence
 
-```json
-{
-  "distribution": "internal",
-  "android": {
-    "buildType": "apk"
-  }
-}
+GitHub pull request:
+
+```text
+PR #2
+chore: validate mobile production build configuration
 ```
+
+Validated PR head:
+
+```text
+dda8c9b6fc22e7a33457ad63070c81370a0118a8
+```
+
+Production squash merge:
+
+```text
+41e9d6082b34bcc17bf98080ce990b3adad77162
+```
+
+Android EAS build:
+
+```text
+075c926d-565f-4d55-8509-fb64d3b9a35d
+```
+
+## Not claimed by this report
+
+The following delivery gates are not claimed as completed:
+
+- iOS Expo export.
+- iOS EAS cloud build.
+- Physical Android device functional testing.
+- Physical iOS device functional testing.
+- Google Play production/AAB release.
+- Apple App Store/TestFlight release.
+
+The verified Android artifact is an internally distributed `preview` APK. It is
+not documented here as a Play Store production release.
 
 ## Important deployment dependency
 
-Deploy the full v4 web/backend source before distributing the mobile app. The
-mobile app depends on the Bearer-auth and mobile API endpoints included in v4.
+Deploy the full v4 web/backend source before distributing the mobile app to
+testers.
+
+The mobile app depends on the Bearer-auth and mobile API endpoints included in
+v4.
