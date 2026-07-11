@@ -1,11 +1,51 @@
 import { notFound } from "next/navigation";
 
 import { signOut } from "@/actions/auth";
+import { webEmpireLightAssets } from "@/brand/web-empire-light-assets";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { translate } from "@/localization/messages";
 import { getLocaleByCode, getUiMessages } from "@/localization/repository";
 import { getActivePlans, getActiveTools } from "@/repositories/catalog";
+
+const dashboardLabels = {
+  ar: {
+    title: "مساحتي",
+    subtitle: "لوحة متابعة الرصيد والباقات والتشغيلات الأخيرة داخل Web Empire.",
+    credits: "الرصيد",
+    plan: "الباقة",
+    recentRuns: "التشغيلات الأخيرة",
+    tool: "الأداة",
+    status: "الحالة",
+    date: "التاريخ",
+    noRunsTitle: "لا توجد تشغيلات بعد",
+    noRunsBody: "ابدأ أول تشغيل لأداة وسيظهر السجل هنا تلقائيًا.",
+    signOut: "تسجيل الخروج",
+    points: "نقطة",
+    myEmpire: "Web Empire",
+    completed: "مكتمل",
+    failed: "فشل",
+    running: "قيد التنفيذ",
+  },
+  en: {
+    title: "My space",
+    subtitle: "A quick view of credits, plan, and your latest executions in Web Empire.",
+    credits: "Credits",
+    plan: "Plan",
+    recentRuns: "Recent runs",
+    tool: "Tool",
+    status: "Status",
+    date: "Date",
+    noRunsTitle: "No runs yet",
+    noRunsBody: "Run any tool and your activity will appear here.",
+    signOut: "Sign out",
+    points: "points",
+    myEmpire: "Web Empire",
+    completed: "Completed",
+    failed: "Failed",
+    running: "Running",
+  },
+} as const;
 
 export default async function DashboardPage({
   params,
@@ -47,57 +87,122 @@ export default async function DashboardPage({
 
   const toolMap = new Map(tools.map((tool) => [tool.id, tool.title]));
   const plan = plans.find((item) => item.id === subscription?.plan_id);
+  const t = locale.code === "ar" ? dashboardLabels.ar : dashboardLabels.en;
+
+  const localizeStatus = (status: string) => {
+    const normalized = status.toLowerCase();
+    if (normalized === "completed") return t.completed;
+    if (normalized === "failed") return t.failed;
+    if (normalized === "running") return t.running;
+    return status;
+  };
+
+  const statusTone = (status: string) => {
+    const normalized = status.toLowerCase();
+    if (normalized === "completed") return "is-completed";
+    if (normalized === "failed") return "is-failed";
+    if (normalized === "running") return "is-running";
+    return "is-neutral";
+  };
 
   return (
-    <main className="section">
-      <div className="container">
-        <div className="section-head">
-          <div>
-            <div className="eyebrow">MY EMPIRE</div>
-            <h2>{translate(messages, "dashboard.title")}</h2>
-            <p>Credits, plan and recent runs.</p>
+    <main className="we-dashboard-page">
+      <div className="we-container we-dashboard-shell">
+        <section className="we-dashboard-hero">
+          <div className="we-dashboard-heading">
+            <img src={webEmpireLightAssets.mark} alt="Web Empire mark" className="we-dashboard-mark" />
+            <div>
+              <p className="we-dashboard-kicker">{t.myEmpire}</p>
+              <h1>{t.title}</h1>
+              <p>{t.subtitle}</p>
+            </div>
           </div>
 
-          <form action={signOut}>
-            <input type="hidden" name="locale" value={locale.code} />
-            <button type="submit" className="we-button-ghost">
-              {locale.code === "ar" ? "تسجيل الخروج" : "Sign out"}
-            </button>
-          </form>
-        </div>
+          <div className="we-dashboard-hero-side">
+            <img
+              src={webEmpireLightAssets.dashboardPreview}
+              alt="Dashboard visual"
+              className="we-dashboard-preview"
+            />
+            <form action={signOut}>
+              <input type="hidden" name="locale" value={locale.code} />
+              <button type="submit" className="we-button-ghost we-dashboard-signout">
+                {t.signOut}
+              </button>
+            </form>
+          </div>
+        </section>
 
-        <div className="metrics-grid">
-          <div className="metric">
-            <span>Credits</span>
-            <h2>{wallet?.balance ?? 0} {translate(messages, "common.points")}</h2>
-          </div>
-          <div className="metric">
-            <span>Plan</span>
-            <h2>{plan?.localizedName ?? translate(messages, "common.free")}</h2>
-          </div>
-          <div className="metric">
-            <span>Recent runs</span>
-            <h2>{runs?.length ?? 0}</h2>
-          </div>
-        </div>
+        <section className="we-dashboard-metrics" aria-label="Dashboard summary">
+          <article className="we-dashboard-metric">
+            <span className="we-dashboard-metric-icon is-violet" aria-hidden="true">◉</span>
+            <div>
+              <p>{t.credits}</p>
+              <h2>
+                {wallet?.balance ?? 0} {locale.code === "ar" ? t.points : translate(messages, "common.points")}
+              </h2>
+            </div>
+          </article>
+          <article className="we-dashboard-metric">
+            <span className="we-dashboard-metric-icon is-gold" aria-hidden="true">◆</span>
+            <div>
+              <p>{t.plan}</p>
+              <h2>{plan?.localizedName ?? translate(messages, "common.free")}</h2>
+            </div>
+          </article>
+          <article className="we-dashboard-metric">
+            <span className="we-dashboard-metric-icon is-soft" aria-hidden="true">◌</span>
+            <div>
+              <p>{t.recentRuns}</p>
+              <h2>{runs?.length ?? 0}</h2>
+            </div>
+          </article>
+        </section>
 
-        <div className="section">
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>Tool</th><th>Status</th><th>Credits</th><th>Date</th></tr></thead>
+        <section className="we-dashboard-table-card">
+          <div className="we-dashboard-table-head">
+            <h2>{t.recentRuns}</h2>
+            <p>{(runs ?? []).length}</p>
+          </div>
+
+          <div className="we-dashboard-table-scroll">
+            <table className="we-dashboard-table">
+              <thead>
+                <tr>
+                  <th>{t.tool}</th>
+                  <th>{t.status}</th>
+                  <th>{t.credits}</th>
+                  <th>{t.date}</th>
+                </tr>
+              </thead>
               <tbody>
-                {(runs ?? []).map((run) => (
-                  <tr key={run.id}>
-                    <td>{toolMap.get(run.tool_id) ?? "Tool"}</td>
-                    <td>{run.status}</td>
-                    <td>{run.credits_charged}</td>
-                    <td>{new Date(run.created_at).toLocaleString(locale.locale_code)}</td>
+                {(runs ?? []).length === 0 ? (
+                  <tr>
+                    <td colSpan={4}>
+                      <div className="we-dashboard-empty">
+                        <strong>{t.noRunsTitle}</strong>
+                        <p>{t.noRunsBody}</p>
+                      </div>
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  (runs ?? []).map((run) => (
+                    <tr key={run.id}>
+                      <td>{toolMap.get(run.tool_id) ?? t.tool}</td>
+                      <td>
+                        <span className={`we-dashboard-status ${statusTone(run.status)}`}>
+                          {localizeStatus(run.status)}
+                        </span>
+                      </td>
+                      <td>{run.credits_charged}</td>
+                      <td>{new Date(run.created_at).toLocaleString(locale.locale_code)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       </div>
     </main>
   );
