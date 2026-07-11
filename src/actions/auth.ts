@@ -55,6 +55,60 @@ export async function signUp(formData: FormData) {
   redirect(`/${locale}/dashboard`);
 }
 
+export async function requestPasswordReset(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim();
+  const locale = normalizeLocale(formData.get("locale"));
+
+  if (!email) {
+    redirect(`/${locale}/auth/forgot-password?error=reset_failed`);
+  }
+
+  const requestHeaders = await headers();
+  const origin = resolveRequestOrigin(requestHeaders, publicEnv.siteUrl);
+  const callbackUrl = new URL("/auth/callback", origin);
+  callbackUrl.searchParams.set("locale", locale);
+  callbackUrl.searchParams.set("next", `/${locale}/auth/reset-password`);
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: callbackUrl.toString(),
+  });
+
+  if (error) {
+    redirect(`/${locale}/auth/forgot-password?error=reset_failed`);
+  }
+
+  redirect(`/${locale}/auth/forgot-password?status=sent`);
+}
+
+export async function updatePassword(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const locale = normalizeLocale(formData.get("locale"));
+
+  if (password.length < 8 || password !== confirmPassword) {
+    redirect(`/${locale}/auth/reset-password?error=password_mismatch`);
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    redirect(`/${locale}/auth/reset-password?error=reset_failed`);
+  }
+
+  await supabase.auth.signOut();
+  redirect(`/${locale}/auth/login?status=password_updated`);
+}
+
+export async function signOut(formData: FormData) {
+  const locale = normalizeLocale(formData.get("locale"));
+  const supabase = await createSupabaseServerClient();
+
+  await supabase.auth.signOut();
+  redirect(`/${locale}/auth/login`);
+}
+
 export async function signInWithProvider(formData: FormData) {
   const locale = normalizeLocale(formData.get("locale"));
   const providerInput = formData.get("provider");

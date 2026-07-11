@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { signOut } from "@/actions/auth";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { translate } from "@/localization/messages";
@@ -56,6 +57,13 @@ export default async function DashboardPage({
             <h2>{translate(messages, "dashboard.title")}</h2>
             <p>Credits, plan and recent runs.</p>
           </div>
+
+          <form action={signOut}>
+            <input type="hidden" name="locale" value={locale.code} />
+            <button type="submit" className="we-button-ghost">
+              {locale.code === "ar" ? "تسجيل الخروج" : "Sign out"}
+            </button>
+          </form>
         </div>
 
         <div className="metrics-grid">

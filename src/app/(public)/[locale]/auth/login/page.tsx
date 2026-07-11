@@ -39,7 +39,7 @@ export default async function LoginPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ next?: string; error?: string }>;
+  searchParams?: Promise<{ next?: string; error?: string; status?: string }>;
 }) {
   const { locale: localeCode } = await params;
   const query = await searchParams;
@@ -49,6 +49,24 @@ export default async function LoginPage({
   const t = locale.code === "ar" ? labels.ar : labels.en;
   const prefix = `/${locale.code}`;
   const next = query?.next ?? `/${locale.code}/dashboard`;
+
+  const statusMessage =
+    query?.status === "password_updated"
+      ? locale.code === "ar"
+        ? "تم تحديث كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن."
+        : "Password updated successfully. You can sign in now."
+      : null;
+
+  const errorMessage =
+    query?.error === "oauth_callback_failed"
+      ? locale.code === "ar"
+        ? "فشل إكمال تسجيل الدخول عبر المزود. حاول مرة أخرى."
+        : "Could not complete provider sign-in. Please try again."
+      : query?.error
+        ? locale.code === "ar"
+          ? "تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى."
+          : "Sign in failed. Check your details and try again."
+        : null;
 
   return (
     <main className="we-page we-auth-page">
@@ -68,10 +86,12 @@ export default async function LoginPage({
           <h1>{t.title}</h1>
           <p className="we-form-note">{t.body}</p>
 
-          {query?.error ? (
-            <p className="we-form-alert">
-              {locale.code === "ar" ? "تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى." : "Sign in failed. Check your details and try again."}
-            </p>
+          {statusMessage ? (
+            <p className="we-form-note" role="status" aria-live="polite">{statusMessage}</p>
+          ) : null}
+
+          {errorMessage ? (
+            <p className="we-form-alert" role="alert" aria-live="assertive">{errorMessage}</p>
           ) : null}
 
           <form action={signIn} className="we-form">

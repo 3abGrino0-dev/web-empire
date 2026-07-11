@@ -48,9 +48,13 @@ export function normalizeAuthErrorCode(input: FormDataEntryValue | string | null
   switch (value) {
     case "invalid_credentials":
     case "signup_failed":
+    case "invalid_signup_input":
+    case "password_mismatch":
     case "invalid_provider":
     case "oauth_unavailable":
     case "oauth_callback_failed":
+    case "reset_failed":
+    case "recovery_failed":
     case "auth_failed":
       return value;
     default:
