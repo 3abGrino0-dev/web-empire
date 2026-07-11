@@ -44,6 +44,7 @@ const labels = {
     errorPasswordMismatch: "كلمتا المرور غير متطابقتين.",
     errorInvalidInput: "تحقق من الاسم والبريد وكلمة المرور.",
     errorOAuth: "تعذر تشغيل تسجيل الدخول الاجتماعي الآن.",
+    statusCheckEmail: "تم إنشاء الحساب. تحقق من بريدك الإلكتروني لتأكيد الحساب.",
     errorGeneric: "حدث خطأ غير متوقع. حاول مرة أخرى.",
   },
   en: {
@@ -83,6 +84,7 @@ const labels = {
     errorPasswordMismatch: "Passwords do not match.",
     errorInvalidInput: "Check your name, email, and password.",
     errorOAuth: "Social sign-in is unavailable right now.",
+    statusCheckEmail: "Account created. Check your email to confirm your account.",
     errorGeneric: "Unexpected error. Please try again.",
   },
 };
@@ -92,7 +94,7 @@ export default async function RegisterPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ next?: string; error?: string }>;
+  searchParams?: Promise<{ next?: string; error?: string; status?: string }>;
 }) {
   const { locale: localeCode } = await params;
   const query = await searchParams;
@@ -103,6 +105,7 @@ export default async function RegisterPage({
   const t = locale.code === "ar" ? labels.ar : labels.en;
   const prefix = `/${locale.code}`;
   const next = query?.next ?? `/${locale.code}/dashboard`;
+  const statusMessage = query?.status === "check_email" ? t.statusCheckEmail : null;
 
   const errorMessage =
     query?.error === "signup_failed"
@@ -195,6 +198,12 @@ export default async function RegisterPage({
               aria-live="assertive"
             >
               {errorMessage}
+            </p>
+          ) : null}
+
+          {statusMessage ? (
+            <p className="we-form-note" role="status" aria-live="polite">
+              {statusMessage}
             </p>
           ) : null}
 

@@ -40,11 +40,18 @@ export async function signUp(formData: FormData) {
     redirect(buildAuthErrorPath(locale, "password_mismatch"));
   }
 
+  const requestHeaders = await headers();
+  const origin = resolveRequestOrigin(requestHeaders, publicEnv.siteUrl);
+  const callbackUrl = new URL("/auth/callback", origin);
+  callbackUrl.searchParams.set("locale", locale);
+  callbackUrl.searchParams.set("next", `/${locale}/dashboard`);
+
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: callbackUrl.toString(),
       data: {
         full_name: fullName,
       },
@@ -52,6 +59,11 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) redirect(buildAuthErrorPath(locale, "signup_failed"));
+
+  if (!data.session) {
+    redirect(`/${locale}/auth/register?status=check_email`);
+  }
+
   redirect(`/${locale}/dashboard`);
 }
 
