@@ -2525,3 +2525,106 @@ body {
     font-size: 1.45rem;
   }
 }
+
+/* WEB EMPIRE ASSET FIT V2 START */
+
+.light-empire-brand-logo {
+  display: block;
+  width: clamp(155px, 15vw, 210px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.we-hero-visual {
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  overflow: visible;
+  background: transparent;
+}
+
+.we-hero-visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 28px 54px rgba(16, 19, 31, 0.08));
+}
+
+.we-bottom-grid {
+  align-items: stretch;
+}
+
+.we-dashboard-card,
+.we-pricing-panel {
+  min-height: 0;
+  align-self: stretch;
+}
+
+.we-dashboard-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.we-dashboard-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 12 / 7;
+  object-fit: cover;
+  object-position: center;
+  margin-top: 16px;
+  border: 1px solid var(--we-line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.we-dashboard-preview {
+  width: min(100%, 660px);
+  height: auto;
+  aspect-ratio: 12 / 7;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 18px;
+}
+
+.we-pricing-visual img,
+.we-pricing-hero img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: multiply;
+}
+
+@media (max-width: 1024px) {
+  .we-hero-visual {
+    width: min(760px, 100%);
+    margin-inline: auto;
+  }
+
+  .we-dashboard-card img,
+  .we-dashboard-preview {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (max-width: 680px) {
+  .light-empire-brand-logo {
+    width: 158px;
+  }
+
+  .we-hero-visual {
+    aspect-ratio: 4 / 3;
+  }
+
+  .we-dashboard-card img,
+  .we-dashboard-preview {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* WEB EMPIRE ASSET FIT V2 END */
