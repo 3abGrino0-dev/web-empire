@@ -7,8 +7,8 @@ import { webEmpireLightAssets as assets } from "@/brand/web-empire-light-assets"
 
 const labels = {
   ar: {
-    title: "إنشاء حساب",
-    body: "أنشئ حسابك وابدأ رحلتك مع إمبراطورية الويب",
+    title: "ابدأ إمبراطوريتك الآن",
+    subtitle: "أنشئ حسابك خلال دقيقة وابدأ استخدام الأدوات الذكية.",
     email: "البريد الإلكتروني",
     password: "كلمة المرور",
     agree: "أوافق على الشروط والأحكام وسياسة الخصوصية",
@@ -17,10 +17,13 @@ const labels = {
     microsoft: "المتابعة عبر Microsoft",
     have: "لديك حساب بالفعل؟",
     login: "تسجيل الدخول",
+    benefitOne: "300 نقطة مجانية",
+    benefitTwo: "أدوات مجانية جاهزة",
+    benefitThree: "سجل تشغيلات محفوظ",
   },
   en: {
-    title: "Create account",
-    body: "Create your account and start with Web Empire.",
+    title: "Start your empire now",
+    subtitle: "Create your account in a minute and start using smart tools.",
     email: "Email",
     password: "Password",
     agree: "I agree to the terms and privacy policy",
@@ -29,6 +32,9 @@ const labels = {
     microsoft: "Continue with Microsoft",
     have: "Already have an account?",
     login: "Login",
+    benefitOne: "300 free credits",
+    benefitTwo: "Ready free tools",
+    benefitThree: "Saved run history",
   },
 };
 
@@ -49,22 +55,45 @@ export default async function RegisterPage({
   const next = query?.next ?? `/${locale.code}/dashboard`;
 
   return (
-    <main className="we-page we-auth-page">
-      <div className="we-container we-auth-grid">
-        <section className="we-auth-visual-card">
+    <main className="we-page we-auth-page we-register-upgraded">
+      <div className="we-container we-register-grid">
+        <section className="we-register-visual">
+          <img src="/brand/web-empire-logo.svg" alt="WEB EMPIRE" className="we-register-logo" />
           <h1>
             <span>{locale.code === "ar" ? "كل أداة تحتاجها." : "Every tool you need."}</span>
             <br />
             <span className="we-gradient-text">{locale.code === "ar" ? "في نظام واحد." : "In one system."}</span>
           </h1>
-          <p>{locale.code === "ar" ? "انضم واحصل على وصول إلى الأدوات الذكية في مكان واحد." : "Join and access smart tools in one place."}</p>
-          <img src={assets.authVisual} alt="" />
-          <img src={assets.dashboardPreview} alt="" />
+          <p>
+            {locale.code === "ar"
+              ? "حساب واحد للوصول إلى الأدوات، الرصيد، سجل التشغيلات، ولوحة التحكم."
+              : "One account for tools, credits, run history, and your dashboard."}
+          </p>
+
+          <div className="we-register-visual-stack">
+            <img src={assets.heroVisual} alt="" />
+            <div className="we-register-mini-dashboard">
+              <span>WEB EMPIRE</span>
+              <div>
+                <strong>300</strong>
+                <small>{t.benefitOne}</small>
+              </div>
+              <div>
+                <strong>26+</strong>
+                <small>{t.benefitTwo}</small>
+              </div>
+              <div>
+                <strong>∞</strong>
+                <small>{t.benefitThree}</small>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section className="we-auth-card">
-          <h1>{t.title}</h1>
-          <p className="we-form-note">{t.body}</p>
+        <section className="we-register-card">
+          <p className="we-simple-kicker">CREATE ACCOUNT</p>
+          <h2>{t.title}</h2>
+          <p>{t.subtitle}</p>
 
           {query?.error ? (
             <p className="we-form-alert">
@@ -76,9 +105,11 @@ export default async function RegisterPage({
             <input type="hidden" name="locale" value={locale.code} />
             <label>{t.email}<input name="email" type="email" placeholder="name@example.com" required /></label>
             <label>{t.password}<input name="password" type="password" placeholder={t.password} minLength={8} required /></label>
-            <label style={{ display: "flex", alignItems: "center" }}><input type="checkbox" required style={{ minHeight: 18 }} /> {t.agree}</label>
-            <button className="primary" type="submit">{t.create}</button>
+            <label className="we-register-check"><input type="checkbox" required /> {t.agree}</label>
+            <button className="primary" type="submit">✧ {t.create}</button>
           </form>
+
+          <div className="we-auth-divider"><span>OR</span></div>
 
           <form action={signInWithProvider} className="we-form">
             <input type="hidden" name="locale" value={locale.code} />
