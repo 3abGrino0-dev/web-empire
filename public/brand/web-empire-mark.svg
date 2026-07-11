@@ -1,29 +1,15 @@
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  viewBox="0 0 64 64"
-  fill="none"
->
-  <title>Web Empire</title>
-
-  <path
-    d="M9 8H55V20H48V15H16V49H48V44H55V56H9V8Z"
-    fill="#F7F5EF"
-  />
-
-  <path
-    d="M18 20H26L32 39L38 20H46L36 46H28L18 20Z"
-    fill="#7138F4"
-  />
-
-  <path
-    d="M41 28H55V35H41V28Z"
-    fill="#23C7E8"
-  />
-
-  <circle
-    cx="52"
-    cy="12"
-    r="3"
-    fill="#D6B56E"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>WEB EMPIRE</title>
+  <rect width="128" height="128" rx="26" fill="#050713"/>
+  <path d="M23 18H53V25H31V47H23V18Z" fill="#D6B56E"/>
+  <path d="M75 18H105V47H97V25H75V18Z" fill="#7138F4"/>
+  <path d="M23 81H31V103H53V110H23V81Z" fill="#D6B56E"/>
+  <path d="M97 81H105V110H75V103H97V81Z" fill="#D6B56E"/>
+  <path d="M33 36L54 58L64 43L74 58L95 36" stroke="#D6B56E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M33 92L54 70L64 85L74 70L95 92" stroke="#F4F1E8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M64 43V85" stroke="#7138F4" stroke-width="7" stroke-linecap="round"/>
+  <path d="M44 64H84" stroke="#23C7E8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M38 29H90M38 99H90" stroke="#F4F1E8" stroke-opacity=".16" stroke-width="2"/>
+  <circle cx="102" cy="28" r="4" fill="#D6B56E"/>
+  <circle cx="28" cy="100" r="4" fill="#7138F4"/>
 </svg>

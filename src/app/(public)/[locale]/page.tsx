@@ -14,60 +14,70 @@ import {
   getActiveTools,
 } from "@/repositories/catalog";
 
-const commandCopy = {
+const copy = {
   ar: {
     kicker: "WEB EMPIRE COMMAND",
-    title: "كل أداة تحتاجها. في نظام واحد.",
-    body:
-      "احسب، قارن، شغّل، وراجع النتيجة من واجهة واحدة مبنية كلوحة أوامر رقمية.",
+    titleTop: "كل أداة تحتاجها.",
+    titleBottom: "في نظام واحد.",
+    body: "مجموعة أدوات متكاملة من الأدوات الذكية لمساعدتك على إنجاز عملك بدقة وسرعة.",
     search: "ابحث عن أداة...",
-    primary: "ابدأ من الأدوات",
-    secondary: "شاهد التصنيفات",
-    live: "LIVE SYSTEM",
-    tools: "أداة نشطة",
-    categories: "قطاعات",
-    engines: "محركات",
-    locales: "لغات",
-    trending: "أوامر سريعة",
-    explore: "استكشف الإمبراطورية",
-    featured: "أدوات جاهزة للتشغيل",
-    command: "COMMAND",
-    free: "FREE",
-    run: "تشغيل",
-    sectors: "قطاعات الإمبراطورية",
-    pricing: "النقاط والخطط",
-    pricingBody: "ابدأ بالأدوات المجانية، ووسّع رصيدك عندما تحتاج.",
-    finalTitle: "ادخل. اختر. شغّل.",
-    finalBody: "Web Empire يتحول الآن إلى نظام أدوات حقيقي، وليس صفحة تسويقية طويلة.",
+    primary: "ابدأ الآن",
+    secondary: "استخدم الأدوات",
+    activeTools: "أداة نشطة",
+    sectors: "قطاعات رئيسية",
+    accuracy: "جاهزية النظام",
+    cost: "تكلفة التجربة",
+    featured: "الأدوات الشائعة",
+    useTool: "استخدم الأداة",
+    identityTitle: "هوية WEB EMPIRE",
+    identityBody: "نظام بصري داكن، هندسي، وملكي بدون رموز تقليدية. الشعار مبني كعلامة W/E داخل بوابة رقمية.",
+    palette: "لوحة الألوان",
+    dashboard: "لوحة التحكم",
+    recent: "آخر التشغيلات",
+    plan: "خطتك",
+    credits: "رصيدك الحالي",
+    runs: "إجمالي التشغيلات",
+    categoryTitle: "التصنيفات",
+    pricing: "الأسعار",
+    final: "أدواتك. ذكاؤك. إمبراطوريتك.",
   },
   en: {
     kicker: "WEB EMPIRE COMMAND",
-    title: "Every tool you need. In one system.",
-    body:
-      "Calculate, compare, run, and review results from one digital command surface.",
+    titleTop: "Every tool you need.",
+    titleBottom: "In one system.",
+    body: "A connected set of intelligent tools built to help you finish work faster and with more control.",
     search: "Search for a tool...",
-    primary: "Start with tools",
-    secondary: "View sectors",
-    live: "LIVE SYSTEM",
-    tools: "active tools",
-    categories: "sectors",
-    engines: "engines",
-    locales: "locales",
-    trending: "Quick commands",
-    explore: "Explore the Empire",
-    featured: "Tools ready to run",
-    command: "COMMAND",
-    free: "FREE",
-    run: "Run",
-    sectors: "Empire sectors",
-    pricing: "Plans and credits",
-    pricingBody: "Start with free tools. Add more capacity when you need it.",
-    finalTitle: "Enter. Choose. Run.",
-    finalBody: "Web Empire is now a real tool system, not a long marketing page.",
+    primary: "Start now",
+    secondary: "Use tools",
+    activeTools: "active tools",
+    sectors: "main sectors",
+    accuracy: "system readiness",
+    cost: "trial cost",
+    featured: "Popular tools",
+    useTool: "Use tool",
+    identityTitle: "WEB EMPIRE Identity",
+    identityBody: "A dark geometric imperial system without literal crowns. The mark is a W/E monogram inside a digital gate.",
+    palette: "Color palette",
+    dashboard: "Control dashboard",
+    recent: "Recent runs",
+    plan: "Your plan",
+    credits: "Current credits",
+    runs: "Total runs",
+    categoryTitle: "Sectors",
+    pricing: "Pricing",
+    final: "Your tools. Your intelligence. Your empire.",
   },
 };
 
-const glyphs = ["%", "↗", "◎", "∑", "₊", "÷", "×", "⌁"];
+const colorTokens = [
+  ["EMPIRE BLACK", "#050713"],
+  ["IMPERIAL VIOLET", "#7138F4"],
+  ["CROWN GOLD", "#D6B56E"],
+  ["SIGNAL CYAN", "#23C7E8"],
+  ["EMPIRE IVORY", "#F4F1E8"],
+];
+
+const glyphs = ["%", "↗", "VAT", "◔", "∑", "÷", "×", "◎"];
 
 function engineLabel(engine: string) {
   return engine.replaceAll("_", " ").toUpperCase();
@@ -92,178 +102,170 @@ export default async function HomePage({
   ]);
 
   const isArabic = locale.code === "ar";
-  const copy = isArabic ? commandCopy.ar : commandCopy.en;
+  const t = isArabic ? copy.ar : copy.en;
   const prefix = `/${locale.code}`;
-
-  const activeTools = tools;
-  const featuredTools = tools.filter((tool) => tool.is_featured).slice(0, 8);
-  const showcase = (featuredTools.length ? featuredTools : tools).slice(0, 8);
-  const quickTools = tools.slice(0, 6);
   const engines = Array.from(new Set(tools.map((tool) => tool.engine_type)));
-  const visibleCategories = categories.slice(0, 6);
+  const featuredTools = (tools.filter((tool) => tool.is_featured).length
+    ? tools.filter((tool) => tool.is_featured)
+    : tools
+  ).slice(0, 4);
+  const quickTools = tools.slice(0, 3);
+  const visibleCategories = categories.slice(0, 4);
   const visiblePlans = plans.slice(0, 3);
 
   return (
-    <main className="command-home">
-      <section className="command-hero empire-grid-surface">
-        <div className="container command-hero-grid">
-          <div className="command-hero-copy">
-            <p className="empire-command-kicker">{copy.kicker}</p>
-            <h1>{copy.title}</h1>
-            <p>{copy.body}</p>
+    <main className="imperial-home">
+      <section className="imperial-hero">
+        <div className="container imperial-hero-grid">
+          <div className="imperial-hero-copy">
+            <p className="imperial-kicker">{t.kicker}</p>
+            <h1>
+              <span>{t.titleTop}</span>
+              <span>{t.titleBottom}</span>
+            </h1>
+            <p>{t.body}</p>
 
-            <div className="command-search-shell" aria-label={copy.search}>
-              <span>⌘K</span>
-              <strong>{copy.search}</strong>
-              <small>{copy.live}</small>
+            <div className="imperial-search" aria-label={t.search}>
+              <span>⌕</span>
+              <strong>{t.search}</strong>
+              <kbd>⌘K</kbd>
             </div>
 
-            <div className="command-hero-actions">
-              <Link href={`${prefix}/tools`} className="button button-primary">
-                {copy.primary}
-              </Link>
-              <a href="#empire-sectors" className="button button-ghost">
-                {copy.secondary}
-              </a>
+            <div className="imperial-metrics">
+              <div><strong>+{tools.length}</strong><small>{t.activeTools}</small></div>
+              <div><strong>{categories.length}</strong><small>{t.sectors}</small></div>
+              <div><strong>99.9%</strong><small>{t.accuracy}</small></div>
+              <div><strong>0</strong><small>{t.cost}</small></div>
             </div>
           </div>
 
-          <div className="command-panel" aria-label="Web Empire live command panel">
-            <div className="command-panel-top">
-              <span />
-              <span />
-              <span />
-              <strong>WEB EMPIRE</strong>
-            </div>
-
-            <div className="command-metric-grid">
-              <div>
-                <strong>{activeTools.length}</strong>
-                <small>{copy.tools}</small>
-              </div>
-              <div>
-                <strong>{categories.length}</strong>
-                <small>{copy.categories}</small>
-              </div>
-              <div>
-                <strong>{engines.length}</strong>
-                <small>{copy.engines}</small>
-              </div>
-              <div>
-                <strong>{locales.length}</strong>
-                <small>{copy.locales}</small>
-              </div>
-            </div>
-
-            <div className="command-live-card">
-              <small>{copy.trending}</small>
-              <div className="command-chip-row">
-                {quickTools.map((tool, index) => (
-                  <Link key={tool.slug} href={`${prefix}/tools/${tool.slug}`}>
-                    <span>{glyphs[index % glyphs.length]}</span>
-                    {tool.title}
-                  </Link>
-                ))}
+          <div className="imperial-cinematic-card" aria-hidden="true">
+            <div className="imperial-sky">
+              <div className="imperial-stars" />
+              <div className="imperial-citadel">
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="command-strip">
-        <div className="container command-strip-grid">
-          {engines.slice(0, 6).map((engine) => (
-            <span key={engine}>{engineLabel(engine)}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="command-section" id="empire-sectors">
+      <section className="imperial-featured">
         <div className="container">
-          <div className="command-section-heading">
-            <p className="empire-command-kicker">{copy.sectors}</p>
-            <h2>{copy.explore}</h2>
+          <h2>{t.featured}</h2>
+          <div className="imperial-tool-row">
+            {featuredTools.map((tool, index) => (
+              <Link href={`${prefix}/tools/${tool.slug}`} className="imperial-tool-card" key={tool.slug}>
+                <div className="imperial-tool-icon">{glyphs[index % glyphs.length]}</div>
+                <h3>{tool.title}</h3>
+                <p>{tool.localizedDescription}</p>
+                <span>{t.useTool}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="imperial-identity-section">
+        <div className="container imperial-identity-grid">
+          <aside className="imperial-brand-board">
+            <p>{isArabic ? "الشعار" : "Logo"}</p>
+            <img src="/brand/web-empire-mark.svg" alt="WEB EMPIRE" width="150" height="150" />
+            <h2>WEB EMPIRE</h2>
+            <strong>{isArabic ? "إمبراطورية الويب" : identity.siteName}</strong>
+            <span>{t.final}</span>
+          </aside>
+
+          <div className="imperial-system-board">
+            <p className="imperial-kicker">IMPERIAL SYSTEM</p>
+            <h2>{t.identityTitle}</h2>
+            <p>{t.identityBody}</p>
+
+            <div className="imperial-palette" aria-label={t.palette}>
+              {colorTokens.map(([name, color]) => (
+                <div key={name}>
+                  <span style={{ backgroundColor: color }} />
+                  <small>{name}</small>
+                  <strong>{color}</strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="imperial-engine-strip">
+              {engines.slice(0, 7).map((engine) => (
+                <span key={engine}>{engineLabel(engine)}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="imperial-dashboard-section">
+        <div className="container imperial-dashboard-grid">
+          <div className="imperial-dashboard-nav">
+            <img src="/brand/web-empire-mark.svg" alt="" width="42" height="42" />
+            <strong>WEB EMPIRE</strong>
+            <span>{t.dashboard}</span>
+            <span>{translate(messages, "nav.tools")}</span>
+            <span>{t.categoryTitle}</span>
+            <span>{t.pricing}</span>
           </div>
 
-          <div className="command-sector-grid">
+          <div className="imperial-dashboard-panel">
+            <div className="imperial-dashboard-top">
+              <div>
+                <p>{t.dashboard}</p>
+                <small>{isArabic ? "نظرة عامة على استخدامك" : "Overview of your usage"}</small>
+              </div>
+              <strong>{locale.code.toUpperCase()}</strong>
+            </div>
+
+            <div className="imperial-dashboard-metrics">
+              <div><span>{t.credits}</span><strong>300</strong></div>
+              <div><span>{t.plan}</span><strong>{isArabic ? "مجاني" : "Free"}</strong></div>
+              <div><span>{t.runs}</span><strong>5</strong></div>
+            </div>
+
+            <div className="imperial-runs">
+              <h3>{t.recent}</h3>
+              {quickTools.map((tool) => (
+                <Link href={`${prefix}/tools/${tool.slug}`} key={tool.slug}>
+                  <span>{tool.title}</span>
+                  <strong>{isArabic ? "مكتمل" : "Completed"}</strong>
+                  <small>0</small>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="imperial-categories" id="empire-sectors">
+        <div className="container">
+          <p className="imperial-kicker">{t.categoryTitle}</p>
+          <div className="imperial-category-grid">
             {visibleCategories.map((category, index) => (
-              <Link
-                key={category.slug}
-                href={`${prefix}/tools?category=${category.slug}`}
-                className="command-sector-card"
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
+              <Link href={`${prefix}/tools?category=${category.slug}`} key={category.slug}>
+                <small>{String(index + 1).padStart(2, "0")}</small>
                 <h3>{category.name}</h3>
                 <p>{category.description}</p>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
 
-      <section className="command-section command-section-dark">
-        <div className="container">
-          <div className="command-section-heading">
-            <p className="empire-command-kicker">{copy.featured}</p>
-            <h2>{copy.command}</h2>
-          </div>
-
-          <div className="command-tool-grid">
-            {showcase.map((tool, index) => (
-              <Link
-                key={tool.slug}
-                href={`${prefix}/tools/${tool.slug}`}
-                className="command-tool-card"
-              >
-                <div className="command-tool-glyph">
-                  {glyphs[index % glyphs.length]}
-                </div>
-                <div>
-                  <small>{engineLabel(tool.engine_type)}</small>
-                  <h3>{tool.title}</h3>
-                  <p>{tool.localizedDescription}</p>
-                </div>
-                <footer>
-                  <span>{tool.pricing_mode === "free" ? copy.free : tool.pricing_mode.toUpperCase()}</span>
-                  <strong>{copy.run} →</strong>
-                </footer>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="command-section command-pricing-section">
-        <div className="container command-pricing-grid">
-          <div>
-            <p className="empire-command-kicker">{copy.pricing}</p>
-            <h2>{copy.pricing}</h2>
-            <p>{copy.pricingBody}</p>
-            <Link href={`${prefix}/pricing`} className="button button-primary">
-              {translate(messages, "nav.pricing")}
-            </Link>
-          </div>
-
-          <div className="command-plan-grid">
+          <div className="imperial-plan-row">
             {visiblePlans.map((plan) => (
-              <Link key={plan.slug} href={`${prefix}/pricing`} className="command-plan-card">
-                <small>{plan.name}</small>
+              <Link href={`${prefix}/pricing`} key={plan.slug}>
+                <span>{plan.name}</span>
                 <strong>{Number(plan.price_sar)} SAR</strong>
-                <span>{Number(plan.monthly_credits).toLocaleString(locale.locale_code)} {translate(messages, "common.points")}</span>
+                <small>{Number(plan.monthly_credits).toLocaleString(locale.locale_code)} {translate(messages, "common.points")}</small>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="command-final empire-grid-surface">
-        <div className="container">
-          <p className="empire-command-kicker">{identity.siteName}</p>
-          <h2>{copy.finalTitle}</h2>
-          <p>{copy.finalBody}</p>
-          <Link href={`${prefix}/tools`} className="button button-primary">
-            {copy.primary}
-          </Link>
         </div>
       </section>
     </main>
