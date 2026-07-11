@@ -1,67 +1,89 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { FormPendingButton } from "@/components/auth/form-pending-button";
 import { signInWithProvider, signUp } from "@/actions/auth";
-import { getLocaleByCode } from "@/localization/repository";
+import { FormPendingButton } from "@/components/auth/form-pending-button";
 import { webEmpireLightAssets as assets } from "@/brand/web-empire-light-assets";
+import { getLocaleByCode } from "@/localization/repository";
 
 const labels = {
   ar: {
-    title: "ابدأ إمبراطوريتك الآن",
-    subtitle: "أنشئ حسابك خلال دقيقة وابدأ استخدام الأدوات الذكية.",
-    createAccount: "إنشاء حساب",
+    title: "إنشاء حساب",
+    subtitle: "أنشئ حسابك وابدأ رحلتك مع إمبراطورية الويب.",
+    fullName: "الاسم الكامل",
+    fullNamePlaceholder: "أدخل اسمك الكامل",
     email: "البريد الإلكتروني",
+    emailPlaceholder: "أدخل بريدك الإلكتروني",
     password: "كلمة المرور",
-    emailHint: "استخدم بريدك الحقيقي لتأكيد الحساب لاحقًا.",
-    passwordHint: "8 أحرف على الأقل.",
-    agree: "أوافق على الشروط والأحكام وسياسة الخصوصية",
+    passwordPlaceholder: "أدخل كلمة مرور قوية",
+    confirmPassword: "تأكيد كلمة المرور",
+    confirmPasswordPlaceholder: "أعد إدخال كلمة المرور",
+    termsPrefix: "أوافق على ",
     terms: "الشروط والأحكام",
+    termsJoin: " و",
     privacy: "سياسة الخصوصية",
     create: "إنشاء الحساب",
     createPending: "جاري إنشاء الحساب...",
+    social: "أو المتابعة باستخدام",
     google: "المتابعة عبر Google",
     googlePending: "جاري التحويل إلى Google...",
     microsoft: "المتابعة عبر Microsoft",
     microsoftPending: "جاري التحويل إلى Microsoft...",
-    socialTitle: "أو التسجيل السريع",
-    benefitsTitle: "ماذا ستحصل عليه",
-    errorSignup: "تعذر إنشاء الحساب. حاول مرة أخرى.",
-    errorOAuth: "تعذر تشغيل تسجيل الدخول الاجتماعي الآن. حاول مرة أخرى.",
-    errorGeneric: "حدث خطأ غير متوقع. حاول مرة أخرى.",
     have: "لديك حساب بالفعل؟",
     login: "تسجيل الدخول",
-    benefitOne: "300 نقطة مجانية",
-    benefitTwo: "أدوات مجانية جاهزة",
-    benefitThree: "سجل تشغيلات محفوظ",
+    heroTitle: "كل أداة تحتاجها.",
+    heroAccent: "في نظام واحد.",
+    heroDescription: "مجموعة متكاملة من الأدوات الذكية لمساعدتك على إنجاز عملك بدقة وسرعة.",
+    secureTitle: "وصول آمن",
+    secureBody: "حماية على مستوى المؤسسة",
+    syncTitle: "بيانات متزامنة",
+    syncBody: "أدواتك وإعداداتك في كل مكان",
+    privacyTitle: "خصوصية تامة",
+    privacyBody: "بياناتك آمنة ولا نشاركها",
+    errorSignup: "تعذر إنشاء الحساب. حاول مرة أخرى.",
+    errorPasswordMismatch: "كلمتا المرور غير متطابقتين.",
+    errorInvalidInput: "تحقق من الاسم والبريد وكلمة المرور.",
+    errorOAuth: "تعذر تشغيل تسجيل الدخول الاجتماعي الآن.",
+    errorGeneric: "حدث خطأ غير متوقع. حاول مرة أخرى.",
   },
   en: {
-    title: "Start your empire now",
-    subtitle: "Create your account in a minute and start using smart tools.",
-    createAccount: "Create account",
+    title: "Create account",
+    subtitle: "Create your account and begin with Web Empire.",
+    fullName: "Full name",
+    fullNamePlaceholder: "Enter your full name",
     email: "Email",
+    emailPlaceholder: "Enter your email",
     password: "Password",
-    emailHint: "Use your real email so you can recover your account later.",
-    passwordHint: "At least 8 characters.",
-    agree: "I agree to the terms and privacy policy",
+    passwordPlaceholder: "Enter a strong password",
+    confirmPassword: "Confirm password",
+    confirmPasswordPlaceholder: "Re-enter your password",
+    termsPrefix: "I agree to the ",
     terms: "Terms",
-    privacy: "Privacy",
+    termsJoin: " and ",
+    privacy: "Privacy Policy",
     create: "Create account",
     createPending: "Creating account...",
+    social: "Or continue with",
     google: "Continue with Google",
     googlePending: "Redirecting to Google...",
     microsoft: "Continue with Microsoft",
     microsoftPending: "Redirecting to Microsoft...",
-    socialTitle: "Or continue with",
-    benefitsTitle: "What you get",
-    errorSignup: "Could not create account. Try again.",
-    errorOAuth: "Social sign-in is unavailable right now. Try again.",
-    errorGeneric: "Unexpected error. Please try again.",
     have: "Already have an account?",
     login: "Login",
-    benefitOne: "300 free credits",
-    benefitTwo: "Ready free tools",
-    benefitThree: "Saved run history",
+    heroTitle: "Every tool you need.",
+    heroAccent: "In one system.",
+    heroDescription: "A complete suite of smart tools to help you work accurately and quickly.",
+    secureTitle: "Secure access",
+    secureBody: "Enterprise-grade protection",
+    syncTitle: "Synced data",
+    syncBody: "Your tools and settings everywhere",
+    privacyTitle: "Complete privacy",
+    privacyBody: "Your data stays private",
+    errorSignup: "Could not create your account. Try again.",
+    errorPasswordMismatch: "Passwords do not match.",
+    errorInvalidInput: "Check your name, email, and password.",
+    errorOAuth: "Social sign-in is unavailable right now.",
+    errorGeneric: "Unexpected error. Please try again.",
   },
 };
 
@@ -75,6 +97,7 @@ export default async function RegisterPage({
   const { locale: localeCode } = await params;
   const query = await searchParams;
   const locale = await getLocaleByCode(localeCode);
+
   if (!locale) notFound();
 
   const t = locale.code === "ar" ? labels.ar : labels.en;
@@ -84,126 +107,185 @@ export default async function RegisterPage({
   const errorMessage =
     query?.error === "signup_failed"
       ? t.errorSignup
-      : query?.error === "oauth_unavailable" || query?.error === "invalid_provider"
-        ? t.errorOAuth
-        : query?.error
-          ? t.errorGeneric
-          : null;
+      : query?.error === "password_mismatch"
+        ? t.errorPasswordMismatch
+        : query?.error === "invalid_signup_input"
+          ? t.errorInvalidInput
+          : query?.error === "oauth_unavailable" || query?.error === "invalid_provider"
+            ? t.errorOAuth
+            : query?.error
+              ? t.errorGeneric
+              : null;
 
   return (
-    <main className="we-page we-auth-page we-register-upgraded">
-      <div className="we-container we-register-grid">
-        <section className="we-register-visual">
-          <img src="/brand/web-empire-logo.svg" alt="WEB EMPIRE" className="we-register-logo" />
-          <h1>
-            <span>{locale.code === "ar" ? "كل أداة تحتاجها." : "Every tool you need."}</span>
-            <br />
-            <span className="we-gradient-text">{locale.code === "ar" ? "في نظام واحد." : "In one system."}</span>
-          </h1>
-          <p>
-            {locale.code === "ar"
-              ? "حساب واحد للوصول إلى الأدوات، الرصيد، سجل التشغيلات، ولوحة التحكم."
-              : "One account for tools, credits, run history, and your dashboard."}
-          </p>
-
-          <div className="we-register-visual-stack">
-            <img src={assets.heroVisual} alt="" />
-            <div className="we-register-mini-dashboard">
-              <span>WEB EMPIRE</span>
-              <div>
-                <strong>300</strong>
-                <small>{t.benefitOne}</small>
-              </div>
-              <div>
-                <strong>26+</strong>
-                <small>{t.benefitTwo}</small>
-              </div>
-              <div>
-                <strong>∞</strong>
-                <small>{t.benefitThree}</small>
-              </div>
-            </div>
+    <main className="we-page we-auth-page we-register-upgraded we-register-reference-theme">
+      <div className="we-container we-register-shell">
+        <section className="we-register-showcase" aria-labelledby="register-hero-title">
+          <div className="we-register-showcase-copy">
+            <h1 id="register-hero-title">
+              <span>{t.heroTitle}</span>
+              <span className="we-gradient-text">{t.heroAccent}</span>
+            </h1>
+            <p>{t.heroDescription}</p>
           </div>
 
-          <div className="we-register-benefits" aria-label={t.benefitsTitle}>
+          <div className="we-register-orbit" aria-hidden="true">
+            <span className="we-register-orbit-chip is-percent">%</span>
+            <span className="we-register-orbit-chip is-vat">VAT</span>
+            <span className="we-register-orbit-chip is-growth">↗</span>
+            <span className="we-register-orbit-chip is-calc">⌗</span>
+            <span className="we-register-orbit-chip is-chart">◔</span>
+
+            <img
+              src={assets.heroVisual}
+              alt=""
+              className="we-register-castle"
+            />
+
+            <img
+              src={assets.dashboardPreview}
+              alt=""
+              className="we-register-dashboard-preview"
+            />
+          </div>
+
+          <div className="we-register-trust-grid">
             <article>
-              <strong>01</strong>
-              <p>{t.benefitOne}</p>
+              <span aria-hidden="true">◈</span>
+              <div>
+                <strong>{t.secureTitle}</strong>
+                <small>{t.secureBody}</small>
+              </div>
             </article>
             <article>
-              <strong>02</strong>
-              <p>{t.benefitTwo}</p>
+              <span aria-hidden="true">⟳</span>
+              <div>
+                <strong>{t.syncTitle}</strong>
+                <small>{t.syncBody}</small>
+              </div>
             </article>
             <article>
-              <strong>03</strong>
-              <p>{t.benefitThree}</p>
+              <span aria-hidden="true">♙</span>
+              <div>
+                <strong>{t.privacyTitle}</strong>
+                <small>{t.privacyBody}</small>
+              </div>
             </article>
           </div>
         </section>
 
-        <section className="we-register-card">
-          <p className="we-simple-kicker">CREATE ACCOUNT</p>
-          <h2>{t.title}</h2>
-          <p>{t.subtitle}</p>
+        <section className="we-register-card" aria-labelledby="register-title">
+          <img
+            src={assets.logo}
+            alt="WEB EMPIRE"
+            className="we-register-card-logo"
+          />
+
+          <div className="we-register-heading">
+            <h2 id="register-title">{t.title}</h2>
+            <p>{t.subtitle}</p>
+            <span aria-hidden="true" />
+          </div>
 
           {errorMessage ? (
-            <p id="register-error" className="we-form-alert" role="alert" aria-live="assertive">
+            <p
+              id="register-error"
+              className="we-form-alert"
+              role="alert"
+              aria-live="assertive"
+            >
               {errorMessage}
             </p>
           ) : null}
 
-          <form action={signUp} className="we-form we-register-form" aria-describedby={errorMessage ? "register-error" : undefined}>
+          <form
+            action={signUp}
+            className="we-form we-register-form"
+            aria-describedby={errorMessage ? "register-error" : undefined}
+          >
             <input type="hidden" name="locale" value={locale.code} />
-            <h3 className="we-register-subtitle">{t.createAccount}</h3>
+
+            <label>
+              {t.fullName}
+              <input
+                name="fullName"
+                type="text"
+                placeholder={t.fullNamePlaceholder}
+                autoComplete="name"
+                minLength={2}
+                maxLength={100}
+                required
+              />
+            </label>
 
             <label>
               {t.email}
               <input
                 name="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder={t.emailPlaceholder}
                 autoComplete="email"
                 inputMode="email"
                 required
               />
-              <small>{t.emailHint}</small>
             </label>
 
-            <label>
-              {t.password}
-              <input
-                name="password"
-                type="password"
-                placeholder={t.password}
-                autoComplete="new-password"
-                minLength={8}
-                required
-              />
-              <small>{t.passwordHint}</small>
-            </label>
+            <div className="we-register-password-grid">
+              <label>
+                {t.password}
+                <input
+                  name="password"
+                  type="password"
+                  placeholder={t.passwordPlaceholder}
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+              </label>
+
+              <label>
+                {t.confirmPassword}
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder={t.confirmPasswordPlaceholder}
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+              </label>
+            </div>
 
             <label className="we-register-check">
               <input type="checkbox" required />
               <span>
-                {locale.code === "ar" ? "أوافق على " : "I agree to the "}
+                {t.termsPrefix}
                 <Link href={`${prefix}/terms`}>{t.terms}</Link>
-                {locale.code === "ar" ? " و" : " and "}
+                {t.termsJoin}
                 <Link href={`${prefix}/privacy`}>{t.privacy}</Link>
               </span>
             </label>
 
-            <FormPendingButton className="primary" type="submit" pendingLabel={t.createPending}>
+            <FormPendingButton
+              className="primary we-register-submit"
+              type="submit"
+              pendingLabel={t.createPending}
+            >
               ✧ {t.create}
             </FormPendingButton>
           </form>
 
-          <div className="we-auth-divider"><span>OR</span></div>
+          <div className="we-auth-divider">
+            <span>{t.social}</span>
+          </div>
 
-          <p className="we-register-social-label">{t.socialTitle}</p>
-
-          <form action={signInWithProvider} className="we-form we-register-social-form">
+          <form
+            action={signInWithProvider}
+            className="we-register-social-form"
+          >
             <input type="hidden" name="locale" value={locale.code} />
             <input type="hidden" name="next" value={next} />
+
             <FormPendingButton
               type="submit"
               name="provider"
@@ -214,6 +296,7 @@ export default async function RegisterPage({
               <span aria-hidden="true" className="we-social-icon">G</span>
               <span>{t.google}</span>
             </FormPendingButton>
+
             <FormPendingButton
               type="submit"
               name="provider"
@@ -221,12 +304,20 @@ export default async function RegisterPage({
               pendingLabel={t.microsoftPending}
               className="we-social-provider we-social-microsoft"
             >
-              <span aria-hidden="true" className="we-social-icon">M</span>
+              <span aria-hidden="true" className="we-social-icon we-ms-icon">
+                <i />
+                <i />
+                <i />
+                <i />
+              </span>
               <span>{t.microsoft}</span>
             </FormPendingButton>
           </form>
 
-          <p className="we-form-note">{t.have} <Link href={`${prefix}/auth/login`}>{t.login}</Link></p>
+          <p className="we-form-note we-register-login-link">
+            {t.have}{" "}
+            <Link href={`${prefix}/auth/login`}>{t.login}</Link>
+          </p>
         </section>
       </div>
     </main>
