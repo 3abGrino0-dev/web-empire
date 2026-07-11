@@ -1,45 +1,57 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-import type { SiteIdentity } from "@/localization/types";
+import type { LocaleRecord, SiteIdentity, UiMessages } from "@/localization/types";
 
-const knownLocales = new Set(["ar", "en", "fr", "tr", "ur"]);
-const footerLabels: Record<string, { home: string; tools: string; pricing: string; login: string }> = {
-  ar: { home: "الرئيسية", tools: "الأدوات", pricing: "الأسعار", login: "الدخول" },
-  en: { home: "Home", tools: "Tools", pricing: "Pricing", login: "Login" },
-  fr: { home: "Accueil", tools: "Outils", pricing: "Tarifs", login: "Connexion" },
-  tr: { home: "Ana Sayfa", tools: "Araclar", pricing: "Fiyatlar", login: "Giris" },
-  ur: { home: "ہوم", tools: "ٹولز", pricing: "قیمت", login: "لاگ ان" },
+const footerLabels = {
+  ar: {
+    rights: "جميع الحقوق محفوظة.",
+    privacy: "سياسة الخصوصية",
+    terms: "الشروط والأحكام",
+    help: "الدعم والمساعدة",
+    contact: "تواصل معنا",
+  },
+  en: {
+    rights: "All rights reserved.",
+    privacy: "Privacy policy",
+    terms: "Terms",
+    help: "Support",
+    contact: "Contact",
+  },
 };
 
-export function SiteFooter({ identity }: { identity: SiteIdentity }) {
-  const pathname = usePathname();
-  const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "en";
-  const locale = knownLocales.has(firstSegment) ? firstSegment : "en";
-  const prefix = `/${locale}`;
-  const labels = footerLabels[locale] ?? footerLabels.en;
+export function SiteFooter({
+  locale,
+  identity,
+  messages,
+}: {
+  locale?: LocaleRecord;
+  identity: SiteIdentity;
+  messages?: UiMessages;
+}) {
+  const localeCode = locale?.code ?? "ar";
+  const t = localeCode === "ar" ? footerLabels.ar : footerLabels.en;
+  const prefix = `/${localeCode}`;
 
   return (
-    <footer className="site-footer empire-footer">
-      <div className="container empire-footer-shell">
-        <div className="empire-footer-brand">
-          <span aria-hidden="true">♛</span>
-          <strong>{identity.siteName}</strong>
-          <p>{identity.tagline}</p>
-          <b aria-hidden="true">WEB EMPIRE</b>
+    <footer className="we-footer">
+      <div className="we-container we-footer-inner">
+        <div className="we-footer-social">
+          <span>𝕏</span>
+          <span>in</span>
+          <span>◎</span>
+          <span>▶</span>
         </div>
 
-        <div className="empire-footer-rail">
-          <nav className="empire-footer-nav" aria-label="Footer navigation">
-            <Link href={prefix}>{labels.home}</Link>
-            <Link href={`${prefix}/tools`}>{labels.tools}</Link>
-            <Link href={`${prefix}/pricing`}>{labels.pricing}</Link>
-            <Link href={`${prefix}/auth/login`}>{labels.login}</Link>
-          </nav>
+        <nav className="we-footer-links" aria-label="Footer">
+          <Link href={`${prefix}/terms`}>{t.terms}</Link>
+          <Link href={`${prefix}/privacy`}>{t.privacy}</Link>
+          <Link href={`${prefix}/contact`}>{t.contact}</Link>
+          <Link href={`${prefix}/support`}>{t.help}</Link>
+        </nav>
 
-          <p className="empire-footer-meta">{identity.siteNameEn ?? identity.siteName}</p>
+        <div className="we-footer-brand">
+          <span>© 2026 {identity.siteName || "Web Empire"}. {t.rights}</span>
+          <img src="/brand/web-empire-mark.svg" alt="" width="48" height="48" />
         </div>
       </div>
     </footer>
