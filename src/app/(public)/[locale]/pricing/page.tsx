@@ -1,135 +1,67 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { PricingAccessSystem } from "@/components/public/pricing-access-system";
 import { translate } from "@/localization/messages";
 import { getLocaleByCode, getUiMessages } from "@/localization/repository";
 import { getActivePlans } from "@/repositories/catalog";
 
-const intro: Record<string, {
-  kicker: string;
-  title: string;
-  body: string;
-  levelsLabel: string;
-  sequenceTitle: string;
-  sequenceChoose: string;
-  sequenceCredits: string;
-  sequenceRun: string;
-  emptyTitle: string;
-  emptyBody: string;
-  action: {
-    freePlan: string;
-    subscribe: string;
-    openingCheckout: string;
-    checkoutError: string;
-  };
-}> = {
-  ar: {
-    kicker: "الخطط والنقاط",
-    title: "ادفع للاستخدام. لا للضوضاء.",
-    body: "الوصول هنا مبني على خطة واضحة ورصيد واضح، بينما تبقى تكلفة المزود داخل النظام.",
-    levelsLabel: "مستويات الوصول",
-    sequenceTitle: "الخطة ← الرصيد ← الأدوات",
-    sequenceChoose: "اختر مستوى الوصول",
-    sequenceCredits: "استلم رصيدك الشهري",
-    sequenceRun: "شغّل الأدوات باستخدام النقاط",
-    emptyTitle: "لا توجد خطط مفعّلة حاليًا",
-    emptyBody: "يمكنك المحاولة لاحقًا عند نشر مستويات وصول جديدة.",
-    action: {
-      freePlan: "الخطة المجانية",
-      subscribe: "اشترك الآن",
-      openingCheckout: "جاري فتح الدفع...",
-      checkoutError: "تعذر بدء الدفع",
-    },
-  },
-  en: {
-    kicker: "PLANS & CREDITS",
-    title: "Pay for usage. Not noise.",
-    body: "Access is structured through real plans and real credits, while provider cost remains inside the system.",
-    levelsLabel: "ACCESS LEVELS",
-    sequenceTitle: "PLAN ← CREDITS ← TOOLS",
-    sequenceChoose: "Choose your access level",
-    sequenceCredits: "Receive your monthly credits",
-    sequenceRun: "Run tools using credits",
-    emptyTitle: "No active plans are available right now",
-    emptyBody: "Please check back later when new access levels are published.",
-    action: {
-      freePlan: "Free plan",
-      subscribe: "Subscribe now",
-      openingCheckout: "Opening checkout...",
-      checkoutError: "Unable to start checkout",
-    },
-  },
-  fr: {
-    kicker: "OFFRES & CREDITS",
-    title: "Payez pour l'usage. Pas pour le bruit.",
-    body: "L'acces est organise par de vraies offres et de vrais credits, tandis que le cout fournisseur reste interne.",
-    levelsLabel: "NIVEAUX D'ACCES",
-    sequenceTitle: "OFFRE ← CREDITS ← OUTILS",
-    sequenceChoose: "Choisissez votre niveau d'acces",
-    sequenceCredits: "Recevez vos credits mensuels",
-    sequenceRun: "Lancez les outils avec vos credits",
-    emptyTitle: "Aucune offre active n'est disponible pour le moment",
-    emptyBody: "Revenez plus tard lorsque de nouveaux niveaux d'acces seront publies.",
-    action: {
-      freePlan: "Offre gratuite",
-      subscribe: "S'abonner",
-      openingCheckout: "Ouverture du paiement...",
-      checkoutError: "Impossible de demarrer le paiement",
-    },
-  },
-  tr: {
-    kicker: "PLANLAR VE KREDILER",
-    title: "Kullanima ode. Gurultuye degil.",
-    body: "Erisim gercek planlar ve gercek kredilerle duzenlenir, saglayici maliyeti sistem icinde kalir.",
-    levelsLabel: "ERISIM SEVIYELERI",
-    sequenceTitle: "PLAN ← KREDI ← ARACLAR",
-    sequenceChoose: "Erisim seviyeni sec",
-    sequenceCredits: "Aylik kredini al",
-    sequenceRun: "Araclari kredi ile calistir",
-    emptyTitle: "Su anda etkin plan yok",
-    emptyBody: "Yeni erisim seviyeleri yayinlandiginda tekrar kontrol edin.",
-    action: {
-      freePlan: "Ucretsiz plan",
-      subscribe: "Hemen abone ol",
-      openingCheckout: "Odeme aciliyor...",
-      checkoutError: "Odeme baslatilamadi",
-    },
-  },
-  ur: {
-    kicker: "پلان اور کریڈٹس",
-    title: "استعمال کے لیے ادائیگی کریں۔ شور کے لیے نہیں۔",
-    body: "رسائی حقیقی پلانز اور حقیقی کریڈٹس سے منظم ہے، جبکہ پرووائیڈر لاگت سسٹم کے اندر رہتی ہے۔",
-    levelsLabel: "رسائی کی سطحیں",
-    sequenceTitle: "پلان ← کریڈٹس ← ٹولز",
-    sequenceChoose: "اپنی رسائی کی سطح منتخب کریں",
-    sequenceCredits: "اپنے ماہانہ کریڈٹس حاصل کریں",
-    sequenceRun: "کریڈٹس کے ساتھ ٹولز چلائیں",
-    emptyTitle: "فی الحال کوئی فعال پلان دستیاب نہیں",
-    emptyBody: "نئی رسائی کی سطحیں شائع ہونے پر دوبارہ دیکھیں۔",
-    action: {
-      freePlan: "مفت پلان",
-      subscribe: "ابھی سبسکرائب کریں",
-      openingCheckout: "چیک آؤٹ کھل رہا ہے...",
-      checkoutError: "چیک آؤٹ شروع نہیں ہو سکا",
-    },
-  },
+const labels = {
+  ar: { title: "خطط بسيطة تناسب الجميع", body: "اختر الباقة المناسبة لاحتياجاتك وابدأ الاستفادة من أدوات الذكاء المتكاملة.", monthly: "شهريًا", start: "ابدأ الآن", choose: "اختر الباقة", compare: "مقارنة المزايا", faq: "أسئلة حول الخطط والتسعير؟" },
+  en: { title: "Simple plans for everyone", body: "Choose the plan that fits your needs and start using the complete tool system.", monthly: "monthly", start: "Start now", choose: "Choose plan", compare: "Feature comparison", faq: "Questions about plans and pricing?" },
 };
 
 export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: localeCode } = await params;
   const locale = await getLocaleByCode(localeCode);
   if (!locale) notFound();
+
   const [plans, messages] = await Promise.all([getActivePlans(locale.code), getUiMessages(locale)]);
-  const copy = intro[locale.code] ?? intro.en;
-  const pointsLabel = translate(messages, "common.points");
+  const t = locale.code === "ar" ? labels.ar : labels.en;
+  const prefix = `/${locale.code}`;
 
   return (
-    <PricingAccessSystem
-      locale={locale.code}
-      localeNumberFormat={locale.locale_code}
-      plans={plans}
-      pointsLabel={pointsLabel}
-      copy={copy}
-    />
+    <main className="we-page we-pricing-page">
+      <section className="we-container">
+        <div className="we-pricing-title">
+          <h1><span className="we-gradient-text">{t.title}</span></h1>
+          <p>{t.body}</p>
+        </div>
+
+        <div className="we-plan-grid">
+          {plans.slice(0, 3).map((plan, index) => (
+            <article className={`we-price-card ${index === 1 ? "featured" : ""}`} key={plan.slug}>
+              <h2>{plan.name}</h2>
+              <p>{plan.description}</p>
+              <div className="we-price">{Number(plan.price_sar)} <span>SAR / {t.monthly}</span></div>
+              <ul>
+                <li>{Number(plan.monthly_credits).toLocaleString(locale.locale_code)} {translate(messages, "common.points")}</li>
+                <li>{locale.code === "ar" ? "وصول إلى الأدوات" : "Tool access"}</li>
+                <li>{locale.code === "ar" ? "سجل تشغيلات" : "Run history"}</li>
+                <li>{locale.code === "ar" ? "دعم أساسي" : "Basic support"}</li>
+              </ul>
+              <Link href={`${prefix}/auth/register`} className={index === 1 ? "we-button-primary" : "we-button-ghost"}>
+                {index === 1 ? t.start : t.choose}
+              </Link>
+            </article>
+          ))}
+        </div>
+
+        <div className="we-compare-card">
+          <h2>{t.compare}</h2>
+          <table>
+            <tbody>
+              <tr><th>{locale.code === "ar" ? "عدد الأدوات" : "Tools"}</th><td>{locale.code === "ar" ? "محدود" : "Limited"}</td><td>{locale.code === "ar" ? "جميع الأدوات" : "All tools"}</td><td>{locale.code === "ar" ? "جميع الأدوات" : "All tools"}</td></tr>
+              <tr><th>{locale.code === "ar" ? "سجل التشغيلات" : "Run history"}</th><td>{locale.code === "ar" ? "محدود" : "Limited"}</td><td>{locale.code === "ar" ? "غير محدود" : "Unlimited"}</td><td>{locale.code === "ar" ? "غير محدود" : "Unlimited"}</td></tr>
+              <tr><th>{locale.code === "ar" ? "الدعم" : "Support"}</th><td>{locale.code === "ar" ? "أساسي" : "Basic"}</td><td>{locale.code === "ar" ? "أولوية" : "Priority"}</td><td>{locale.code === "ar" ? "مخصص" : "Dedicated"}</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="we-cta-strip">
+          <h2>{t.faq}</h2>
+          <Link href={`${prefix}/contact`} className="we-button-ghost">{locale.code === "ar" ? "تواصل معنا" : "Contact us"}</Link>
+        </div>
+      </section>
+    </main>
   );
 }

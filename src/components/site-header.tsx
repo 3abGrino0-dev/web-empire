@@ -6,28 +6,23 @@ import type { ColorMode, HeaderStyle } from "@/appearance/types";
 import type { LocaleRecord, SiteIdentity, UiMessages } from "@/localization/types";
 import { translate } from "@/localization/messages";
 
-const sectorLabels: Record<string, string> = {
-  ar: "التصنيفات",
-  en: "Sectors",
-  fr: "Secteurs",
-  tr: "Kategoriler",
-  ur: "زمرے",
-};
-
-const pricingLabels: Record<string, string> = {
-  ar: "الأسعار",
-  en: "Pricing",
-  fr: "Tarifs",
-  tr: "Fiyatlar",
-  ur: "قیمتیں",
-};
-
-const menuLabels: Record<string, string> = {
-  ar: "القائمة",
-  en: "Menu",
-  fr: "Menu",
-  tr: "Menu",
-  ur: "مینو",
+const labels = {
+  ar: {
+    pricing: "الأسعار",
+    sectors: "التصنيفات",
+    blog: "المدونة",
+    companies: "الشركات",
+    login: "تسجيل الدخول",
+    start: "ابدأ الآن",
+  },
+  en: {
+    pricing: "Pricing",
+    sectors: "Categories",
+    blog: "Blog",
+    companies: "Companies",
+    login: "Login",
+    start: "Start now",
+  },
 };
 
 export function SiteHeader({
@@ -45,61 +40,39 @@ export function SiteHeader({
   defaultColorMode: ColorMode;
 }) {
   const prefix = `/${locale.code}`;
-  const isArabic = locale.code === "ar";
+  const t = locale.code === "ar" ? labels.ar : labels.en;
 
   return (
-    <header className={`site-header imperial-header header-${headerStyle}`}>
-      <div className="container imperial-header-inner">
-        <Link href={prefix} className="imperial-brand" aria-label="WEB EMPIRE">
-          <img
-            src="/brand/web-empire-mark.svg"
-            alt=""
-            width="42"
-            height="42"
-            className="imperial-brand-mark"
-          />
-          <span className="imperial-brand-type">
-            <strong>WEB EMPIRE</strong>
-            <small>{isArabic ? "إمبراطورية الويب" : "TOOLS. INTELLIGENCE. CONTROL."}</small>
-          </span>
+    <header className={`site-header light-empire-header header-${headerStyle}`}>
+      <div className="container light-empire-header-inner">
+        <Link href={prefix} className="light-empire-brand" aria-label="WEB EMPIRE">
+          <img src="/brand/web-empire-logo.svg" alt="WEB EMPIRE" width="210" height="54" />
         </Link>
 
-        <nav className="imperial-nav" aria-label="Main navigation">
+        <nav className="light-empire-nav" aria-label="Main navigation">
           <Link href={prefix}>{translate(messages, "nav.home")}</Link>
           <Link href={`${prefix}/tools`}>{translate(messages, "nav.tools")}</Link>
-          <Link href={`${prefix}/tools#empire-sectors`}>{sectorLabels[locale.code] ?? sectorLabels.en}</Link>
-          <Link href={`${prefix}/pricing`}>{pricingLabels[locale.code] ?? pricingLabels.en}</Link>
+          <Link href={`${prefix}/tools#categories`}>{t.sectors}</Link>
+          <Link href={`${prefix}/pricing`}>{t.pricing}</Link>
+          <Link href={`${prefix}/blog`}>{t.blog}</Link>
+          <Link href={`${prefix}/companies`}>{t.companies}</Link>
         </nav>
 
-        <div className="imperial-header-actions">
+        <div className="light-empire-actions">
           <LanguageSwitcher
             locales={locales}
             currentLocale={locale.code}
             label={translate(messages, "language.label")}
           />
-          <Link href={`${prefix}/auth/login`} className="button imperial-login-btn">
-            {translate(messages, "nav.login")}
+          <Link href={`${prefix}/auth/login`} className="light-empire-login">
+            {t.login}
           </Link>
-          <Link href={`${prefix}/tools`} className="button imperial-cta">
-            {isArabic ? "ابدأ الآن" : translate(messages, "home.explore")}
+          <Link href={`${prefix}/auth/register`} className="light-empire-start">
+            ✧ {t.start}
           </Link>
-          <div className="imperial-utility-controls" aria-label="Display controls">
+          <div className="light-empire-mode">
             <ColorModeToggle defaultMode={defaultColorMode} />
           </div>
-
-          <details className="imperial-mobile-menu">
-            <summary aria-label={menuLabels[locale.code] ?? menuLabels.en}>
-              {menuLabels[locale.code] ?? menuLabels.en}
-            </summary>
-            <div className="imperial-mobile-menu-panel">
-              <nav className="imperial-mobile-nav" aria-label="Mobile navigation">
-                <Link href={prefix}>{translate(messages, "nav.home")}</Link>
-                <Link href={`${prefix}/tools`}>{translate(messages, "nav.tools")}</Link>
-                <Link href={`${prefix}/tools#empire-sectors`}>{sectorLabels[locale.code] ?? sectorLabels.en}</Link>
-                <Link href={`${prefix}/pricing`}>{pricingLabels[locale.code] ?? pricingLabels.en}</Link>
-              </nav>
-            </div>
-          </details>
         </div>
       </div>
     </header>

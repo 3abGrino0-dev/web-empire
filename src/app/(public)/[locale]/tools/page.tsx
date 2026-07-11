@@ -1,149 +1,74 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ToolsArchive } from "@/components/public/tools-archive";
-import { translate } from "@/localization/messages";
-import { getLocaleByCode, getUiMessages } from "@/localization/repository";
-import { getActiveTools } from "@/repositories/catalog";
+import { getLocaleByCode } from "@/localization/repository";
+import { getActiveCategories, getActiveTools } from "@/repositories/catalog";
+import { webEmpireLightAssets as assets } from "@/brand/web-empire-light-assets";
 
-const intro: Record<
-  string,
-  {
-    kicker: string;
-    title: string;
-    body: string;
-    countLabel: string;
-    archiveLabel: string;
-    engineLabel: string;
-    pricingLabel: string;
-    openLabel: string;
-    fromLabel: string;
-    emptyTitle: string;
-    emptyBody: string;
-  }
-> = {
-  ar: {
-    kicker: "أرشيف الأدوات",
-    title: "كل أداة. مهمة واضحة. نتيجة قابلة للاستخدام.",
-    body: "فهرس كامل للأدوات المنشورة داخل إمبراطورية الويب. اختر المهمة وافتح الأداة مباشرة.",
-    countLabel: "أداة منشورة",
-    archiveLabel: "فهرس الأدوات",
-    engineLabel: "المحرك",
-    pricingLabel: "النقاط",
-    openLabel: "افتح الأداة",
-    fromLabel: "من",
-    emptyTitle: "لا توجد أدوات منشورة الآن",
-    emptyBody: "ارجع لاحقًا. سيتم عرض الأدوات النشطة هنا مباشرة عند نشرها.",
-  },
-  en: {
-    kicker: "TOOL ARCHIVE",
-    title: "Every tool. One clear task. One usable result.",
-    body: "A complete index of published tools inside Web Empire. Pick the job and open the tool directly.",
-    countLabel: "published tools",
-    archiveLabel: "Tool archive",
-    engineLabel: "Engine",
-    pricingLabel: "Credits",
-    openLabel: "Open tool",
-    fromLabel: "From",
-    emptyTitle: "No published tools yet",
-    emptyBody: "Check back soon. Active tools will appear here as soon as they are published.",
-  },
-  fr: {
-    kicker: "ARCHIVE DES OUTILS",
-    title: "Chaque outil. Une mission claire. Un résultat exploitable.",
-    body: "Un index complet des outils publiés dans Web Empire. Choisissez la mission et ouvrez l’outil directement.",
-    countLabel: "outils publiés",
-    archiveLabel: "Archive des outils",
-    engineLabel: "Moteur",
-    pricingLabel: "Crédits",
-    openLabel: "Ouvrir l’outil",
-    fromLabel: "À partir de",
-    emptyTitle: "Aucun outil publié pour le moment",
-    emptyBody: "Revenez bientôt. Les outils actifs apparaîtront ici dès leur publication.",
-  },
-  tr: {
-    kicker: "ARAC ARSIVI",
-    title: "Her arac. Net bir gorev. Kullanilabilir bir sonuc.",
-    body: "Web Empire icinde yayinda olan araclarin tam dizini. Gorevi secin ve araci dogrudan acin.",
-    countLabel: "yayindaki arac",
-    archiveLabel: "Arac arsivi",
-    engineLabel: "Motor",
-    pricingLabel: "Puan",
-    openLabel: "Araci ac",
-    fromLabel: "En az",
-    emptyTitle: "Henuz yayinda arac yok",
-    emptyBody: "Kisa sure sonra tekrar bakin. Aktif araclar yayinlandiginda burada gorunecek.",
-  },
-  ur: {
-    kicker: "ٹول آرکائیو",
-    title: "ہر ٹول۔ واضح کام۔ قابلِ استعمال نتیجہ۔",
-    body: "Web Empire میں شائع شدہ ٹولز کا مکمل انڈیکس۔ کام منتخب کریں اور ٹول براہ راست کھولیں۔",
-    countLabel: "شائع شدہ ٹولز",
-    archiveLabel: "ٹول آرکائیو",
-    engineLabel: "انجن",
-    pricingLabel: "پوائنٹس",
-    openLabel: "ٹول کھولیں",
-    fromLabel: "سے",
-    emptyTitle: "ابھی کوئی شائع شدہ ٹول موجود نہیں",
-    emptyBody: "بعد میں دوبارہ دیکھیں۔ فعال ٹولز شائع ہوتے ہی یہاں دکھائی دیں گے۔",
-  },
+const labels = {
+  ar: { title: "مكتبة الأدوات", body: "اكتشف مجموعة الأدوات الذكية التي تساعدك على إنجاز عملك بدقة وسرعة.", search: "ابحث عن أداة أو كلمة مفتاحية...", all: "الكل", sort: "الأحدث أولًا", filter: "تصفية", missing: "أداة مفقودة؟", suggest: "اقترح أداة جديدة", use: "استخدم الأداة", load: "تحميل المزيد" },
+  en: { title: "Tools Library", body: "Explore smart tools that help you analyze, calculate, and grow.", search: "Search tools...", all: "All", sort: "Newest first", filter: "Filter", missing: "Missing a tool?", suggest: "Suggest a tool", use: "Use tool", load: "Load more" },
 };
+
+const glyphs = ["%", "↗", "VAT", "◔", "▣", "☷", "◎", "T", "⌕"];
 
 export default async function ToolsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: localeCode } = await params;
   const locale = await getLocaleByCode(localeCode);
   if (!locale) notFound();
-  const [tools, messages] = await Promise.all([getActiveTools(locale.code), getUiMessages(locale)]);
-  const copy = intro[locale.code] ?? intro.en;
-  const archiveTools = tools.map((tool) => ({
-    key: String(tool.id),
-    slug: tool.slug,
-    title: tool.title,
-    description: tool.localizedDescription,
-    engineType: tool.engine_type,
-    pricingMode: tool.pricing_mode,
-    fixedPoints: Number(tool.fixed_points),
-    minimumPoints: Number(tool.minimum_points),
-  }));
-  const engines = Array.from(new Set(archiveTools.map((tool) => tool.engineType)));
+
+  const [tools, categories] = await Promise.all([getActiveTools(locale.code), getActiveCategories(locale.code)]);
+  const t = locale.code === "ar" ? labels.ar : labels.en;
+  const prefix = `/${locale.code}`;
 
   return (
-    <main className="empire-archive-page">
-      <header className="empire-archive-hero">
-        <div className="container empire-archive-hero-grid">
-          <div>
-            <p className="empire-section-kicker">{copy.kicker}</p>
-            <h1 className="empire-archive-title">{copy.title}</h1>
+    <main className="we-page we-tools-page">
+      <div className="we-container we-tools-layout">
+        <aside className="we-tools-sidebar">
+          <h3>+100 {locale.code === "ar" ? "أداة" : "tools"}</h3>
+          <img src={assets.toolsVisual} alt="" style={{ width: "100%", height: "auto" }} />
+          <Link className="we-side-item active" href={`${prefix}/tools`}><span>{t.all}</span><strong>({tools.length}+)</strong></Link>
+          {categories.slice(0, 7).map((category, index) => (
+            <Link className="we-side-item" href={`${prefix}/tools?category=${category.slug}`} key={category.slug}>
+              <span>{category.name}</span><small>({22 - index * 2})</small>
+            </Link>
+          ))}
+          <div className="we-tools-sidebar" style={{ marginTop: 18, boxShadow: "none" }}>
+            <h3>{t.missing}</h3>
+            <p style={{ color: "var(--we-muted)" }}>{locale.code === "ar" ? "اقترح أداة جديدة تساعدك في عملك اليومي." : "Suggest a new tool for your workflow."}</p>
+            <Link className="we-button-ghost" href={`${prefix}/contact`}>✧ {t.suggest}</Link>
+          </div>
+        </aside>
+
+        <section>
+          <div className="we-tools-title">
+            <h1>{t.title}</h1>
+            <p>{t.body}</p>
+          </div>
+          <div className="we-search"><span>⌕</span><strong>{t.search}</strong><span>☷</span></div>
+          <div className="we-chip-row">
+            <span className="we-chip active">{t.all}</span>
+            {categories.slice(0, 6).map((category) => <span className="we-chip" key={category.slug}>{category.name}</span>)}
+            <span className="we-chip">{t.sort}</span>
+            <span className="we-chip">{t.filter}</span>
           </div>
 
-          <div className="empire-archive-side">
-            <p className="empire-archive-intro">{copy.body}</p>
-            <p className="empire-archive-count" aria-label={copy.countLabel}>
-              <strong>{String(tools.length).padStart(2, "0")}</strong>
-              <span>{copy.countLabel}</span>
-            </p>
+          <div className="we-tools-grid">
+            {tools.slice(0, 12).map((tool, index) => (
+              <Link href={`${prefix}/tools/${tool.slug}`} className="we-tool-list-card" key={tool.slug}>
+                <div className="we-icon">{glyphs[index % glyphs.length]}</div>
+                <h3>{tool.title}</h3>
+                <p>{tool.localizedDescription}</p>
+                <span className="we-card-link">← {t.use}</span>
+              </Link>
+            ))}
           </div>
-        </div>
-      </header>
 
-      <section className="container empire-archive-wrap">
-        <ToolsArchive
-          locale={locale.code}
-          localeCode={locale.locale_code}
-          tools={archiveTools}
-          engines={engines}
-          labels={{
-            archiveLabel: copy.archiveLabel,
-            engineLabel: copy.engineLabel,
-            pricingLabel: copy.pricingLabel,
-            openLabel: copy.openLabel,
-            freeLabel: translate(messages, "common.free"),
-            pointsLabel: translate(messages, "common.points"),
-            fromLabel: copy.fromLabel,
-            emptyTitle: copy.emptyTitle,
-            emptyBody: copy.emptyBody,
-          }}
-        />
-      </section>
+          <div style={{ marginTop: 22, textAlign: "center" }}>
+            <button className="we-button-ghost">{t.load}</button>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
