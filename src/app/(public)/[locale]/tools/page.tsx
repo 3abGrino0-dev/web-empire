@@ -92,7 +92,7 @@ export default async function ToolsPage({
         </aside>
 
         <section>
-          <div className="we-tools-title">
+          <div className="we-tools-title" id="categories">
             <h1>{activeCategory?.name ?? t.title}</h1>
             <p>{activeCategory?.description || t.body}</p>
           </div>
@@ -113,16 +113,30 @@ export default async function ToolsPage({
             <span className="we-chip">{t.sort}</span>
           </div>
 
-          <div className="we-tools-grid">
-            {visibleTools.map((tool, index) => (
-              <Link href={`${prefix}/tools/${tool.slug}`} className="we-tool-list-card" key={tool.slug}>
-                <div className="we-icon">{glyphs[index % glyphs.length]}</div>
-                <h3>{tool.title}</h3>
-                <p>{tool.localizedDescription}</p>
-                <span className="we-card-link">← {t.use}</span>
+          {visibleTools.length > 0 ? (
+            <div className="we-tools-grid">
+              {visibleTools.map((tool, index) => (
+                <Link href={`${prefix}/tools/${tool.slug}`} className="we-tool-list-card" key={tool.slug}>
+                  <div className="we-icon">{glyphs[index % glyphs.length]}</div>
+                  <h3>{tool.title}</h3>
+                  <p>{tool.localizedDescription}</p>
+                  <span className="we-card-link">← {t.use}</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="we-tools-empty" role="status">
+              <strong>{locale.code === "ar" ? "لا توجد أدوات في هذا التصنيف حاليًا" : "No tools are available in this category yet."}</strong>
+              <p>
+                {locale.code === "ar"
+                  ? "اختر تصنيفًا آخر أو اقترح أداة جديدة تناسب سير عملك."
+                  : "Choose another category or suggest a new tool for your workflow."}
+              </p>
+              <Link className="we-button-ghost" href={`${prefix}/contact`}>
+                ✧ {t.suggest}
               </Link>
-            ))}
-          </div>
+            </div>
+          )}
         </section>
       </div>
     </main>

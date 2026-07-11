@@ -13,5 +13,5 @@ export const serverEnv = {
 };
 
 export const publicEnv = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://webempire.site"
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://webempire.site"
 };
