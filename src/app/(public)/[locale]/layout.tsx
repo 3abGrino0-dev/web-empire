@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import "@/app/globals.css";
 import "@/app/editorial.css";
 import "@/app/empire-brand.css";
+import "@/app/empire-command.css";
 import { appearanceCssVariables, getAppearanceSettings } from "@/appearance/repository";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
