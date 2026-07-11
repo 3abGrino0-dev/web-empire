@@ -2539,7 +2539,7 @@ body {
 .we-hero-visual {
   min-height: 0;
   aspect-ratio: 16 / 9;
-  overflow: visible;
+  overflow: hidden;
   background: transparent;
 }
 
@@ -2549,9 +2549,10 @@ body {
   height: 100%;
   object-fit: contain;
   object-position: center;
-  background: transparent;
   mix-blend-mode: multiply;
-  filter: drop-shadow(0 28px 54px rgba(16, 19, 31, 0.08));
+  filter: drop-shadow(
+    0 28px 54px rgba(16, 19, 31, 0.08)
+  );
 }
 
 .we-bottom-grid {
