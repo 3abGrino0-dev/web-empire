@@ -213,6 +213,7 @@ export default async function RegisterPage({
             aria-describedby={errorMessage ? "register-error" : undefined}
           >
             <input type="hidden" name="locale" value={locale.code} />
+            <input type="hidden" name="next" value={next} />
 
             <label>
               {t.fullName}

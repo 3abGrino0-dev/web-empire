@@ -31,20 +31,21 @@ export async function signUp(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
   const locale = normalizeLocale(formData.get("locale"));
+  const safeNext = resolveSafeNext(locale, formData.get("next"));
 
   if (fullName.length < 2 || !email || password.length < 8) {
-    redirect(buildAuthErrorPath(locale, "invalid_signup_input"));
+    redirect(`/${locale}/auth/register?error=invalid_signup_input&next=${encodeURIComponent(safeNext)}`);
   }
 
   if (password !== confirmPassword) {
-    redirect(buildAuthErrorPath(locale, "password_mismatch"));
+    redirect(`/${locale}/auth/register?error=password_mismatch&next=${encodeURIComponent(safeNext)}`);
   }
 
   const requestHeaders = await headers();
   const origin = resolveRequestOrigin(requestHeaders, publicEnv.siteUrl);
   const callbackUrl = new URL("/auth/callback", origin);
   callbackUrl.searchParams.set("locale", locale);
-  callbackUrl.searchParams.set("next", `/${locale}/dashboard`);
+  callbackUrl.searchParams.set("next", safeNext);
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signUp({
@@ -58,13 +59,15 @@ export async function signUp(formData: FormData) {
     },
   });
 
-  if (error) redirect(buildAuthErrorPath(locale, "signup_failed"));
+  if (error) {
+    redirect(`/${locale}/auth/register?error=signup_failed&next=${encodeURIComponent(safeNext)}`);
+  }
 
   if (!data.session) {
     redirect(`/${locale}/auth/register?status=check_email`);
   }
 
-  redirect(`/${locale}/dashboard`);
+  redirect(safeNext);
 }
 
 export async function requestPasswordReset(formData: FormData) {
