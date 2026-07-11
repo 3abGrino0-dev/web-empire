@@ -848,3 +848,46 @@ html[dir="rtl"] .we-pricing-title h1 {
     justify-content: center;
   }
 }
+
+/* Functional repair */
+.we-form-alert {
+  padding: 12px 14px;
+  border: 1px solid rgba(220, 38, 38, 0.18);
+  border-radius: 12px;
+  color: #b42318;
+  background: #fff5f5;
+  text-align: center;
+  font-weight: 800;
+}
+
+.we-chip,
+.we-side-item,
+.we-button-primary,
+.we-button-ghost,
+.we-tool-card,
+.we-tool-list-card {
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.we-chip:hover,
+.we-side-item:hover,
+.we-button-primary:hover,
+.we-button-ghost:hover,
+.we-tool-card:hover,
+.we-tool-list-card:hover {
+  transform: translateY(-2px);
+}
+
+.we-tools-grid:empty::before {
+  content: "لا توجد أدوات في هذا التصنيف حاليًا";
+  display: block;
+  padding: 24px;
+  border: 1px solid var(--we-line);
+  border-radius: 18px;
+  background: white;
+  color: var(--we-muted);
+}
