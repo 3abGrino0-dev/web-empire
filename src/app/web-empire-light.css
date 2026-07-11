@@ -2550,30 +2550,21 @@ body {
   object-fit: contain;
   object-position: center;
   mix-blend-mode: multiply;
-  filter: drop-shadow(
-    0 28px 54px rgba(16, 19, 31, 0.08)
-  );
+  filter: drop-shadow(0 28px 54px rgba(16, 19, 31, 0.08));
 }
 
 .we-bottom-grid {
-  align-items: stretch;
+  align-items: start;
 }
 
 .we-dashboard-card,
 .we-pricing-panel {
   min-height: 0;
-  align-self: stretch;
-}
-
-.we-dashboard-card {
-  display: flex;
-  flex-direction: column;
 }
 
 .we-dashboard-card img {
   display: block;
   width: 100%;
-  height: auto;
   aspect-ratio: 12 / 7;
   object-fit: cover;
   object-position: center;
@@ -2585,7 +2576,6 @@ body {
 
 .we-dashboard-preview {
   width: min(100%, 660px);
-  height: auto;
   aspect-ratio: 12 / 7;
   object-fit: cover;
   object-position: center;
@@ -2594,23 +2584,11 @@ body {
 
 .we-pricing-visual img,
 .we-pricing-hero img {
+  display: block;
   width: 100%;
   height: auto;
   object-fit: contain;
-  object-position: center;
   mix-blend-mode: multiply;
-}
-
-@media (max-width: 1024px) {
-  .we-hero-visual {
-    width: min(760px, 100%);
-    margin-inline: auto;
-  }
-
-  .we-dashboard-card img,
-  .we-dashboard-preview {
-    aspect-ratio: 16 / 10;
-  }
 }
 
 @media (max-width: 680px) {
