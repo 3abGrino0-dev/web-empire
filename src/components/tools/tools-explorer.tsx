@@ -66,6 +66,21 @@ const copy = {
   },
 };
 
+function categoryGlyph(icon: string, slug: string): string {
+  const value = `${icon} ${slug}`.toLowerCase();
+
+  if (value.includes("sparkles") || value.includes("ai")) return "✦";
+  if (value.includes("calculator") || value.includes("math")) return "▦";
+  if (value.includes("text") || value.includes("content")) return "T";
+  if (value.includes("briefcase") || value.includes("business")) return "▣";
+  if (value.includes("chart") || value.includes("marketing")) return "↗";
+  if (value.includes("wallet") || value.includes("finance")) return "◈";
+  if (value.includes("design")) return "✎";
+  if (value.includes("code")) return "</>";
+
+  return "◇";
+}
+
 function normalize(value: string): string {
   return value
     .toLocaleLowerCase()
@@ -191,8 +206,8 @@ export function ToolsExplorer({
     <div className={styles.shell}>
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
         <div className={styles.sidebarSummary}>
-          <span>+{tools.length}</span>
-          <strong>{t.tools}</strong>
+          <span>{tools.length}</span>
+          <strong>{isArabic ? "أداة" : t.tools}</strong>
           <p>{t.description}</p>
           <div className={styles.summaryBars} aria-hidden="true">
             <i />
@@ -222,7 +237,12 @@ export function ToolsExplorer({
               onClick={() => selectCategory(item.slug)}
               type="button"
             >
-              <span>{item.icon || "◇"} {item.name}</span>
+              <span>
+                <i className={styles.categoryIcon} aria-hidden="true">
+                  {categoryGlyph(item.icon, item.slug)}
+                </i>
+                {item.name}
+              </span>
               <small>{categoryCounts.get(item.id) ?? 0}</small>
             </button>
           ))}

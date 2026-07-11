@@ -583,3 +583,224 @@
     transition: none;
   }
 }
+
+/* TOOLS EXPERIENCE V2 — STAGE 1.1 VISUAL FIX */
+
+.shell {
+  grid-template-columns: 238px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.sidebarSummary {
+  padding: 20px;
+}
+
+.sidebarSummary > span {
+  font-size: 1.85rem;
+}
+
+.sidebarSummary > strong {
+  margin-inline-start: 5px;
+}
+
+.sidebarSummary p {
+  margin-bottom: 14px;
+  font-size: 0.8rem;
+}
+
+.summaryBars {
+  height: 44px;
+  gap: 6px;
+}
+
+.summaryBars i {
+  width: 8px;
+}
+
+.summaryBars i:nth-child(1),
+.summaryBars i:nth-child(7) {
+  height: 16px;
+}
+
+.summaryBars i:nth-child(2),
+.summaryBars i:nth-child(6) {
+  height: 28px;
+}
+
+.summaryBars i:nth-child(3),
+.summaryBars i:nth-child(5) {
+  height: 36px;
+}
+
+.summaryBars i:nth-child(4) {
+  height: 44px;
+}
+
+.categoryNav {
+  padding: 8px;
+}
+
+.categoryNav button {
+  min-height: 44px;
+  padding-inline: 11px;
+  font-size: 0.84rem;
+}
+
+.categoryNav button > span {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: start;
+}
+
+.categoryIcon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--we-violet);
+  background: #f4efff;
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.suggestion {
+  padding: 18px;
+}
+
+.suggestion > span {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  font-size: 1.25rem;
+}
+
+.suggestion h3 {
+  margin-top: 11px;
+  font-size: 1rem;
+}
+
+.suggestion p {
+  margin-bottom: 8px;
+  font-size: 0.79rem;
+}
+
+.suggestion a {
+  min-height: 40px;
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 4vw, 4.6rem);
+}
+
+.hero p {
+  font-size: 0.95rem;
+}
+
+.grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.card {
+  min-height: 318px;
+  padding: 20px;
+}
+
+.thumbnail {
+  width: 62px;
+  height: 62px;
+  border-radius: 18px;
+  font-size: 1.62rem;
+}
+
+.featuredBadge,
+.typeBadge {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 850;
+}
+
+.featuredBadge {
+  color: #9b650c;
+  background: #fff6df;
+}
+
+.typeBadge {
+  color: var(--we-violet);
+  background: #f2edff;
+}
+
+.cardBody h3 {
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+
+.categoryName {
+  margin-top: 18px;
+  font-size: 0.75rem;
+}
+
+.description {
+  min-height: 66px;
+  font-size: 0.9rem;
+  line-height: 1.75;
+  -webkit-line-clamp: 3;
+}
+
+.cardMeta {
+  margin-top: 18px;
+  font-size: 0.75rem;
+}
+
+.useButton {
+  min-height: 46px;
+  margin-top: 14px;
+  border-radius: 12px;
+}
+
+@media (max-width: 1220px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1040px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 286px;
+  }
+
+  .description {
+    min-height: auto;
+  }
+}

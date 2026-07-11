@@ -33,10 +33,29 @@ function toolGlyph(tool: ToolExplorerItem): string {
   if (value.includes("content") || value.includes("محتوى")) return "T";
   if (value.includes("name") || value.includes("اسم")) return "✦";
   if (value.includes("analysis") || value.includes("تحليل")) return "⌁";
+  if (value.includes("discount") || value.includes("خصم")) return "−%";
+  if (value.includes("growth") || value.includes("نمو")) return "↗";
+  if (value.includes("cost") || value.includes("تكلفة")) return "◫";
   if (tool.engineType.startsWith("ai_")) return "✧";
   if (tool.engineType === "formula") return "∑";
 
   return "◇";
+}
+
+function toolTypeLabel(tool: ToolExplorerItem, isArabic: boolean): string {
+  if (tool.engineType.startsWith("ai_")) {
+    return isArabic ? "ذكاء اصطناعي" : "AI";
+  }
+
+  if (tool.engineType === "formula") {
+    return isArabic ? "نتيجة فورية" : "Instant";
+  }
+
+  if (tool.engineType === "text_transform") {
+    return isArabic ? "معالجة نصوص" : "Text";
+  }
+
+  return isArabic ? "أداة ذكية" : "Smart";
 }
 
 export function ToolCard({ tool, prefix, locale }: ToolCardProps) {
@@ -51,18 +70,6 @@ export function ToolCard({ tool, prefix, locale }: ToolCardProps) {
         ? `${tool.fixedPoints} ${isArabic ? "نقطة" : "credits"}`
         : `${tool.minimumPoints}+ ${isArabic ? "نقطة" : "credits"}`;
 
-  const engineLabel = tool.engineType.startsWith("ai_")
-    ? isArabic
-      ? "ذكاء اصطناعي"
-      : "AI"
-    : tool.engineType === "formula"
-      ? isArabic
-        ? "نتيجة فورية"
-        : "Instant result"
-      : isArabic
-        ? "أداة ذكية"
-        : "Smart tool";
-
   return (
     <article className={styles.card}>
       <div className={styles.cardTop}>
@@ -70,14 +77,15 @@ export function ToolCard({ tool, prefix, locale }: ToolCardProps) {
           <span>{toolGlyph(tool)}</span>
         </div>
 
-        <div className={styles.badges}>
-          {tool.isFeatured ? (
-            <span className={styles.featuredBadge}>
-              {isArabic ? "مميزة" : "Featured"}
-            </span>
-          ) : null}
-          <span className={styles.engineBadge}>{engineLabel}</span>
-        </div>
+        {tool.isFeatured ? (
+          <span className={styles.featuredBadge}>
+            {isArabic ? "مميزة" : "Featured"}
+          </span>
+        ) : (
+          <span className={styles.typeBadge}>
+            {toolTypeLabel(tool, isArabic)}
+          </span>
+        )}
       </div>
 
       <div className={styles.cardBody}>
@@ -88,7 +96,7 @@ export function ToolCard({ tool, prefix, locale }: ToolCardProps) {
 
       <div className={styles.cardMeta}>
         <span>{pricing}</span>
-        <span>{tool.engineType === "formula" ? "≈ 0.1s" : "≈ 3–15s"}</span>
+        <span>{toolTypeLabel(tool, isArabic)}</span>
       </div>
 
       <Link className={styles.useButton} href={`${prefix}/tools/${tool.slug}`}>
