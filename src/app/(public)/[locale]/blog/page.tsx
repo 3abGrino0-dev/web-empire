@@ -33,7 +33,7 @@ export default async function BlogPage({
   return (
     <main className="we-page we-simple-page">
       <section className="we-container we-simple-card">
-        <img src="/brand/web-empire-logo.svg" alt="WEB EMPIRE" width="260" height="70" />
+        <img src="/brand/web-empire-logo-horizontal.png" alt="WEB EMPIRE" width="260" height="70" />
         <p className="we-simple-kicker">{t.coming}</p>
         <h1>{t.title}</h1>
         <p>{t.body}</p>

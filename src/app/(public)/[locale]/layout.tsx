@@ -91,7 +91,13 @@ export default async function LocaleLayout({
   const style = appearanceCssVariables(appearance) as CSSProperties;
 
   return (
-    <html lang={locale.locale_code} dir={locale.direction} className={`${inter.variable} ${tajawal.variable}`}>
+    <html
+        lang={locale.locale_code}
+        dir={locale.direction}
+        className={`${inter.variable} ${tajawal.variable} ${
+          locale.direction === "rtl" ? tajawal.className : inter.className
+        }`}
+      >
       <body>
         <div
           className="public-shell"

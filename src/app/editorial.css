@@ -19,8 +19,8 @@
   overflow-x: clip;
 }
 
-html[dir="rtl"] .public-shell { font-family: var(--font-arabic), sans-serif; }
-html[dir="ltr"] .public-shell { font-family: var(--font-latin), sans-serif; }
+html[dir="rtl"] .public-shell { font-family: var(--font-ui-arabic); }
+html[dir="ltr"] .public-shell { font-family: var(--font-ui-latin); }
 .public-shell .container { width: min(var(--empire-max), calc(100% - clamp(28px, 6vw, 112px))); margin-inline: auto; }
 .public-shell a { color: inherit; }
 

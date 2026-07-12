@@ -47,9 +47,9 @@
   --danger: var(--danger);
   --radius: 20px;
   --shadow: var(--shadow-card);
-  --font-latin: var(--font-latin, Arial, "Segoe UI", sans-serif);
-  --font-arabic: var(--font-arabic, "Segoe UI", Tahoma, sans-serif);
-  --font-mono: var(--font-mono, ui-monospace, monospace);
+  --font-ui-latin: var(--font-latin, "Inter", "Segoe UI", Arial, sans-serif);
+  --font-ui-arabic: var(--font-arabic, "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif);
+  --font-ui-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -59,13 +59,13 @@ body {
   min-height: 100vh;
   background: radial-gradient(circle at top left, rgba(7, 89, 133, 0.22), transparent 32%), var(--background);
   color: var(--foreground);
-  font-family: var(--font-latin);
+  font-family: var(--font-ui-latin);
   line-height: 1.6;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-body[dir="rtl"] { font-family: var(--font-arabic); }
+html[dir="rtl"] body { font-family: var(--font-ui-arabic); }
 a { color: inherit; text-decoration: none; }
 button, input, textarea, select { font: inherit; }
 .container { width: min(var(--page-max-width), calc(100% - 32px)); margin-inline: auto; }

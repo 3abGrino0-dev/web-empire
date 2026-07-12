@@ -134,6 +134,7 @@ async function executeEngine(
   input: Record<string, unknown>,
   runId: string,
   maxOutputTokensLimit: number | null,
+  localeCode: string,
 ): Promise<EngineResult> {
   if (tool.engine_type === "formula") {
     const result = evaluateFormula(String(tool.runtime_config.expression ?? ""), input);
@@ -141,7 +142,7 @@ async function executeEngine(
   }
 
   if (tool.engine_type === "text_transform") {
-    const result = executeTextTransform(tool, input);
+    const result = executeTextTransform(tool, input, localeCode);
     return { ...result, providerCostSar: 0 };
   }
 
@@ -207,7 +208,9 @@ export async function runTool(
 
   const userId = userIdOverride ?? (await getCurrentUserId());
   const access = await enforceToolAccess(tool, userId);
-  const pointsPerSar = await getPointsPerSar();
+  const pointsPerSar =
+    tool.pricing_mode === "free" ? 0 : await getPointsPerSar();
+  const localizedToolPromise = getToolBySlug(slug, localeCode);
   const runId = await createRun(tool, userId, input);
   let reserved = 0;
 
@@ -223,7 +226,13 @@ export async function runTool(
       await reserveCredits(userId, runId, reserved);
     }
 
-    const result = await executeEngine(tool, input, runId, access.maxOutputTokens);
+    const result = await executeEngine(
+      tool,
+      input,
+      runId,
+      access.maxOutputTokens,
+      localeCode,
+    );
     const actual = calculateProviderCostPoints(
       tool,
       result.providerCostSar,
@@ -247,7 +256,7 @@ export async function runTool(
       credits_charged: actual,
     });
 
-    const localizedTool = await getToolBySlug(slug, localeCode);
+    const localizedTool = await localizedToolPromise;
 
     return {
       runId,

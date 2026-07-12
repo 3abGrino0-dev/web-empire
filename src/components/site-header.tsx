@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { webEmpireLightAssets } from "@/brand/web-empire-light-assets";
+
 import { ColorModeToggle } from "@/components/appearance/color-mode-toggle";
 import { LanguageSwitcher } from "@/components/localization/language-switcher";
 import type { ColorMode, HeaderStyle } from "@/appearance/types";
@@ -46,7 +48,13 @@ export function SiteHeader({
     <header className={`site-header light-empire-header header-${headerStyle}`}>
       <div className="container light-empire-header-inner">
         <Link href={prefix} className="light-empire-brand" aria-label="WEB EMPIRE">
-          <img src="/brand/web-empire-logo.svg" alt="WEB EMPIRE" width="210" height="54" />
+          <img
+            src={webEmpireLightAssets.logo}
+            alt="WEB EMPIRE"
+            width="200"
+            height="50"
+            className="light-empire-brand-logo"
+          />
         </Link>
 
         <nav className="light-empire-nav" aria-label="Main navigation">

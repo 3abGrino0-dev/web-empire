@@ -11,7 +11,8 @@
     "mobile:install": "npm --prefix apps/mobile ci",
     "mobile:start": "npm --prefix apps/mobile start",
     "mobile:typecheck": "npm --prefix apps/mobile run typecheck",
-    "mobile:lint": "npm --prefix apps/mobile run lint"
+    "mobile:lint": "npm --prefix apps/mobile run lint",
+    "test:tools:wave1": "node --experimental-strip-types scripts/verify-tool-wave1.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

@@ -10,7 +10,12 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const locale = normalizeLocale(url.searchParams.get("locale"));
-  const safeNext = resolveSafeNext(locale, url.searchParams.get("next"));
+  const callbackType = url.searchParams.get("type");
+  const requestedNext =
+    callbackType === "recovery"
+      ? `/${locale}/auth/reset-password`
+      : url.searchParams.get("next");
+  const safeNext = resolveSafeNext(locale, requestedNext);
   const code = url.searchParams.get("code");
 
   if (!code) {
