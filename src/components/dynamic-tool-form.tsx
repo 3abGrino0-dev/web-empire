@@ -923,7 +923,18 @@ export function DynamicToolForm({
               <div className={styles.result} aria-live="polite">
                 <div className={styles.resultHero}>
                   <small>{resultLabel}</small>
-                  <pre className={isLongResult ? styles.long : ""}>
+                  <pre
+                    className={[
+                      isLongResult ? styles.long : "",
+                      formattedResult.formatted.length > 18
+                        ? styles.compactNumber
+                        : formattedResult.formatted.length > 12
+                          ? styles.mediumNumber
+                          : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
                     {formattedResult.formatted}
                   </pre>
                   {equation ? (

@@ -580,3 +580,53 @@
     font-size: 0.82rem;
   }
 }
+
+/* TOOLS EXPERIENCE V2 — STAGE 2.2 VISUAL POLISH */
+
+.field input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+  direction: ltr;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.resultHero {
+  overflow: hidden;
+}
+
+.resultHero pre:not(.long) {
+  overflow: visible;
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: center;
+  scrollbar-width: none;
+}
+
+.resultHero pre:not(.long)::-webkit-scrollbar {
+  display: none;
+}
+
+.mediumNumber {
+  font-size: clamp(1.9rem, 4vw, 3.8rem) !important;
+}
+
+.compactNumber {
+  font-size: clamp(1.4rem, 3vw, 2.8rem) !important;
+}
+
+@media (max-width: 680px) {
+  .mediumNumber {
+    font-size: clamp(1.7rem, 10vw, 3rem) !important;
+  }
+
+  .compactNumber {
+    font-size: clamp(1.25rem, 8vw, 2.35rem) !important;
+  }
+}
