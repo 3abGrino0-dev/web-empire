@@ -630,3 +630,16 @@
     font-size: clamp(1.25rem, 8vw, 2.35rem) !important;
   }
 }
+
+/* TOOLS EXPERIENCE V2 — STAGE 2.3 INPUT FORMATTING */
+
+.field input[inputmode="decimal"] {
+  direction: ltr;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.meta span {
+  white-space: nowrap;
+}

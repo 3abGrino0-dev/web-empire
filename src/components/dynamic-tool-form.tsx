@@ -247,8 +247,47 @@ function normalizeDigits(value: string): string {
   return value
     .replace(/[٠-٩]/g, (digit) => String(arabic.indexOf(digit)))
     .replace(/[۰-۹]/g, (digit) => String(persian.indexOf(digit)))
-    .replace(/،/g, ".")
-    .replace(/,/g, ".");
+    .replace(/٬/g, "")
+    .replace(/,/g, "")
+    .replace(/[٫،]/g, ".");
+}
+
+function formatNumericInput(value: string): string {
+  const normalized = normalizeDigits(value).trim();
+
+  if (!normalized || normalized === "-" || normalized === ".") {
+    return value;
+  }
+
+  const numeric = Number(normalized);
+  if (!Number.isFinite(numeric)) return value;
+
+  const fraction = normalized.includes(".")
+    ? normalized.split(".")[1]?.length ?? 0
+    : 0;
+
+  return new Intl.NumberFormat("en-US", {
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: Math.min(fraction, 8),
+  }).format(numeric);
+}
+
+function formatDuration(durationMs: number, locale: string): string {
+  if (durationMs < 1000) {
+    return locale === "ar"
+      ? `${durationMs} مللي ثانية`
+      : `${durationMs} ms`;
+  }
+
+  const seconds = durationMs / 1000;
+  const formatted = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: seconds >= 10 ? 0 : 1,
+  }).format(seconds);
+
+  return locale === "ar"
+    ? `${formatted} ثانية`
+    : `${formatted} sec`;
 }
 
 function valueToText(value: JsonValue): string {
@@ -842,16 +881,49 @@ export function DynamicToolForm({
                       </select>
                     ) : (
                       <input
-                        defaultValue={String(field.defaultValue ?? "")}
-                        inputMode={field.type === "number" ? "decimal" : undefined}
+                        autoComplete="off"
+                        defaultValue={
+                          field.type === "number"
+                            ? formatNumericInput(
+                                String(field.defaultValue ?? ""),
+                              )
+                            : String(field.defaultValue ?? "")
+                        }
+                        inputMode={
+                          field.type === "number" ? "decimal" : undefined
+                        }
                         max={field.max}
-                        maxLength={field.type === "number" ? undefined : field.maxLength}
+                        maxLength={
+                          field.type === "number"
+                            ? undefined
+                            : field.maxLength
+                        }
                         min={field.min}
                         name={field.key}
+                        onBlur={
+                          field.type === "number"
+                            ? (event) => {
+                                event.currentTarget.value =
+                                  formatNumericInput(
+                                    event.currentTarget.value,
+                                  );
+                              }
+                            : undefined
+                        }
+                        onFocus={
+                          field.type === "number"
+                            ? (event) => {
+                                event.currentTarget.value =
+                                  normalizeDigits(
+                                    event.currentTarget.value,
+                                  );
+                              }
+                            : undefined
+                        }
                         placeholder={field.placeholder}
                         required={field.required}
                         step={field.step}
-                        type={field.type}
+                        type={field.type === "number" ? "text" : field.type}
                       />
                     )}
 
@@ -975,7 +1047,7 @@ export function DynamicToolForm({
 
                   {durationMs !== null ? (
                     <span>
-                      {t.duration}: {durationMs}ms
+                      {t.duration}: {formatDuration(durationMs, locale)}
                     </span>
                   ) : null}
                 </div>
