@@ -120,7 +120,7 @@ export default async function LoginPage({
               <Link href={`${prefix}/auth/forgot-password`}>{t.forgot}</Link>
             </div>
             <FormPendingButton className="primary" type="submit" pendingLabel={t.loginPending}>
-              {t.login} ←
+              {locale.code === "ar" ? `${t.login} ←` : `${t.login} →`}
             </FormPendingButton>
           </form>
 

@@ -2675,3 +2675,140 @@ body {
     padding: 24px;
   }
 }
+
+
+/* WEB EMPIRE TYPOGRAPHY POLISH */
+.public-shell,
+.public-shell button,
+.public-shell input,
+.public-shell textarea,
+.public-shell select {
+  font-family: inherit;
+}
+
+.public-shell h1,
+.public-shell h2,
+.public-shell h3,
+.public-shell h4,
+.public-shell strong,
+.public-shell button {
+  font-family: inherit;
+}
+
+html[dir="ltr"] .public-shell {
+  font-family: var(--font-ui-latin);
+}
+
+html[dir="rtl"] .public-shell {
+  font-family: var(--font-ui-arabic);
+}
+
+.light-empire-nav {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.light-empire-login,
+.light-empire-start,
+.we-button-primary,
+.we-button-ghost,
+.we-form button {
+  font-weight: 750;
+}
+
+.we-hero-copy h1 {
+  font-size: clamp(3.5rem, 6.3vw, 6.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+html[dir="rtl"] .we-hero-copy h1 {
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+html[dir="ltr"] .we-hero-copy {
+  text-align: left;
+}
+
+html[dir="ltr"] .we-hero-actions {
+  justify-content: flex-start;
+}
+
+.we-hero-copy p {
+  max-width: 680px;
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+html[dir="ltr"] .we-hero-copy p {
+  margin-inline-end: auto;
+}
+
+.we-auth-card h1,
+.we-register-heading h2 {
+  font-size: clamp(2.35rem, 3.8vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+html[dir="rtl"] .we-auth-card h1,
+html[dir="rtl"] .we-register-heading h2 {
+  letter-spacing: -0.015em;
+  line-height: 1.18;
+}
+
+.we-tool-hero-copy h1 {
+  font-size: clamp(3.2rem, 6.8vw, 7rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+html[dir="rtl"] .we-tool-hero-copy h1 {
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.we-tool-result-content pre {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+}
+
+.we-tool-field input,
+.we-tool-field select,
+.we-tool-field textarea,
+.we-form input {
+  font-weight: 500;
+}
+
+.we-hero-visual {
+  overflow: hidden;
+}
+
+.we-hero-visual img {
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(
+    ellipse 83% 78% at 50% 50%,
+    #000 62%,
+    rgba(0, 0, 0, .92) 76%,
+    transparent 99%
+  );
+  mask-image: radial-gradient(
+    ellipse 83% 78% at 50% 50%,
+    #000 62%,
+    rgba(0, 0, 0, .92) 76%,
+    transparent 99%
+  );
+}
+
+@media (max-width: 680px) {
+  .we-hero-copy h1 {
+    font-size: clamp(2.8rem, 14vw, 4.4rem);
+  }
+
+  .we-tool-hero-copy h1 {
+    font-size: clamp(2.7rem, 13vw, 4.2rem);
+  }
+}
