@@ -207,7 +207,9 @@ export async function runTool(
 
   const userId = userIdOverride ?? (await getCurrentUserId());
   const access = await enforceToolAccess(tool, userId);
-  const pointsPerSar = await getPointsPerSar();
+  const pointsPerSar =
+    tool.pricing_mode === "free" ? 0 : await getPointsPerSar();
+  const localizedToolPromise = getToolBySlug(slug, localeCode);
   const runId = await createRun(tool, userId, input);
   let reserved = 0;
 
@@ -247,7 +249,7 @@ export async function runTool(
       credits_charged: actual,
     });
 
-    const localizedTool = await getToolBySlug(slug, localeCode);
+    const localizedTool = await localizedToolPromise;
 
     return {
       runId,

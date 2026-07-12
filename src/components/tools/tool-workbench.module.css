@@ -502,3 +502,81 @@
     animation: none;
   }
 }
+
+/* TOOLS EXPERIENCE V2 — STAGE 2.1 */
+
+.grid {
+  align-items: start;
+}
+
+.inputPanel,
+.resultPanel {
+  min-height: 0;
+}
+
+.resultPanelInner {
+  top: 102px;
+}
+
+.resultHero pre:not(.long) {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+  scrollbar-width: thin;
+}
+
+.equation {
+  margin: 8px 0 0;
+  color: var(--we-muted);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.7;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.warning {
+  padding: 13px 15px;
+  border: 1px solid rgba(214, 145, 30, 0.25);
+  border-radius: 14px;
+  color: #8a5900;
+  background: #fff9e9;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.7;
+}
+
+.resultActions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.raw {
+  opacity: 0.82;
+}
+
+.raw summary {
+  padding-block: 10px;
+  color: var(--we-muted);
+  font-size: 0.74rem;
+}
+
+@media (max-width: 1180px) {
+  .resultActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .resultHero pre:not(.long) {
+    font-size: clamp(2.2rem, 14vw, 4rem);
+  }
+
+  .equation {
+    font-size: 0.82rem;
+  }
+}

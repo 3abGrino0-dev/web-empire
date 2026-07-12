@@ -174,6 +174,8 @@ export default async function ToolPage({
             engineType={tool.engine_type}
             locale={locale.code}
             messages={messages}
+            pricingMode={tool.pricing_mode}
+            runtimeConfig={tool.runtime_config}
             schema={tool.localizedInputSchema}
             slug={tool.slug}
             toolTitle={tool.title}

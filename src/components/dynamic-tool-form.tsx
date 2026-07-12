@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
-import type { JsonValue, ToolInputSchema, ToolRunResponse } from "@/domain/types";
+import type { JsonValue, PricingMode, ToolInputSchema, ToolRunResponse } from "@/domain/types";
 import type { UiMessages } from "@/localization/types";
+import { evaluateFormula } from "@/engines/formula";
 import { translate } from "@/localization/messages";
 
 import styles from "./tools/tool-workbench.module.css";
@@ -16,9 +17,125 @@ interface Props {
   messages: UiMessages;
   toolTitle: string;
   engineType: string;
+  runtimeConfig: Record<string, JsonValue>;
+  pricingMode: PricingMode;
 }
 
 type MobileTab = "input" | "result";
+
+const percentageSlugs = new Set([
+  "percentage-calculator",
+  "profit-margin-calculator",
+  "markup-calculator",
+  "roi-calculator",
+  "ctr-calculator",
+  "conversion-rate-calculator",
+  "salary-increase-calculator",
+  "weighted-score-calculator",
+]);
+
+const currencySlugs = new Set([
+  "gross-profit-calculator",
+  "commission-calculator",
+  "unit-price-calculator",
+  "discount-calculator",
+  "cpc-calculator",
+  "cpm-calculator",
+  "cpa-calculator",
+  "aov-calculator",
+  "customer-acquisition-cost-calculator",
+  "vat-calculator",
+  "pre-tax-price-calculator",
+  "simple-interest-calculator",
+  "compound-interest-calculator",
+  "tip-calculator",
+]);
+
+function formatSmartNumber(value: number): string {
+  const absolute = Math.abs(value);
+  const decimals =
+    absolute === 0
+      ? 0
+      : absolute >= 1
+        ? 2
+        : absolute >= 0.01
+          ? 3
+          : Math.min(6, Math.max(3, Math.ceil(-Math.log10(absolute)) + 2));
+
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+function outputUnit(slug: string, locale: string): string {
+  if (percentageSlugs.has(slug)) return "%";
+  if (currencySlugs.has(slug)) return locale === "ar" ? " ر.س" : " SAR";
+  if (slug === "roas-calculator") return "×";
+  if (slug === "break-even-calculator") {
+    return locale === "ar" ? " وحدة" : " units";
+  }
+  return "";
+}
+
+function outputLabel(slug: string, locale: string, fallback: string): string {
+  const labels: Record<string, [string, string]> = {
+    "percentage-calculator": ["النسبة المئوية", "Percentage"],
+    "profit-margin-calculator": ["هامش الربح", "Profit margin"],
+    "markup-calculator": ["نسبة الزيادة", "Markup"],
+    "roi-calculator": ["العائد على الاستثمار", "ROI"],
+    "ctr-calculator": ["معدل النقر", "CTR"],
+    "conversion-rate-calculator": ["معدل التحويل", "Conversion rate"],
+    "gross-profit-calculator": ["الربح الإجمالي", "Gross profit"],
+    "break-even-calculator": ["نقطة التعادل", "Break-even point"],
+    "roas-calculator": ["العائد الإعلاني", "ROAS"],
+    "vat-calculator": ["قيمة الضريبة", "VAT amount"],
+  };
+  const value = labels[slug];
+  if (!value) return fallback;
+  return locale === "ar" ? value[0] : value[1];
+}
+
+function formatToolResult(
+  slug: string,
+  locale: string,
+  raw: string,
+): { formatted: string; numeric: number | null } {
+  const numeric = Number(raw);
+  const valid = Number.isFinite(numeric);
+
+  return {
+    formatted: valid
+      ? `${formatSmartNumber(numeric)}${outputUnit(slug, locale)}`
+      : raw,
+    numeric: valid ? numeric : null,
+  };
+}
+
+function percentageEquation(
+  input: Record<string, unknown>,
+  formatted: string,
+): string {
+  const values = Object.values(input)
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value));
+
+  if (values.length < 2) return "";
+  return `${formatSmartNumber(values[0])} ÷ ${formatSmartNumber(values[1])} × 100 = ${formatted}`;
+}
+
+function fieldLabel(
+  slug: string,
+  locale: string,
+  index: number,
+  fallback: string,
+): string {
+  if (slug !== "percentage-calculator") return fallback;
+  if (index === 0) return locale === "ar" ? "الجزء" : "Part";
+  if (index === 1) return locale === "ar" ? "الإجمالي" : "Total";
+  return fallback;
+}
+
 
 interface SavedResult {
   slug: string;
@@ -208,6 +325,8 @@ export function DynamicToolForm({
   messages,
   toolTitle,
   engineType,
+  runtimeConfig,
+  pricingMode,
 }: Props) {
   const isArabic = locale === "ar";
   const t = isArabic ? copy.ar : copy.en;
@@ -219,14 +338,39 @@ export function DynamicToolForm({
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [mobileTab, setMobileTab] = useState<MobileTab>("input");
   const [actionMessage, setActionMessage] = useState("");
+  const [lastInput, setLastInput] = useState<Record<string, unknown>>({});
 
   const formRef = useRef<HTMLFormElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const displayResult = primaryResult(result);
   const entries = useMemo(() => resultEntries(result), [result]);
+  const formattedResult = useMemo(
+    () => formatToolResult(slug, locale, displayResult),
+    [displayResult, locale, slug],
+  );
+  const resultLabel = outputLabel(
+    slug,
+    locale,
+    result?.title ?? toolTitle,
+  );
+  const equation =
+    slug === "percentage-calculator"
+      ? percentageEquation(lastInput, formattedResult.formatted)
+      : "";
+  const inputValues = Object.values(lastInput)
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value));
+  const warning =
+    slug === "percentage-calculator" &&
+    inputValues.length >= 2 &&
+    inputValues[0] > inputValues[1]
+      ? locale === "ar"
+        ? "الجزء أكبر من الإجمالي، لذلك النتيجة تتجاوز 100%."
+        : "The part is greater than the total, so the result exceeds 100%."
+      : "";
   const isLongResult =
-    displayResult.length > 120 ||
+    formattedResult.formatted.length > 120 ||
     engineType.startsWith("ai_") ||
     engineType === "text_transform";
 
@@ -256,6 +400,57 @@ export function DynamicToolForm({
 
       if (field.type === "checkbox" && !(field.key in input)) {
         input[field.key] = "false";
+      }
+    }
+
+    setLastInput(input);
+
+    const expression =
+      typeof runtimeConfig.expression === "string"
+        ? runtimeConfig.expression
+        : "";
+
+    if (engineType === "formula" && pricingMode === "free" && expression) {
+      try {
+        const localValue = evaluateFormula(expression, input);
+        const localDuration = Math.max(
+          1,
+          Math.round(performance.now() - startedAt),
+        );
+
+        const previewResult: ToolRunResponse = {
+          runId: `local-${Date.now()}`,
+          title: toolTitle,
+          text: String(localValue),
+          data: { result: localValue },
+          creditsCharged: 0,
+        };
+
+        setResult(previewResult);
+        setDurationMs(localDuration);
+        setMobileTab("result");
+        setPending(false);
+
+        void fetch(`/api/tools/${slug}/run`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ input, locale }),
+          signal: controller.signal,
+        })
+          .then(async (response) => {
+            if (!response.ok) return null;
+            return (await response.json()) as ToolRunResponse;
+          })
+          .then((payload) => {
+            if (payload && abortRef.current === controller) {
+              setResult(payload);
+            }
+          })
+          .catch(() => undefined);
+
+        return;
+      } catch {
+        // Continue through the server path for authoritative validation.
       }
     }
 
@@ -312,6 +507,7 @@ export function DynamicToolForm({
     setStatusCode(null);
     setDurationMs(null);
     setActionMessage("");
+    setLastInput({});
     setPending(false);
     setMobileTab("input");
   }
@@ -323,7 +519,7 @@ export function DynamicToolForm({
         .join("\n");
 
       await navigator.clipboard.writeText(
-        [toolTitle, displayResult, detailText].filter(Boolean).join("\n\n"),
+        [toolTitle, formattedResult.formatted, equation, warning, detailText].filter(Boolean).join("\n\n"),
       );
 
       setActionMessage(t.copied);
@@ -405,11 +601,11 @@ export function DynamicToolForm({
 
       context.fillStyle = "#7138f4";
       context.font = "900 112px Arial";
-      context.fillText(displayResult.slice(0, 22), 600, 520);
+      context.fillText(formattedResult.formatted.slice(0, 22), 600, 520);
 
       context.fillStyle = "#10131f";
       context.font = "700 30px Arial";
-      context.fillText(result.title, 600, 590);
+      context.fillText(resultLabel, 600, 590);
 
       context.fillStyle = "#f7f4ff";
       roundedRect(context, 150, 680, 900, 220, 32);
@@ -543,8 +739,8 @@ export function DynamicToolForm({
     </header>
     <main>
       <div class="result">
-        <h2>${escapeHtml(result.title)}</h2>
-        <pre>${escapeHtml(displayResult)}</pre>
+        <h2>${escapeHtml(resultLabel)}</h2>
+        <pre>${escapeHtml(formattedResult.formatted)}</pre>
       </div>
       ${detailsHtml ? `<table><tbody>${detailsHtml}</tbody></table>` : ""}
     </main>
@@ -602,7 +798,7 @@ export function DynamicToolForm({
 
           <form className={styles.form} onSubmit={onSubmit} ref={formRef}>
             <div className={styles.fields}>
-              {schema.fields.map((field) =>
+              {schema.fields.map((field, fieldIndex) =>
                 field.type === "checkbox" ? (
                   <label className={styles.checkbox} key={field.key}>
                     <input
@@ -615,7 +811,14 @@ export function DynamicToolForm({
                   </label>
                 ) : (
                   <label className={styles.field} key={field.key}>
-                    <span>{field.label}</span>
+                    <span>
+                      {fieldLabel(
+                        slug,
+                        locale,
+                        fieldIndex,
+                        field.label,
+                      )}
+                    </span>
 
                     {field.type === "textarea" ? (
                       <textarea
@@ -719,11 +922,20 @@ export function DynamicToolForm({
             {result ? (
               <div className={styles.result} aria-live="polite">
                 <div className={styles.resultHero}>
-                  <small>{result.title}</small>
+                  <small>{resultLabel}</small>
                   <pre className={isLongResult ? styles.long : ""}>
-                    {displayResult}
+                    {formattedResult.formatted}
                   </pre>
+                  {equation ? (
+                    <p className={styles.equation}>{equation}</p>
+                  ) : null}
                 </div>
+
+                {warning ? (
+                  <div className={styles.warning} role="status">
+                    {warning}
+                  </div>
+                ) : null}
 
                 {entries.length ? (
                   <div className={styles.details}>
