@@ -1,6 +1,6 @@
 export const webEmpireLightAssets = {
   logo: "/brand/web-empire-logo-horizontal.png",
-  mark: "/brand/web-empire-mark.svg",
+  mark: "/brand/web-empire-logo-horizontal.webp",
   heroVisual: "/brand/web-empire-hero-castle-v2.webp",
   heroVisualSmall: "/brand/web-empire-hero-castle-v2-sm.webp",
   toolsVisual: "/brand/web-empire-tools-library-v2.webp",

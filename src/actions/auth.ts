@@ -17,12 +17,30 @@ export async function signIn(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const locale = normalizeLocale(formData.get("locale"));
+  const safeNext = resolveSafeNext(locale, formData.get("next"));
+
+  const errorPath = (code: string) =>
+    `/${locale}/auth/login?error=${encodeURIComponent(code)}&next=${encodeURIComponent(safeNext)}`;
+
+  if (!email || password.length < 6) {
+    redirect(errorPath("invalid_credentials"));
+  }
 
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-  if (error) redirect(buildAuthErrorPath(locale, "invalid_credentials"));
-  redirect(`/${locale}/dashboard`);
+  if (error || !data.session) {
+    const code =
+      error?.code === "email_not_confirmed"
+        ? "email_not_confirmed"
+        : "invalid_credentials";
+    redirect(errorPath(code));
+  }
+
+  redirect(safeNext);
 }
 
 export async function signUp(formData: FormData) {

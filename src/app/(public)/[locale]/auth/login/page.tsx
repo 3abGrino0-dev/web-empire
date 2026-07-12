@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { signIn, signInWithProvider } from "@/actions/auth";
+import { FormPendingButton } from "@/components/auth/form-pending-button";
 import { getLocaleByCode } from "@/localization/repository";
 import { webEmpireLightAssets as assets } from "@/brand/web-empire-light-assets";
 
@@ -14,6 +15,11 @@ const labels = {
     remember: "تذكرني",
     forgot: "نسيت كلمة المرور؟",
     login: "دخول",
+    loginPending: "جاري تسجيل الدخول...",
+    googlePending: "جاري التحويل إلى Google...",
+    microsoftPending: "جاري التحويل إلى Microsoft...",
+    invalidCredentials: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    emailNotConfirmed: "يجب تأكيد البريد الإلكتروني قبل تسجيل الدخول.",
     google: "المتابعة عبر Google",
     microsoft: "المتابعة عبر Microsoft",
     noAccount: "ما عندك حساب؟",
@@ -27,6 +33,11 @@ const labels = {
     remember: "Remember me",
     forgot: "Forgot password?",
     login: "Login",
+    loginPending: "Signing in...",
+    googlePending: "Redirecting to Google...",
+    microsoftPending: "Redirecting to Microsoft...",
+    invalidCredentials: "The email or password is incorrect.",
+    emailNotConfirmed: "Confirm your email before signing in.",
     google: "Continue with Google",
     microsoft: "Continue with Microsoft",
     noAccount: "No account?",
@@ -58,7 +69,11 @@ export default async function LoginPage({
       : null;
 
   const errorMessage =
-    query?.error === "oauth_callback_failed"
+    query?.error === "invalid_credentials"
+      ? t.invalidCredentials
+      : query?.error === "email_not_confirmed"
+        ? t.emailNotConfirmed
+        : query?.error === "oauth_callback_failed"
       ? locale.code === "ar"
         ? "فشل إكمال تسجيل الدخول عبر المزود. حاول مرة أخرى."
         : "Could not complete provider sign-in. Please try again."
@@ -72,14 +87,16 @@ export default async function LoginPage({
     <main className="we-page we-auth-page">
       <div className="we-container we-auth-grid">
         <section className="we-auth-visual-card">
-          <img src="/brand/web-empire-logo.svg" alt="WEB EMPIRE" style={{ maxWidth: 300 }} />
+          <img src={assets.logo} alt="WEB EMPIRE" className="we-auth-brand-logo" />
           <h1>
             <span>{locale.code === "ar" ? "كل أداة تحتاجها." : "Every tool you need."}</span>
             <br />
             <span className="we-gradient-text">{locale.code === "ar" ? "في نظام واحد." : "In one system."}</span>
           </h1>
           <p>{locale.code === "ar" ? "نفس حسابك للوصول إلى أدواتك وسجل تشغيلاتك ورصيدك." : "One account for your tools, runs, and credits."}</p>
-          <img src={assets.authVisual} alt="" />
+          <div className="we-auth-art-frame" aria-hidden="true">
+            <img src={assets.authVisual} alt="" className="we-auth-visual-art" />
+          </div>
         </section>
 
         <section className="we-auth-card">
@@ -102,14 +119,20 @@ export default async function LoginPage({
               <label style={{ display: "flex", alignItems: "center" }}><input type="checkbox" defaultChecked style={{ minHeight: 18 }} /> {t.remember}</label>
               <Link href={`${prefix}/auth/forgot-password`}>{t.forgot}</Link>
             </div>
-            <button className="primary" type="submit">{t.login} ←</button>
+            <FormPendingButton className="primary" type="submit" pendingLabel={t.loginPending}>
+              {t.login} ←
+            </FormPendingButton>
           </form>
 
           <form action={signInWithProvider} className="we-form">
             <input type="hidden" name="locale" value={locale.code} />
             <input type="hidden" name="next" value={next} />
-            <button type="submit" name="provider" value="google">{t.google}</button>
-            <button type="submit" name="provider" value="azure">{t.microsoft}</button>
+            <FormPendingButton type="submit" name="provider" value="google" pendingLabel={t.googlePending}>
+              {t.google}
+            </FormPendingButton>
+            <FormPendingButton type="submit" name="provider" value="azure" pendingLabel={t.microsoftPending}>
+              {t.microsoft}
+            </FormPendingButton>
           </form>
 
           <p className="we-form-note">{t.noAccount} <Link href={`${prefix}/auth/register`}>{t.create}</Link></p>

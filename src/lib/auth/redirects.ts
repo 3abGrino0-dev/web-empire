@@ -47,6 +47,7 @@ export function normalizeAuthErrorCode(input: FormDataEntryValue | string | null
 
   switch (value) {
     case "invalid_credentials":
+    case "email_not_confirmed":
     case "signup_failed":
     case "invalid_signup_input":
     case "password_mismatch":

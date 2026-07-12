@@ -2607,3 +2607,71 @@ body {
 }
 
 /* WEB EMPIRE ASSET FIT V2 END */
+
+
+/* AUTH IMAGE EDGE FIX */
+.we-auth-brand-logo {
+  width: min(280px, 72%);
+  height: auto;
+  display: block;
+  margin: 0 auto 16px;
+}
+
+.we-auth-art-frame {
+  width: min(720px, 100%);
+  margin: 8px auto 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.we-auth-visual-art {
+  width: 100% !important;
+  height: auto;
+  display: block;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(
+    ellipse 78% 72% at 50% 50%,
+    #000 54%,
+    rgba(0, 0, 0, .9) 72%,
+    transparent 98%
+  );
+  mask-image: radial-gradient(
+    ellipse 78% 72% at 50% 50%,
+    #000 54%,
+    rgba(0, 0, 0, .9) 72%,
+    transparent 98%
+  );
+  filter: drop-shadow(0 26px 38px rgba(64, 42, 110, .1));
+}
+
+.we-auth-card button[data-pending="true"] {
+  opacity: .72;
+  cursor: wait;
+}
+
+.we-auth-card input:focus-visible,
+.we-auth-card button:focus-visible,
+.we-auth-card a:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--we-violet) 65%, white 35%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .we-auth-visual-card {
+    display: none;
+  }
+
+  .we-auth-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .we-auth-card {
+    padding: 24px;
+  }
+}
