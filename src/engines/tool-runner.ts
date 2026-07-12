@@ -134,6 +134,7 @@ async function executeEngine(
   input: Record<string, unknown>,
   runId: string,
   maxOutputTokensLimit: number | null,
+  localeCode: string,
 ): Promise<EngineResult> {
   if (tool.engine_type === "formula") {
     const result = evaluateFormula(String(tool.runtime_config.expression ?? ""), input);
@@ -141,7 +142,7 @@ async function executeEngine(
   }
 
   if (tool.engine_type === "text_transform") {
-    const result = executeTextTransform(tool, input);
+    const result = executeTextTransform(tool, input, localeCode);
     return { ...result, providerCostSar: 0 };
   }
 
@@ -225,7 +226,13 @@ export async function runTool(
       await reserveCredits(userId, runId, reserved);
     }
 
-    const result = await executeEngine(tool, input, runId, access.maxOutputTokens);
+    const result = await executeEngine(
+      tool,
+      input,
+      runId,
+      access.maxOutputTokens,
+      localeCode,
+    );
     const actual = calculateProviderCostPoints(
       tool,
       result.providerCostSar,

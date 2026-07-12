@@ -53,6 +53,17 @@ const copy = {
 function toolGlyph(slug: string, title: string): string {
   const value = `${slug} ${title}`.toLowerCase();
 
+  if (value.includes("decorate") || value.includes("زخرف")) return "✦";
+  if (value.includes("hashtag") || value.includes("هاشتاق")) return "#";
+  if (value.includes("slug") || value.includes("رابط مختصر")) return "/";
+  if (value.includes("email") || value.includes("بريد")) return "@";
+  if (value.includes("whatsapp") || value.includes("واتساب")) return "☏";
+  if (value.includes("youtube") || value.includes("يوتيوب")) return "▶";
+  if (value.includes("seo") || value.includes("keyword") || value.includes("كلمة مفتاحية")) return "⌕";
+  if (value.includes("summar") || value.includes("ملخص")) return "≡";
+  if (value.includes("rewrite") || value.includes("proof") || value.includes("صياغ") || value.includes("تدقيق")) return "✎";
+  if (value.includes("social") || value.includes("caption") || value.includes("منشور") || value.includes("كابشن")) return "◉";
+  if (value.includes("meeting") || value.includes("proposal") || value.includes("اجتماع") || value.includes("عرض خدمات")) return "▤";
   if (value.includes("vat") || value.includes("ضريبة")) return "VAT";
   if (value.includes("percent") || value.includes("نسبة")) return "%";
   if (value.includes("roi") || value.includes("عائد")) return "↗";
