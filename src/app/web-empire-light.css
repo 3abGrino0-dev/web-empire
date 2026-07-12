@@ -2812,3 +2812,69 @@ html[dir="rtl"] .we-tool-hero-copy h1 {
     font-size: clamp(2.7rem, 13vw, 4.2rem);
   }
 }
+
+
+/* OAUTH PROVIDER BUTTONS */
+.we-oauth-form {
+  margin-top: 16px;
+  gap: 12px;
+}
+
+.we-oauth-button {
+  width: 100%;
+  min-height: 58px;
+  position: relative;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-inline: 52px !important;
+  border: 1px solid var(--we-line) !important;
+  border-radius: 13px;
+  background: #fff !important;
+  color: var(--we-black) !important;
+  cursor: pointer;
+  font-weight: 750;
+  box-shadow: none;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.we-oauth-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(113, 56, 244, .32) !important;
+  background: #fcfaff !important;
+  box-shadow: 0 10px 28px rgba(16, 19, 31, .06);
+}
+
+.we-oauth-button:active {
+  transform: translateY(0);
+}
+
+.we-oauth-button[data-pending="true"] {
+  cursor: wait;
+  opacity: .72;
+}
+
+.we-oauth-icon {
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  inset-inline-start: 18px;
+  flex: 0 0 22px;
+}
+
+.we-oauth-button > span {
+  text-align: center;
+}
+
+.we-oauth-google:hover {
+  border-color: rgba(66, 133, 244, .38) !important;
+}
+
+.we-oauth-microsoft:hover {
+  border-color: rgba(0, 120, 212, .38) !important;
+}

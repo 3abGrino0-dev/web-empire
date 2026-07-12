@@ -6,6 +6,50 @@ import { FormPendingButton } from "@/components/auth/form-pending-button";
 import { getLocaleByCode } from "@/localization/repository";
 import { webEmpireLightAssets as assets } from "@/brand/web-empire-light-assets";
 
+function GoogleIcon() {
+  return (
+    <svg
+      className="we-oauth-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="#4285F4"
+        d="M21.6 12.227c0-.709-.064-1.391-.182-2.045H12v3.868h5.382a4.6 4.6 0 0 1-1.995 3.018v2.509h3.232c1.891-1.741 2.981-4.305 2.981-7.35Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 22c2.7 0 4.964-.895 6.619-2.423l-3.232-2.509c-.895.6-2.041.955-3.387.955-2.605 0-4.809-1.759-5.596-4.123H3.064v2.591A10 10 0 0 0 12 22Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M6.404 13.9A6.012 6.012 0 0 1 6.091 12c0-.659.114-1.3.313-1.9V7.509h-3.34A10 10 0 0 0 2 12c0 1.614.386 3.141 1.064 4.491L6.404 13.9Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.977c1.468 0 2.786.505 3.823 1.495l2.868-2.868C16.959 2.991 14.7 2 12 2a10 10 0 0 0-8.936 5.509l3.34 2.591C7.191 7.736 9.395 5.977 12 5.977Z"
+      />
+    </svg>
+  );
+}
+
+function MicrosoftIcon() {
+  return (
+    <svg
+      className="we-oauth-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect x="2" y="2" width="9" height="9" fill="#F25022" />
+      <rect x="13" y="2" width="9" height="9" fill="#7FBA00" />
+      <rect x="2" y="13" width="9" height="9" fill="#00A4EF" />
+      <rect x="13" y="13" width="9" height="9" fill="#FFB900" />
+    </svg>
+  );
+}
+
 const labels = {
   ar: {
     title: "تسجيل الدخول",
@@ -124,14 +168,29 @@ export default async function LoginPage({
             </FormPendingButton>
           </form>
 
-          <form action={signInWithProvider} className="we-form">
+          <form action={signInWithProvider} className="we-form we-oauth-form">
             <input type="hidden" name="locale" value={locale.code} />
             <input type="hidden" name="next" value={next} />
-            <FormPendingButton type="submit" name="provider" value="google" pendingLabel={t.googlePending}>
-              {t.google}
+            <FormPendingButton
+              type="submit"
+              name="provider"
+              value="google"
+              pendingLabel={t.googlePending}
+              className="we-oauth-button we-oauth-google"
+            >
+              <GoogleIcon />
+              <span>{t.google}</span>
             </FormPendingButton>
-            <FormPendingButton type="submit" name="provider" value="azure" pendingLabel={t.microsoftPending}>
-              {t.microsoft}
+
+            <FormPendingButton
+              type="submit"
+              name="provider"
+              value="azure"
+              pendingLabel={t.microsoftPending}
+              className="we-oauth-button we-oauth-microsoft"
+            >
+              <MicrosoftIcon />
+              <span>{t.microsoft}</span>
             </FormPendingButton>
           </form>
 
