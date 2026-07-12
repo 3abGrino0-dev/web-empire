@@ -1,0 +1,237 @@
+.page {
+  min-height: 100vh;
+  padding-block: 34px 78px;
+  background:
+    radial-gradient(circle at 84% 2%, rgba(113, 56, 244, 0.055), transparent 28%),
+    radial-gradient(circle at 8% 12%, rgba(214, 181, 110, 0.07), transparent 26%),
+    linear-gradient(180deg, #fff 0%, #fbfbfe 68%, #fff 100%);
+}
+
+.hero {
+  min-height: 190px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  padding: 26px 30px;
+  border: 1px solid var(--we-line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 70px rgba(16, 19, 31, 0.075);
+}
+
+.icon {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(113, 56, 244, 0.14);
+  border-radius: 24px;
+  color: var(--we-violet);
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,.95), transparent 34%),
+    linear-gradient(145deg, #f5f1ff, #ece4ff);
+  font-size: 2.25rem;
+  font-weight: 950;
+}
+
+.copy {
+  min-width: 0;
+}
+
+.kicker {
+  margin: 0 0 6px;
+  color: var(--we-gold-2);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.copy h1 {
+  margin: 0;
+  max-width: 920px;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.copy > p:last-of-type {
+  max-width: 760px;
+  margin: 12px 0 0;
+  color: var(--we-muted);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.actions {
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.badges span {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 14px;
+  border: 1px solid var(--we-line);
+  border-radius: 999px;
+  background: white;
+  color: var(--we-muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.badges span:first-child {
+  color: var(--we-gold-2);
+}
+
+.back {
+  color: var(--we-violet);
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.workbench {
+  margin-top: 22px;
+}
+
+.guide {
+  margin-top: 24px;
+  padding: 28px;
+  border: 1px solid var(--we-line);
+  border-radius: 26px;
+  background: white;
+  box-shadow: 0 18px 52px rgba(16, 19, 31, 0.055);
+}
+
+.guideHeader {
+  max-width: 760px;
+}
+
+.guideHeader p {
+  margin: 0;
+  color: var(--we-gold-2);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+}
+
+.guideHeader h2 {
+  margin: 7px 0 8px;
+  font-size: clamp(1.75rem, 3vw, 2.8rem);
+}
+
+.guideHeader > span {
+  color: var(--we-muted);
+  line-height: 1.8;
+}
+
+.guideGrid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.guideGrid article {
+  padding: 20px;
+  border: 1px solid var(--we-line);
+  border-radius: 18px;
+  background: #fffcf7;
+}
+
+.guideGrid h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.guideGrid p {
+  margin: 0;
+  color: var(--we-muted);
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+
+@media (max-width: 920px) {
+  .hero {
+    grid-template-columns: auto 1fr;
+  }
+
+  .actions {
+    grid-column: 1 / -1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .badges {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 680px) {
+  .page {
+    padding-block: 18px 52px;
+  }
+
+  .hero {
+    min-height: 0;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 17px;
+    font-size: 1.55rem;
+  }
+
+  .copy h1 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+
+  .copy > p:last-of-type {
+    grid-column: 1 / -1;
+    font-size: 0.9rem;
+  }
+
+  .actions {
+    display: grid;
+    justify-items: stretch;
+  }
+
+  .badges {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .badges span {
+    justify-content: center;
+    padding-inline: 8px;
+  }
+
+  .back {
+    text-align: center;
+  }
+
+  .guide {
+    padding: 20px;
+  }
+
+  .guideGrid {
+    grid-template-columns: 1fr;
+  }
+}
