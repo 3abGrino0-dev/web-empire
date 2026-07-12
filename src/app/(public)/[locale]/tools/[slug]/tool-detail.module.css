@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
-  padding: 118px 0 78px;
-  scroll-padding-top: 118px;
+  padding: 34px 0 78px;
+  scroll-padding-top: 110px;
   background:
     radial-gradient(circle at 84% 2%, rgba(113, 56, 244, 0.055), transparent 28%),
     radial-gradient(circle at 8% 12%, rgba(214, 181, 110, 0.07), transparent 26%),
@@ -30,7 +30,7 @@
   border-radius: 24px;
   color: var(--we-violet);
   background:
-    radial-gradient(circle at 28% 22%, rgba(255,255,255,.95), transparent 34%),
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.95), transparent 34%),
     linear-gradient(145deg, #f5f1ff, #ece4ff);
   font-size: 2.25rem;
   font-weight: 950;
@@ -182,8 +182,8 @@
 
 @media (max-width: 680px) {
   .page {
-    padding: 92px 0 52px;
-    scroll-padding-top: 92px;
+    padding: 22px 0 52px;
+    scroll-padding-top: 88px;
   }
 
   .hero {
