@@ -622,3 +622,43 @@
     width: 92vw;
   }
 }
+
+/* ADMIN CONTROL CENTER FOUNDATION */
+.admin-users-page,.admin-audit-page{display:grid;gap:18px}
+.admin-page-hero{border:1px solid var(--admin-border);border-radius:20px;background:linear-gradient(135deg,#18191c,#131416);padding:24px;display:flex;justify-content:space-between;gap:18px}
+.admin-page-hero h1{margin:4px 0 8px;font-size:clamp(1.7rem,3vw,2.7rem)}
+.admin-page-hero p{margin:0;color:var(--admin-muted)}
+.admin-eyebrow{color:var(--admin-gold)!important;font-size:.76rem;font-weight:800;letter-spacing:.12em}
+.admin-summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.admin-summary-grid article{min-height:112px;border:1px solid var(--admin-border);border-radius:17px;background:var(--admin-surface);padding:18px;display:grid;align-content:space-between}
+.admin-summary-grid span{color:var(--admin-muted);font-size:.84rem}
+.admin-summary-grid strong{font-size:1.65rem}
+.admin-filter-card,.admin-table-card{border:1px solid var(--admin-border);border-radius:18px;background:var(--admin-surface)}
+.admin-filter-card{padding:16px}
+.admin-users-filters{display:grid;grid-template-columns:minmax(220px,1.5fr) minmax(150px,.7fr) minmax(150px,.7fr) auto auto;gap:12px;align-items:end}
+.admin-users-filters label{display:grid;gap:7px;color:var(--admin-muted);font-size:.82rem}
+.admin-users-filters input,.admin-users-filters select{width:100%;min-height:46px;border:1px solid var(--admin-border);border-radius:12px;background:#111214;color:var(--admin-text);padding:0 12px;font:inherit}
+.admin-primary-button,.admin-secondary-button,.admin-pagination a{min-height:44px;border-radius:11px;padding:0 15px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:inherit;font-weight:750;cursor:pointer}
+.admin-primary-button{border:1px solid #2f6d57;background:#1c4c3c;color:#ecfff8}
+.admin-secondary-button,.admin-pagination a{border:1px solid var(--admin-border);background:var(--admin-surface-2);color:var(--admin-text)}
+.admin-table-heading{min-height:76px;padding:16px 18px;border-bottom:1px solid var(--admin-border);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.admin-table-heading h2{margin:0;font-size:1.05rem}
+.admin-table-heading p,.admin-table-heading span{margin:4px 0 0;color:var(--admin-muted);font-size:.82rem}
+.admin-table-scroll{overflow-x:auto}
+.admin-data-table{width:100%;border-collapse:collapse;min-width:980px}
+.admin-data-table th,.admin-data-table td{padding:14px 16px;border-bottom:1px solid var(--admin-border);text-align:start;vertical-align:middle}
+.admin-data-table th{color:var(--admin-muted);font-size:.75rem;background:#141517}
+.admin-data-table td{font-size:.86rem}
+.admin-user-cell{display:flex;align-items:center;gap:11px}
+.admin-user-cell>div{min-width:0;display:grid;gap:3px}
+.admin-user-cell small{max-width:260px;overflow:hidden;text-overflow:ellipsis;color:var(--admin-muted)}
+.admin-user-avatar{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,#b79956,#6f4cf4);display:grid;place-items:center;color:#fff;font-weight:900}
+.admin-status-pill{width:fit-content;border-radius:999px;padding:5px 10px;font-size:.76rem;font-weight:800}
+.admin-status-pill.is-active{color:#a9f2d6;background:#143d31;border:1px solid #26644f}
+.admin-status-pill.is-suspended{color:#f1d79d;background:#3b321d;border:1px solid #68572d}
+.admin-status-pill.is-blocked{color:#ffc1c1;background:#442327;border:1px solid #733b42}
+.admin-pagination{padding:15px 18px;display:flex;align-items:center;justify-content:center;gap:12px}
+.admin-pagination span{color:#666a72}
+.admin-empty-state{min-height:180px;display:grid;place-items:center;color:var(--admin-muted)}
+@media(max-width:1180px){.admin-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-users-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.admin-page-hero{padding:18px;flex-direction:column}.admin-summary-grid{grid-template-columns:1fr 1fr}.admin-users-filters{grid-template-columns:1fr}}

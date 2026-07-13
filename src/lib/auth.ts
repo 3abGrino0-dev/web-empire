@@ -28,15 +28,33 @@ export async function requireUser(loginPath = "/en/auth/login"): Promise<string>
   return userId;
 }
 
-export async function requireAdmin(): Promise<string> {
+export type AdminContext = {
+  userId: string;
+  role: "owner" | "super_admin" | "admin" | "support" | "content_manager" | "finance_manager";
+  permissions: Record<string, unknown>;
+};
+
+export async function requireAdminContext(): Promise<AdminContext> {
   const userId = await requireUser("/en/auth/login");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("admin_users")
-    .select("user_id")
+    .select("user_id, role, permissions, is_active")
     .eq("user_id", userId)
     .maybeSingle();
 
-  if (error || !data) redirect("/");
-  return userId;
+  if (error || !data || data.is_active !== true) redirect("/");
+
+  return {
+    userId,
+    role: data.role as AdminContext["role"],
+    permissions:
+      data.permissions && typeof data.permissions === "object"
+        ? data.permissions as Record<string, unknown>
+        : {},
+  };
+}
+
+export async function requireAdmin(): Promise<string> {
+  return (await requireAdminContext()).userId;
 }
