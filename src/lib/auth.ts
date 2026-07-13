@@ -35,7 +35,7 @@ export type AdminContext = {
 };
 
 export async function requireAdminContext(): Promise<AdminContext> {
-  const userId = await requireUser("/en/auth/login");
+  const userId = await requireUser("/en/auth/login?next=%2Fadmin");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("admin_users")
