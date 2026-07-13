@@ -157,6 +157,7 @@ export default async function LoginPage({
 
           <form action={signIn} className="we-form">
             <input type="hidden" name="locale" value={locale.code} />
+            <input type="hidden" name="next" value={next} />
             <label>{t.email}<input name="email" type="email" placeholder="name@example.com" required /></label>
             <label>{t.password}<input name="password" type="password" placeholder={t.password} required /></label>
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>

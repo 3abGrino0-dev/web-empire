@@ -20,10 +20,10 @@ const navGroups: NavGroup[] = [
     title: "نظرة عامة",
     items: [
       { label: "لوحة التحكم", href: "/admin", status: "active" },
-      { label: "المستخدمون", status: "coming_soon" },
+      { label: "المستخدمون", href: "/admin/users", status: "active" },
       { label: "حالة النظام", href: "/admin#system-status", status: "active" },
       { label: "الإصدار", href: "/admin#version", status: "active" },
-      { label: "السجلات", status: "coming_soon" },
+      { label: "سجل الإجراءات", href: "/admin/audit", status: "active" },
     ],
   },
   {
@@ -76,6 +76,8 @@ const navGroups: NavGroup[] = [
 
 const crumbLabelMap: Record<string, string> = {
   admin: "نظرة عامة",
+  users: "المستخدمون",
+  audit: "سجل الإجراءات",
   tools: "الأدوات",
   content: "محتوى و SEO",
   related: "الأدوات ذات الصلة",
