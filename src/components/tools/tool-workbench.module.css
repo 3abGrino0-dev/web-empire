@@ -308,8 +308,8 @@
   overflow: auto;
   padding: 8px;
   color: var(--we-black);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: clamp(0.96rem, 1.12vw, 1.08rem);
+  font-weight: 550;
   line-height: 1.85;
   text-align: start;
 }
@@ -613,20 +613,20 @@
   display: none;
 }
 
-.mediumNumber {
+.resultHero pre.mediumNumber:not(.long) {
   font-size: clamp(1.9rem, 4vw, 3.8rem) !important;
 }
 
-.compactNumber {
+.resultHero pre.compactNumber:not(.long) {
   font-size: clamp(1.4rem, 3vw, 2.8rem) !important;
 }
 
 @media (max-width: 680px) {
-  .mediumNumber {
+  .resultHero pre.mediumNumber:not(.long) {
     font-size: clamp(1.7rem, 10vw, 3rem) !important;
   }
 
-  .compactNumber {
+  .resultHero pre.compactNumber:not(.long) {
     font-size: clamp(1.25rem, 8vw, 2.35rem) !important;
   }
 }
