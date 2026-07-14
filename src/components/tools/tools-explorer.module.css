@@ -861,3 +861,67 @@
     width: 100%;
   }
 }
+
+
+/* TOOLS EXPLORER V4 — DROPDOWN FILTER */
+
+.toolbar {
+  display: grid;
+  grid-template-columns:
+    minmax(260px, 1fr)
+    minmax(190px, 240px);
+  align-items: end;
+  gap: 12px;
+}
+
+.selectGroup {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.selectGroup > span {
+  color: var(--we-muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.selectGroup select {
+  width: 100%;
+  min-height: 48px;
+  padding-inline: 15px;
+  border: 1px solid var(--we-line);
+  border-radius: 13px;
+  outline: 0;
+  color: var(--we-black);
+  background: white;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.selectGroup select:hover {
+  border-color: rgba(113, 56, 244, 0.3);
+}
+
+.selectGroup select:focus {
+  border-color: rgba(113, 56, 244, 0.55);
+  box-shadow: 0 0 0 4px rgba(113, 56, 244, 0.08);
+}
+
+.chips {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .selectGroup select {
+    min-height: 50px;
+  }
+}

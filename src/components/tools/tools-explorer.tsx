@@ -295,35 +295,37 @@ export function ToolsExplorer({
         </div>
 
         <div className={styles.toolbar}>
-          <div className={styles.chips}>
-            <button
-              className={!category ? styles.chipActive : ""}
-              onClick={() => selectCategory("")}
-              type="button"
+          <label className={styles.selectGroup}>
+            <span>{t.filter}</span>
+            <select
+              aria-label={t.filter}
+              onChange={(event) => selectCategory(event.target.value)}
+              value={category}
             >
-              {t.all}
-            </button>
-            {categories.map((item) => (
-              <button
-                className={category === item.slug ? styles.chipActive : ""}
-                key={item.id}
-                onClick={() => selectCategory(item.slug)}
-                type="button"
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
+              <option value="">
+                {t.all} — {tools.length}
+              </option>
 
-          <select
-            aria-label={isArabic ? "ترتيب الأدوات" : "Sort tools"}
-            onChange={(event) => setSort(event.target.value as SortMode)}
-            value={sort}
-          >
-            <option value="featured">{t.sortFeatured}</option>
-            <option value="title">{t.sortTitle}</option>
-            <option value="free">{t.sortFree}</option>
-          </select>
+              {categories.map((item) => (
+                <option key={item.id} value={item.slug}>
+                  {item.name} — {categoryCounts.get(item.id) ?? 0}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={styles.selectGroup}>
+            <span>{isArabic ? "ترتيب الأدوات" : "Sort tools"}</span>
+            <select
+              aria-label={isArabic ? "ترتيب الأدوات" : "Sort tools"}
+              onChange={(event) => setSort(event.target.value as SortMode)}
+              value={sort}
+            >
+              <option value="featured">{t.sortFeatured}</option>
+              <option value="title">{t.sortTitle}</option>
+              <option value="free">{t.sortFree}</option>
+            </select>
+          </label>
         </div>
 
         <div className={styles.resultsHead}>
