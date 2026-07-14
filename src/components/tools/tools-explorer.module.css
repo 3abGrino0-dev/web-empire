@@ -804,3 +804,60 @@
     min-height: auto;
   }
 }
+
+
+/* TOOLS EXPLORER V3 — ICON AND FILTER FIX */
+
+.heroIcon,
+.thumbnail {
+  isolation: isolate;
+}
+
+.heroIcon svg {
+  width: 31px;
+  height: 31px;
+  display: block;
+}
+
+.thumbnail svg {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+
+.toolbar {
+  align-items: flex-start;
+}
+
+.chips {
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  overflow: visible;
+  padding-block: 0;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chips button {
+  min-height: 40px;
+  padding-inline: 15px;
+  white-space: nowrap;
+}
+
+.toolbar select {
+  width: 180px;
+  max-width: 100%;
+}
+
+@media (max-width: 760px) {
+  .chips {
+    width: 100%;
+  }
+
+  .toolbar select {
+    width: 100%;
+  }
+}

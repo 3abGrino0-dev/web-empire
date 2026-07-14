@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ToolCard, type ToolExplorerItem } from "./tool-card";
+import { ToolIcon } from "./tool-icon";
 import styles from "./tools-explorer.module.css";
 
 export interface ToolExplorerCategory {
@@ -258,7 +259,12 @@ export function ToolsExplorer({
 
       <section className={styles.content}>
         <header className={styles.hero}>
-          <div className={styles.heroIcon} aria-hidden="true">✣</div>
+          <div className={styles.heroIcon}>
+            <ToolIcon
+              slug={selectedCategory?.slug ?? "tools-library"}
+              title={selectedCategory?.name ?? t.title}
+            />
+          </div>
           <div>
             <h1>{selectedCategory?.name ?? t.title}</h1>
             <p>{selectedCategory?.description || t.description}</p>

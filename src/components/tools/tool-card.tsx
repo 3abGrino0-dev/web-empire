@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import styles from "./tools-explorer.module.css";
+import { ToolIcon } from "./tool-icon";
 
 export interface ToolExplorerItem {
   slug: string;
@@ -20,37 +21,6 @@ interface ToolCardProps {
   tool: ToolExplorerItem;
   prefix: string;
   locale: string;
-}
-
-function toolGlyph(tool: ToolExplorerItem): string {
-  const value = `${tool.slug} ${tool.title}`.toLowerCase();
-
-  if (value.includes("decorate") || value.includes("زخرف")) return "✦";
-  if (value.includes("hashtag") || value.includes("هاشتاق")) return "#";
-  if (value.includes("slug") || value.includes("رابط مختصر")) return "/";
-  if (value.includes("email") || value.includes("بريد")) return "@";
-  if (value.includes("whatsapp") || value.includes("واتساب")) return "☏";
-  if (value.includes("youtube") || value.includes("يوتيوب")) return "▶";
-  if (value.includes("seo") || value.includes("keyword") || value.includes("كلمة مفتاحية")) return "⌕";
-  if (value.includes("summar") || value.includes("ملخص")) return "≡";
-  if (value.includes("rewrite") || value.includes("proof") || value.includes("صياغ") || value.includes("تدقيق")) return "✎";
-  if (value.includes("social") || value.includes("caption") || value.includes("منشور") || value.includes("كابشن")) return "◉";
-  if (value.includes("meeting") || value.includes("proposal") || value.includes("اجتماع") || value.includes("عرض خدمات")) return "▤";
-  if (value.includes("vat") || value.includes("ضريبة")) return "VAT";
-  if (value.includes("percent") || value.includes("نسبة")) return "%";
-  if (value.includes("roi") || value.includes("عائد")) return "↗";
-  if (value.includes("margin") || value.includes("هامش")) return "◔";
-  if (value.includes("invoice") || value.includes("فاتور")) return "▤";
-  if (value.includes("content") || value.includes("محتوى")) return "T";
-  if (value.includes("name") || value.includes("اسم")) return "✦";
-  if (value.includes("analysis") || value.includes("تحليل")) return "⌁";
-  if (value.includes("discount") || value.includes("خصم")) return "−%";
-  if (value.includes("growth") || value.includes("نمو")) return "↗";
-  if (value.includes("cost") || value.includes("تكلفة")) return "◫";
-  if (tool.engineType.startsWith("ai_")) return "✧";
-  if (tool.engineType === "formula") return "∑";
-
-  return "◇";
 }
 
 function toolTypeLabel(tool: ToolExplorerItem, isArabic: boolean): string {
@@ -84,8 +54,12 @@ export function ToolCard({ tool, prefix, locale }: ToolCardProps) {
   return (
     <article className={styles.card}>
       <div className={styles.cardTop}>
-        <div className={styles.thumbnail} aria-hidden="true">
-          <span>{toolGlyph(tool)}</span>
+        <div className={styles.thumbnail}>
+          <ToolIcon
+            engineType={tool.engineType}
+            slug={tool.slug}
+            title={tool.title}
+          />
         </div>
 
         {tool.isFeatured ? (
