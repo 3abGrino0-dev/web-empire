@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   PRODUCT_CORE_VERSION,
@@ -32,9 +34,9 @@ function getRecentRiyadhDateKeys(days: number) {
   const todayStart = new Date(getRiyadhStartOfDayIso(todayKey));
   const keys: string[] = [];
 
-  for (let i = days - 1; i >= 0; i -= 1) {
+  for (let index = days - 1; index >= 0; index -= 1) {
     const current = new Date(todayStart);
-    current.setUTCDate(current.getUTCDate() - i);
+    current.setUTCDate(current.getUTCDate() - index);
     keys.push(getRiyadhDateKey(current));
   }
 
@@ -54,10 +56,12 @@ function formatUsd(value: number) {
   }).format(value);
 }
 
-function statusClass(status: string) {
-  if (status === "completed") return "ok";
-  if (status === "failed" || status === "cancelled") return "error";
-  return "warn";
+function formatActivityTime(value: string) {
+  return new Intl.DateTimeFormat("ar-SA", {
+    timeZone: RIYADH_TIME_ZONE,
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(new Date(value));
 }
 
 export default async function AdminPage() {
@@ -67,7 +71,14 @@ export default async function AdminPage() {
   const recentDateKeys = getRecentRiyadhDateKeys(7);
   const recentLowerBoundIso = getRiyadhStartOfDayIso(recentDateKeys[0] ?? todayDateKey);
 
-  const [activeToolsResult, usersResult, todayRunsResult, todayProviderUsageResult, recentRunsResult, latestRunsResult] = await Promise.all([
+  const [
+    activeToolsResult,
+    usersResult,
+    todayRunsResult,
+    todayProviderUsageResult,
+    recentRunsResult,
+    latestRunsResult,
+  ] = await Promise.all([
     supabase.from("tools").select("id", { count: "exact", head: true }).eq("is_active", true),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase
@@ -77,7 +88,7 @@ export default async function AdminPage() {
       .limit(5000),
     supabase
       .from("provider_usage")
-      .select("id, estimated_cost_usd, provider_id, model_id, input_tokens, output_tokens, created_at")
+      .select("id, estimated_cost_usd, created_at")
       .gte("created_at", todayLowerBoundIso)
       .limit(5000),
     supabase
@@ -87,9 +98,11 @@ export default async function AdminPage() {
       .limit(5000),
     supabase
       .from("tool_runs")
-      .select("id, status, credits_charged, created_at, provider_usage(estimated_cost_usd), tools(title_ar, engine_type), ai_providers(name), ai_models(name), user_id")
+      .select(
+        "id, status, credits_charged, created_at, tools(title_ar, engine_type), user_id"
+      )
       .order("created_at", { ascending: false })
-      .limit(12),
+      .limit(8),
   ]);
 
   const activeToolsAvailable = !activeToolsResult.error;
@@ -99,25 +112,25 @@ export default async function AdminPage() {
   const recentRunsAvailable = !recentRunsResult.error;
   const latestRunsAvailable = !latestRunsResult.error;
 
-  const criticalSources = [activeToolsAvailable, usersAvailable, runsTodayAvailable, aiUsageAvailable];
-  const healthyCriticalSources = criticalSources.filter(Boolean).length;
-  const allCriticalHealthy = healthyCriticalSources === criticalSources.length;
-
-  const userIds = Array.from(
-    new Set((latestRunsAvailable ? latestRunsResult.data ?? [] : []).map((r) => r.user_id).filter(Boolean))
-  );
-  const profileRowsResult = userIds.length
-    ? await supabase.from("profiles").select("id, display_name").in("id", userIds)
-    : {
-      data: [] as Array<{ id: string; display_name: string | null }>,
-      error: null,
-    };
-  const profileMap = new Map((profileRowsResult.data ?? []).map((p) => [p.id, p.display_name]));
-
   const todayRuns = runsTodayAvailable ? todayRunsResult.data ?? [] : [];
   const todayProviderUsage = aiUsageAvailable ? todayProviderUsageResult.data ?? [] : [];
   const recentRuns = recentRunsAvailable ? recentRunsResult.data ?? [] : [];
   const latestRuns = latestRunsAvailable ? latestRunsResult.data ?? [] : [];
+
+  const userIds = Array.from(
+    new Set(latestRuns.map((run) => run.user_id).filter((value): value is string => Boolean(value)))
+  );
+
+  const profileRowsResult = userIds.length
+    ? await supabase.from("profiles").select("id, display_name").in("id", userIds)
+    : {
+        data: [] as Array<{ id: string; display_name: string | null }>,
+        error: null,
+      };
+
+  const profileMap = new Map(
+    (profileRowsResult.data ?? []).map((profile) => [profile.id, profile.display_name])
+  );
 
   const activeToolsCount = activeToolsAvailable ? activeToolsResult.count ?? 0 : 0;
   const usersCount = usersAvailable ? usersResult.count ?? 0 : 0;
@@ -137,66 +150,18 @@ export default async function AdminPage() {
     : "VERSION UNAVAILABLE";
 
   const runsByDayMap = new Map<string, number>();
-  for (const dayKey of recentDateKeys) {
-    runsByDayMap.set(dayKey, 0);
-  }
+  for (const dayKey of recentDateKeys) runsByDayMap.set(dayKey, 0);
+
   for (const run of recentRuns) {
     const key = getRiyadhDateKey(new Date(run.created_at));
     runsByDayMap.set(key, (runsByDayMap.get(key) ?? 0) + 1);
   }
-  const runsByDay = recentDateKeys.map((day) => ({ day, total: runsByDayMap.get(day) ?? 0 }));
-  const maxRunsByDay = Math.max(1, ...runsByDay.map((i) => i.total));
 
-  const engineUsageMap = new Map<string, number>();
-  for (const run of recentRuns) {
-    const toolRef = Array.isArray(run.tools) ? run.tools[0] : run.tools;
-    const engine = toolRef?.engine_type ?? "unknown";
-    engineUsageMap.set(engine, (engineUsageMap.get(engine) ?? 0) + 1);
-  }
-  const engineUsage = Array.from(engineUsageMap.entries())
-    .map(([engine, total]) => ({ engine, total }))
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 6);
-  const maxEngine = Math.max(1, ...engineUsage.map((i) => i.total));
-
-  const providerMap = new Map<string, { runs: number; cost: number }>();
-  for (const row of todayProviderUsage) {
-    const key = `${row.provider_id ?? "unknown"}:${row.model_id ?? "unknown"}`;
-    const current = providerMap.get(key) ?? { runs: 0, cost: 0 };
-    current.runs += 1;
-    current.cost += Number(row.estimated_cost_usd ?? 0);
-    providerMap.set(key, current);
-  }
-
-  const providerIds = Array.from(new Set(todayProviderUsage.map((p) => p.provider_id).filter(Boolean)));
-  const modelIds = Array.from(new Set(todayProviderUsage.map((p) => p.model_id).filter(Boolean)));
-
-  const [providerRowsResult, modelRowsResult] = await Promise.all([
-    providerIds.length
-      ? supabase.from("ai_providers").select("id, name").in("id", providerIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; name: string }>, error: null }),
-    modelIds.length
-      ? supabase.from("ai_models").select("id, name").in("id", modelIds)
-      : Promise.resolve({ data: [] as Array<{ id: string; name: string }>, error: null }),
-  ]);
-
-  const providerNameMap = new Map((providerRowsResult.data ?? []).map((p) => [p.id, p.name]));
-  const modelNameMap = new Map((modelRowsResult.data ?? []).map((m) => [m.id, m.name]));
-
-  const providerUsage = Array.from(providerMap.entries())
-    .map(([key, value]) => {
-      const [providerId, modelId] = key.split(":");
-      const providerName = providerNameMap.get(providerId) ?? "Unknown Provider";
-      const modelName = modelNameMap.get(modelId) ?? "Unknown Model";
-      return {
-        name: `${providerName} / ${modelName}`,
-        runs: value.runs,
-        cost: value.cost,
-      };
-    })
-    .sort((a, b) => b.runs - a.runs)
-    .slice(0, 6);
-  const maxProviderRuns = Math.max(1, ...providerUsage.map((i) => i.runs));
+  const runsByDay = recentDateKeys.map((day) => ({
+    day,
+    total: runsByDayMap.get(day) ?? 0,
+  }));
+  const maxRunsByDay = Math.max(1, ...runsByDay.map((item) => item.total));
 
   const topToolsMap = new Map<string, number>();
   for (const run of recentRuns) {
@@ -204,229 +169,249 @@ export default async function AdminPage() {
     const title = toolRef?.title_ar ?? "أداة غير معروفة";
     topToolsMap.set(title, (topToolsMap.get(title) ?? 0) + 1);
   }
+
   const topTools = Array.from(topToolsMap.entries())
     .map(([name, runs]) => ({ name, runs }))
-    .sort((a, b) => b.runs - a.runs)
-    .slice(0, 8);
-  const maxTopTools = Math.max(1, ...topTools.map((i) => i.runs));
+    .sort((first, second) => second.runs - first.runs)
+    .slice(0, 5);
+
+  const maxTopToolRuns = Math.max(1, ...topTools.map((item) => item.runs));
 
   const totalRecentRuns = recentRuns.length;
   const failedRecentRuns = recentRuns.filter((run) => run.status === "failed").length;
   const errorRate = totalRecentRuns > 0 ? (failedRecentRuns / totalRecentRuns) * 100 : 0;
 
-  const systemStatusLabel = allCriticalHealthy ? "ONLINE" : "DEGRADED";
-  const systemStatusClass = allCriticalHealthy ? "ok" : "warn";
+  const healthSources = [
+    { label: "قاعدة بيانات الأدوات", healthy: activeToolsAvailable },
+    { label: "حسابات المستخدمين", healthy: usersAvailable },
+    { label: "عمليات التشغيل", healthy: runsTodayAvailable },
+    { label: "استخدام الذكاء الاصطناعي", healthy: aiUsageAvailable },
+  ];
+
+  const allHealthy = healthSources.every((source) => source.healthy);
 
   const metrics = [
-    { label: "Active Tools", value: formatNumber(activeToolsCount), dataSourceMissing: !activeToolsAvailable },
-    { label: "Runs Today", value: formatNumber(runsToday), dataSourceMissing: !runsTodayAvailable },
-    { label: "Users", value: formatNumber(usersCount), dataSourceMissing: !usersAvailable },
-    { label: "AI Usage Today", value: formatNumber(aiUsageToday), dataSourceMissing: !aiUsageAvailable },
-    { label: "Estimated AI Cost", value: formatUsd(estimatedAiCostToday), dataSourceMissing: !aiUsageAvailable },
-    { label: "Credits Consumed", value: formatNumber(creditsConsumedToday), dataSourceMissing: !runsTodayAvailable },
+    {
+      label: "إجمالي المستخدمين",
+      value: usersAvailable ? formatNumber(usersCount) : "—",
+      helper: "الحسابات المسجلة",
+      tone: "purple",
+    },
+    {
+      label: "الأدوات النشطة",
+      value: activeToolsAvailable ? formatNumber(activeToolsCount) : "—",
+      helper: "جاهزة للاستخدام",
+      tone: "gold",
+    },
+    {
+      label: "تشغيلات اليوم",
+      value: runsTodayAvailable ? formatNumber(runsToday) : "—",
+      helper: "منذ بداية اليوم",
+      tone: "green",
+    },
+    {
+      label: "استخدام AI اليوم",
+      value: aiUsageAvailable ? formatNumber(aiUsageToday) : "—",
+      helper: "طلبات مزودي AI",
+      tone: "blue",
+    },
+    {
+      label: "النقاط المستهلكة",
+      value: runsTodayAvailable ? formatNumber(creditsConsumedToday) : "—",
+      helper: "إجمالي اليوم",
+      tone: "purple",
+    },
+    {
+      label: "تكلفة AI",
+      value: aiUsageAvailable ? formatUsd(estimatedAiCostToday) : "—",
+      helper: "تقدير اليوم",
+      tone: "gold",
+    },
   ];
 
   return (
-    <>
-      <div className="admin-head">
-        <div className="eyebrow">WEB EMPIRE ADMIN</div>
-        <h1>نظرة عامة النظام</h1>
-        <p>لوحة تشغيل حية مبنية على بيانات Supabase الفعلية.</p>
-      </div>
-
-      <div className="panel">
-        <div className="chip-row">
-          <span className="chip">WEB EMPIRE</span>
-          <span className="chip">SYSTEM STATUS: {systemStatusLabel}</span>
-          <span className="chip">VERSION</span>
-          <span className="chip" dir="ltr">{productVersion}</span>
-          <span className={`status-pill ${systemStatusClass}`}>{systemStatusLabel}</span>
-          <span className="chip">REPORTING TIMEZONE: {RIYADH_TIME_ZONE}</span>
+    <div className="adminv3-dashboard">
+      <section className="adminv3-page-heading">
+        <div>
+          <h2>مرحبًا، هذه نظرة عامة على المنصة</h2>
+          <p>مؤشرات مباشرة عن المستخدمين والأدوات والتشغيلات وحالة النظام.</p>
         </div>
-      </div>
-
-      <div className="panel" id="system-status">
-        <h3>SYSTEM STATUS</h3>
-        <div className="chip-row">
-          <span className={`status-pill ${systemStatusClass}`}>{systemStatusLabel}</span>
-          <span className="chip" dir="ltr">
-            {healthyCriticalSources} / {criticalSources.length} DATA SOURCES HEALTHY
+        <div className="adminv3-heading-actions">
+          <span className={`adminv3-status ${allHealthy ? "" : "is-warn"}`}>
+            {allHealthy ? "جميع الأنظمة تعمل" : "بعض الخدمات تحتاج مراجعة"}
           </span>
-          <span className="chip" dir="ltr">TOOLS: {activeToolsAvailable ? "OK" : "UNAVAILABLE"}</span>
-          <span className="chip" dir="ltr">PROFILES: {usersAvailable ? "OK" : "UNAVAILABLE"}</span>
-          <span className="chip" dir="ltr">TOOL RUNS: {runsTodayAvailable ? "OK" : "UNAVAILABLE"}</span>
-          <span className="chip" dir="ltr">PROVIDER USAGE: {aiUsageAvailable ? "OK" : "UNAVAILABLE"}</span>
+          <Link href="/admin/audit" className="adminv3-secondary-link">
+            سجل الإجراءات
+          </Link>
         </div>
-      </div>
+      </section>
 
-      <div className="panel" id="version">
-        <h3>VERSION</h3>
-        <div className="chip-row">
-          <span className="chip" dir="ltr">DESIGN: {PRODUCT_DESIGN_VERSION}</span>
-          <span className="chip" dir="ltr">CORE: {PRODUCT_CORE_VERSION}</span>
-          <span className="chip" dir="ltr">
-            ACTIVE TOOLS: {activeToolsAvailable ? formatNumber(activeToolsCount) : "DATA SOURCE NOT AVAILABLE"}
-          </span>
-          <span className="chip" dir="ltr">VERSION: {productVersion}</span>
-        </div>
-      </div>
-
-      <div className="metrics-grid">
-        {metrics.map((metric) => (
-          <div className="metric" key={metric.label}>
-            <span>{metric.label}</span>
-            <h2 dir="ltr">
-              {metric.dataSourceMissing ? "DATA SOURCE NOT AVAILABLE" : metric.value}
-            </h2>
-          </div>
-        ))}
-      </div>
-
-      <div className="analytics-grid">
-        <div className="card">
-          <h3>RUNS - آخر 7 أيام</h3>
-          <div className="bars">
-            {!recentRunsAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : runsByDay.length ? runsByDay.map((item) => (
-              <div className="bar-row" key={item.day}>
-                <div className="bar-row-head">
-                  <span dir="ltr">{item.day}</span>
-                  <strong dir="ltr">{item.total}</strong>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill" style={{ width: `${(item.total / maxRunsByDay) * 100}%` }} />
-                </div>
-              </div>
-            )) : <p className="inline-note">لا توجد بيانات تشغيل حديثة.</p>}
-          </div>
-        </div>
-
-        <div className="card">
-          <h3>ENGINE USAGE</h3>
-          <div className="bars">
-            {!recentRunsAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : engineUsage.length ? engineUsage.map((item) => (
-              <div className="bar-row" key={item.engine}>
-                <div className="bar-row-head">
-                  <span dir="ltr">{item.engine}</span>
-                  <strong dir="ltr">{item.total}</strong>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill gold" style={{ width: `${(item.total / maxEngine) * 100}%` }} />
-                </div>
-              </div>
-            )) : <p className="inline-note">لا توجد بيانات كافية.</p>}
-          </div>
-        </div>
-
-        <div className="card">
-          <h3>AI PROVIDER USAGE / COST - اليوم</h3>
-          <div className="bars">
-            {!aiUsageAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : providerUsage.length ? providerUsage.map((item) => (
-              <div className="bar-row" key={item.name}>
-                <div className="bar-row-head">
-                  <span>{item.name}</span>
-                  <strong dir="ltr">{item.runs} / {formatUsd(item.cost)}</strong>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill" style={{ width: `${(item.runs / maxProviderRuns) * 100}%` }} />
-                </div>
-              </div>
-            )) : <p className="inline-note">لا يوجد استخدام AI مسجل اليوم.</p>}
-          </div>
-        </div>
-
-        <div className="card">
-          <h3>TOP TOOLS</h3>
-          <div className="bars">
-            {!recentRunsAvailable ? <p className="inline-note">DATA SOURCE NOT AVAILABLE</p> : topTools.length ? topTools.map((item) => (
-              <div className="bar-row" key={item.name}>
-                <div className="bar-row-head">
-                  <span>{item.name}</span>
-                  <strong dir="ltr">{item.runs}</strong>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill gold" style={{ width: `${(item.runs / maxTopTools) * 100}%` }} />
-                </div>
-              </div>
-            )) : <p className="inline-note">لا توجد بيانات أدوات كافية.</p>}
-          </div>
-        </div>
-      </div>
-
-      <div className="panel">
-        <h3>ERROR RATE</h3>
-        {!recentRunsAvailable ? (
-          <p className="inline-note">DATA SOURCE NOT AVAILABLE</p>
-        ) : (
-          <>
-            <p className="inline-note">آخر 7 أيام</p>
-            <div className="chip-row">
-              <span className={`status-pill ${errorRate >= 15 ? "error" : errorRate > 5 ? "warn" : "ok"}`} dir="ltr">
-                {errorRate.toFixed(2)}%
-              </span>
-              <span className="chip" dir="ltr">{failedRecentRuns} failed</span>
-              <span className="chip" dir="ltr">{totalRecentRuns} total</span>
+      <section className="adminv3-kpi-grid" aria-label="المؤشرات الرئيسية">
+        {metrics.map((metric, index) => (
+          <article className="adminv3-kpi-card" key={metric.label}>
+            <div className="adminv3-kpi-head">
+              <span>{metric.label}</span>
+              <span className="adminv3-kpi-icon">{String(index + 1).padStart(2, "0")}</span>
             </div>
-          </>
-        )}
-      </div>
+            <strong>{metric.value}</strong>
+            <small>{metric.helper}</small>
+          </article>
+        ))}
+      </section>
 
-      <div className="section">
-        <h3>LATEST RUNS</h3>
-        <p className="inline-note">أحدث التشغيلات مع المزود/النموذج والتكلفة والنقاط</p>
-      </div>
+      <section className="adminv3-dashboard-grid">
+        <article className="adminv3-card">
+          <header className="adminv3-card-header">
+            <div>
+              <h3>نشاط التشغيل خلال آخر 7 أيام</h3>
+              <p>عدد التشغيلات المسجلة يوميًا بتوقيت الرياض.</p>
+            </div>
+            <span className="adminv3-status">بيانات مباشرة</span>
+          </header>
 
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Tool</th>
-              <th>User</th>
-              <th>Engine</th>
-              <th>Status</th>
-              <th>AI Provider / Model</th>
-              <th>Estimated Cost</th>
-              <th>Credits Charged</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!latestRunsAvailable ? (
-              <tr>
-                <td colSpan={8}>DATA SOURCE NOT AVAILABLE</td>
-              </tr>
-            ) : latestRuns.length ? latestRuns.map((run) => {
-              const toolRef = Array.isArray(run.tools) ? run.tools[0] : run.tools;
-              const providerRef = Array.isArray(run.ai_providers) ? run.ai_providers[0] : run.ai_providers;
-              const modelRef = Array.isArray(run.ai_models) ? run.ai_models[0] : run.ai_models;
-              const usageRef = Array.isArray(run.provider_usage) ? run.provider_usage : [];
-              const estimatedCost = usageRef.reduce(
-                (sum, usage) => sum + Number(usage.estimated_cost_usd ?? 0),
-                0
-              );
-              const userDisplay = run.user_id ? profileMap.get(run.user_id) ?? run.user_id.slice(0, 8) : "-";
-
+          <div className="adminv3-chart">
+            {runsByDay.map((item) => {
+              const height = Math.max(4, (item.total / maxRunsByDay) * 100);
               return (
-                <tr key={run.id}>
-                  <td>{toolRef?.title_ar ?? "-"}</td>
-                  <td dir="ltr">{userDisplay}</td>
-                  <td dir="ltr">{toolRef?.engine_type ?? "-"}</td>
-                  <td>
-                    <span className={`status-pill ${statusClass(run.status)}`}>{run.status}</span>
-                  </td>
-                  <td>{providerRef?.name ?? "-"} / {modelRef?.name ?? "-"}</td>
-                  <td dir="ltr">{formatUsd(estimatedCost)}</td>
-                  <td dir="ltr">{formatNumber(Number(run.credits_charged ?? 0))}</td>
-                  <td dir="ltr">{new Date(run.created_at).toLocaleString("en-GB", { hour12: false })}</td>
-                </tr>
+                <div className="adminv3-chart-column" key={item.day}>
+                  <strong>{item.total}</strong>
+                  <div className="adminv3-chart-bar-wrap">
+                    <span className="adminv3-chart-bar" style={{ height: `${height}%` }} />
+                  </div>
+                  <span>{item.day.slice(5)}</span>
+                </div>
               );
-            }) : (
-              <tr>
-                <td colSpan={8}>لا توجد تشغيلات حديثة.</td>
-              </tr>
+            })}
+          </div>
+        </article>
+
+        <article className="adminv3-card">
+          <header className="adminv3-card-header">
+            <div>
+              <h3>آخر النشاطات</h3>
+              <p>أحدث عمليات التشغيل على المنصة.</p>
+            </div>
+            <Link href="/admin/runs" className="adminv3-secondary-link">
+              عرض الكل
+            </Link>
+          </header>
+
+          <div className="adminv3-activity-list">
+            {!latestRunsAvailable ? (
+              <p className="inline-note">تعذر قراءة أحدث النشاطات.</p>
+            ) : latestRuns.length ? (
+              latestRuns.map((run) => {
+                const toolRef = Array.isArray(run.tools) ? run.tools[0] : run.tools;
+                const userDisplay = run.user_id
+                  ? profileMap.get(run.user_id) ?? run.user_id.slice(0, 8)
+                  : "مستخدم غير معروف";
+
+                return (
+                  <div className="adminv3-activity-item" key={run.id}>
+                    <span className="adminv3-activity-icon">
+                      {run.status === "completed" ? "✓" : run.status === "failed" ? "!" : "•"}
+                    </span>
+                    <span className="adminv3-activity-copy">
+                      <strong>{toolRef?.title_ar ?? "تشغيل أداة"}</strong>
+                      <small>{userDisplay}</small>
+                    </span>
+                    <time className="adminv3-activity-time">
+                      {formatActivityTime(run.created_at)}
+                    </time>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="inline-note">لا توجد نشاطات حديثة.</p>
             )}
-          </tbody>
-        </table>
-      </div>
-    </>
+          </div>
+        </article>
+      </section>
+
+      <section className="adminv3-bottom-grid">
+        <article className="adminv3-card">
+          <header className="adminv3-card-header">
+            <div>
+              <h3>حالة النظام</h3>
+              <p>فحص مصادر البيانات الأساسية.</p>
+            </div>
+            <span className={`adminv3-status ${allHealthy ? "" : "is-warn"}`}>
+              {allHealthy ? "سليم" : "يحتاج متابعة"}
+            </span>
+          </header>
+
+          <div className="adminv3-health-list">
+            {healthSources.map((source) => (
+              <div className="adminv3-health-row" key={source.label}>
+                <span>{source.label}</span>
+                <strong className={source.healthy ? "adminv3-health-ok" : ""}>
+                  {source.healthy ? "متصل" : "غير متاح"}
+                </strong>
+              </div>
+            ))}
+            <div className="adminv3-health-row">
+              <span>معدل الأخطاء — 7 أيام</span>
+              <strong className={errorRate <= 5 ? "adminv3-health-ok" : ""}>
+                {errorRate.toFixed(2)}%
+              </strong>
+            </div>
+          </div>
+        </article>
+
+        <article className="adminv3-card">
+          <header className="adminv3-card-header">
+            <div>
+              <h3>الأدوات الأكثر استخدامًا</h3>
+              <p>حسب تشغيلات آخر 7 أيام.</p>
+            </div>
+          </header>
+
+          <div className="adminv3-ranking">
+            {topTools.length ? (
+              topTools.map((tool) => (
+                <div className="adminv3-ranking-row" key={tool.name}>
+                  <span>{tool.name}</span>
+                  <div className="adminv3-inline-actions">
+                    <div className="adminv3-progress">
+                      <span style={{ width: `${(tool.runs / maxTopToolRuns) * 100}%` }} />
+                    </div>
+                    <strong>{tool.runs}</strong>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="inline-note">لا توجد بيانات كافية حتى الآن.</p>
+            )}
+          </div>
+        </article>
+
+        <article className="adminv3-card">
+          <header className="adminv3-card-header">
+            <div>
+              <h3>إجراءات سريعة</h3>
+              <p>اختصارات لأكثر العمليات استخدامًا.</p>
+            </div>
+          </header>
+
+          <div className="adminv3-quick-actions">
+            <Link href="/admin/users" className="adminv3-quick-action">إدارة المستخدمين</Link>
+            <Link href="/admin/tools/new" className="adminv3-quick-action">إضافة أداة</Link>
+            <Link href="/admin/plans" className="adminv3-quick-action">الخطط والنقاط</Link>
+            <Link href="/admin/audit" className="adminv3-quick-action">سجل الإجراءات</Link>
+          </div>
+
+          <div className="adminv3-health-list" style={{ marginTop: 14 }}>
+            <div className="adminv3-health-row">
+              <span>إصدار المنتج</span>
+              <strong>{productVersion}</strong>
+            </div>
+            <div className="adminv3-health-row">
+              <span>Core / Design</span>
+              <strong>{PRODUCT_CORE_VERSION} / {PRODUCT_DESIGN_VERSION}</strong>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
   );
 }
