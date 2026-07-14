@@ -78,9 +78,9 @@ const copy = {
     duration: "وقت التنفيذ",
     raw: "التفاصيل التقنية",
     copied: "تم نسخ النتيجة.",
-    saved: "تم حفظ النتيجة محليًا.",
+    saved: "تم حفظ النتيجة وتنزيل ملف نصي.",
     imageSaved: "تم تنزيل صورة النتيجة.",
-    printOpened: "تم فتح نموذج PDF للطباعة والحفظ.",
+    printOpened: "تم فتح نافذة الطباعة. اختر حفظ كملف PDF.",
     actionFailed: "تعذر تنفيذ العملية.",
     loginRequired: "يلزم تسجيل الدخول لتشغيل هذه الأداة.",
     loginAction: "تسجيل الدخول",
@@ -117,9 +117,9 @@ const copy = {
     duration: "Duration",
     raw: "Technical details",
     copied: "Result copied.",
-    saved: "Result saved locally.",
+    saved: "Result saved and downloaded.",
     imageSaved: "Result image downloaded.",
-    printOpened: "PDF print view opened.",
+    printOpened: "Print view opened. Choose Save as PDF.",
     actionFailed: "Unable to complete the action.",
     loginRequired: "Sign in is required to run this tool.",
     loginAction: "Sign in",
@@ -681,6 +681,37 @@ export function DynamicToolForm({
       ].slice(0, 50);
 
       window.localStorage.setItem(storageKey, JSON.stringify(next));
+
+      const detailText = entries
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+
+      const exportText = [
+        toolTitle,
+        display.label,
+        display.formatted,
+        display.equation,
+        display.warning,
+        display.insight,
+        display.note,
+        detailText,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+
+      const blob = new Blob([exportText], {
+        type: "text/plain;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `${slug}-result.txt`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setActionMessage(t.saved);
     } catch {
       setActionMessage(t.actionFailed);
@@ -765,10 +796,16 @@ export function DynamicToolForm({
   function openPdfPrint() {
     if (!result) return;
 
-    const printWindow = window.open("", "_blank", "noopener,noreferrer");
+    const printWindow = window.open("about:blank", "_blank");
     if (!printWindow) {
       setActionMessage(t.actionFailed);
       return;
+    }
+
+    try {
+      printWindow.opener = null;
+    } catch {
+      // Some browsers prevent changing opener; printing can continue safely.
     }
 
     const detailsHtml = entries
@@ -829,7 +866,14 @@ ${detailsHtml ? `<table><tbody>${detailsHtml}</tbody></table>` : ""}
 </main>
 <footer><strong>${isArabic ? "إمبراطورية الويب" : "Web Empire"}</strong> • webempire.site</footer>
 </section>
-<script>window.addEventListener("load",()=>setTimeout(()=>window.print(),450));</script>
+<script>
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    window.focus();
+    window.print();
+  }, 650);
+});
+</script>
 </body>
 </html>`);
 
