@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { signOut } from "@/actions/auth";
-import { webEmpireLightAssets } from "@/brand/web-empire-light-assets";
 import { requireUser } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { translate } from "@/localization/messages";
@@ -110,7 +109,6 @@ export default async function DashboardPage({
       <div className="we-container we-dashboard-shell">
         <section className="we-dashboard-hero">
           <div className="we-dashboard-heading">
-            <img src={webEmpireLightAssets.mark} alt="Web Empire mark" className="we-dashboard-mark" />
             <div>
               <p className="we-dashboard-kicker">{t.myEmpire}</p>
               <h1>{t.title}</h1>
@@ -119,11 +117,6 @@ export default async function DashboardPage({
           </div>
 
           <div className="we-dashboard-hero-side">
-            <img
-              src={webEmpireLightAssets.dashboardPreview}
-              alt="Dashboard visual"
-              className="we-dashboard-preview"
-            />
             <form action={signOut}>
               <input type="hidden" name="locale" value={locale.code} />
               <button type="submit" className="we-button-ghost we-dashboard-signout">

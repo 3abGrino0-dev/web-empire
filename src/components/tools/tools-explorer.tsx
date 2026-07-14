@@ -120,6 +120,19 @@ export function ToolsExplorer({
 
   const selectedCategory = categories.find((item) => item.slug === category);
 
+  const availableCategories = useMemo(
+    () =>
+      categories
+        .filter((item) => (categoryCounts.get(item.id) ?? 0) > 0)
+        .sort((a, b) => {
+          const countA = categoryCounts.get(a.id) ?? 0;
+          const countB = categoryCounts.get(b.id) ?? 0;
+
+          return countB - countA || a.name.localeCompare(b.name, locale);
+        }),
+    [categories, categoryCounts, locale],
+  );
+
   const visibleTools = useMemo(() => {
     const normalizedQuery = normalize(query);
 
@@ -205,55 +218,58 @@ export function ToolsExplorer({
 
   return (
     <div className={styles.shell}>
-      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-        <div className={styles.sidebarSummary}>
-          <span>{tools.length}</span>
-          <strong>{isArabic ? "أداة" : t.tools}</strong>
-          <p>{t.description}</p>
-          <div className={styles.summaryBars} aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </div>
-        </div>
+      <aside
+        className={`${styles.sidebar} ${
+          sidebarOpen ? styles.sidebarOpen : ""
+        }`}
+      >
+        <div className={styles.sidebarPanel}>
+          <header className={styles.sidebarHeader}>
+            <div>
+              <span>{t.filter}</span>
+              <strong>{availableCategories.length}</strong>
+            </div>
 
-        <nav className={styles.categoryNav} aria-label={t.filter}>
-          <button
-            className={!category ? styles.categoryActive : ""}
-            onClick={() => selectCategory("")}
-            type="button"
-          >
-            <span>⌂ {t.all}</span>
-            <small>{tools.length}</small>
-          </button>
+            <small>
+              {tools.length} {isArabic ? "أداة متاحة" : "available tools"}
+            </small>
+          </header>
 
-          {categories.map((item) => (
+          <nav className={styles.categoryNav} aria-label={t.filter}>
             <button
-              className={category === item.slug ? styles.categoryActive : ""}
-              key={item.id}
-              onClick={() => selectCategory(item.slug)}
+              className={!category ? styles.categoryActive : ""}
+              onClick={() => selectCategory("")}
               type="button"
             >
               <span>
                 <i className={styles.categoryIcon} aria-hidden="true">
-                  {categoryGlyph(item.icon, item.slug)}
+                  ◫
                 </i>
-                {item.name}
+                {t.all}
               </span>
-              <small>{categoryCounts.get(item.id) ?? 0}</small>
+              <small>{tools.length}</small>
             </button>
-          ))}
-        </nav>
 
-        <div className={styles.suggestion}>
-          <span aria-hidden="true">✦</span>
-          <h3>{t.missing}</h3>
-          <p>{t.suggestBody}</p>
-          <Link href={`${prefix}/contact`}>{t.suggest}</Link>
+            {availableCategories.map((item) => (
+              <button
+                className={
+                  category === item.slug ? styles.categoryActive : ""
+                }
+                key={item.id}
+                onClick={() => selectCategory(item.slug)}
+                type="button"
+              >
+                <span>
+                  <i className={styles.categoryIcon} aria-hidden="true">
+                    {categoryGlyph(item.icon, item.slug)}
+                  </i>
+                  {item.name}
+                </span>
+
+                <small>{categoryCounts.get(item.id) ?? 0}</small>
+              </button>
+            ))}
+          </nav>
         </div>
       </aside>
 
@@ -306,7 +322,7 @@ export function ToolsExplorer({
                 {t.all} — {tools.length}
               </option>
 
-              {categories.map((item) => (
+              {availableCategories.map((item) => (
                 <option key={item.id} value={item.slug}>
                   {item.name} — {categoryCounts.get(item.id) ?? 0}
                 </option>

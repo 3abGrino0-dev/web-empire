@@ -2990,3 +2990,55 @@ html[dir="rtl"] .we-tool-hero-copy h1 {
     width: 100%;
   }
 }
+
+
+/* CUSTOMER DASHBOARD V3 — CLEAN HERO WITHOUT MEDIA */
+
+.we-dashboard-hero {
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 30px 34px;
+}
+
+.we-dashboard-heading {
+  display: block;
+}
+
+.we-dashboard-heading > div {
+  max-width: 700px;
+}
+
+.we-dashboard-heading h1 {
+  margin-top: 5px;
+}
+
+.we-dashboard-heading p {
+  max-width: 62ch;
+}
+
+.we-dashboard-hero-side {
+  width: auto;
+  display: block;
+}
+
+.we-dashboard-preview,
+.we-dashboard-mark {
+  display: none !important;
+}
+
+.we-dashboard-signout {
+  min-width: 150px;
+}
+
+@media (max-width: 680px) {
+  .we-dashboard-hero {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+
+  .we-dashboard-signout {
+    width: 100%;
+  }
+}
