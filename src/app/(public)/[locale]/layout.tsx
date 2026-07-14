@@ -12,6 +12,7 @@ import { appearanceCssVariables, getAppearanceSettings } from "@/appearance/repo
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { publicEnv } from "@/lib/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   getActiveLocales,
   getLocaleByCode,
@@ -81,7 +82,16 @@ export default async function LocaleLayout({
   const locale = await getLocaleByCode(localeCode);
   if (!locale) notFound();
 
-  const [locales, identity, messages, appearance] = await Promise.all([
+  const supabase = await createSupabaseServerClient();
+
+  const [
+    { data: { user } },
+    locales,
+    identity,
+    messages,
+    appearance,
+  ] = await Promise.all([
+    supabase.auth.getUser(),
     getActiveLocales(),
     getSiteIdentity(locale),
     getUiMessages(locale),
@@ -116,6 +126,7 @@ export default async function LocaleLayout({
             messages={messages}
             headerStyle={appearance.headerStyle}
             defaultColorMode={appearance.defaultColorMode}
+            isAuthenticated={Boolean(user)}
           />
           {children}
           <SiteFooter identity={identity} />

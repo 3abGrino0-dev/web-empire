@@ -16,6 +16,7 @@ const labels = {
     companies: "الشركات",
     login: "تسجيل الدخول",
     start: "ابدأ الآن",
+    dashboard: "لوحة التحكم",
   },
   en: {
     pricing: "Pricing",
@@ -24,6 +25,7 @@ const labels = {
     companies: "Companies",
     login: "Login",
     start: "Start now",
+    dashboard: "Dashboard",
   },
 };
 
@@ -33,6 +35,7 @@ export function SiteHeader({
   messages,
   headerStyle,
   defaultColorMode,
+  isAuthenticated,
 }: {
   locale: LocaleRecord;
   locales: LocaleRecord[];
@@ -40,6 +43,7 @@ export function SiteHeader({
   messages: UiMessages;
   headerStyle: HeaderStyle;
   defaultColorMode: ColorMode;
+  isAuthenticated: boolean;
 }) {
   const prefix = `/${locale.code}`;
   const t = locale.code === "ar" ? labels.ar : labels.en;
@@ -72,12 +76,20 @@ export function SiteHeader({
             currentLocale={locale.code}
             label={translate(messages, "language.label")}
           />
-          <Link href={`${prefix}/auth/login`} className="light-empire-login">
-            {t.login}
-          </Link>
-          <Link href={`${prefix}/auth/register`} className="light-empire-start">
-            ✧ {t.start}
-          </Link>
+          {isAuthenticated ? (
+            <Link href={`${prefix}/dashboard`} className="light-empire-start">
+              ✦ {t.dashboard}
+            </Link>
+          ) : (
+            <>
+              <Link href={`${prefix}/auth/login`} className="light-empire-login">
+                {t.login}
+              </Link>
+              <Link href={`${prefix}/auth/register`} className="light-empire-start">
+                ✧ {t.start}
+              </Link>
+            </>
+          )}
           <div className="light-empire-mode">
             <ColorModeToggle defaultMode={defaultColorMode} />
           </div>
