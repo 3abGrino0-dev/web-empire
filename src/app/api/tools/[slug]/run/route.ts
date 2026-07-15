@@ -1,9 +1,12 @@
-import { NextResponse } from "next/server";
-
 import { runTool } from "@/engines/tool-runner";
+import { corsJson, corsOptions } from "@/lib/api-cors";
 import { getRequestUserId } from "@/lib/request-auth";
 
 const MAX_REQUEST_BYTES = 1_000_000;
+
+export function OPTIONS() {
+  return corsOptions();
+}
 
 export async function POST(
   request: Request,
@@ -12,14 +15,14 @@ export async function POST(
   try {
     const contentLength = Number(request.headers.get("content-length") ?? 0);
     if (contentLength > MAX_REQUEST_BYTES) {
-      return NextResponse.json({ error: "REQUEST_TOO_LARGE" }, { status: 413 });
+      return corsJson({ error: "REQUEST_TOO_LARGE" }, { status: 413 });
     }
 
     const { slug } = await context.params;
     const userId = await getRequestUserId(request);
     const hasBearer = /^Bearer\s+/i.test(request.headers.get("authorization") ?? "");
     if (hasBearer && !userId) {
-      return NextResponse.json({ error: "INVALID_ACCESS_TOKEN" }, { status: 401 });
+      return corsJson({ error: "INVALID_ACCESS_TOKEN" }, { status: 401 });
     }
 
     const body = (await request.json()) as {
@@ -33,7 +36,7 @@ export async function POST(
       body.locale ?? "en",
       userId ?? undefined,
     );
-    return NextResponse.json(result);
+    return corsJson(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "TOOL_RUN_FAILED";
     const status =
@@ -47,7 +50,7 @@ export async function POST(
             ? 403
             : 400;
 
-    return NextResponse.json(
+    return corsJson(
       {
         error:
           message === "LOGIN_REQUIRED"

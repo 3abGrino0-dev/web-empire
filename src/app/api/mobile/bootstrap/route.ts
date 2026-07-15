@@ -1,11 +1,14 @@
-import { NextResponse } from "next/server";
-
 import { getAppearanceSettings } from "@/appearance/repository";
+import { corsJson, corsOptions } from "@/lib/api-cors";
 import { getActiveLocales, getLocaleByCode, getSiteIdentity, getUiMessages } from "@/localization/repository";
 import { resolveRequestLocale } from "@/localization/resolve";
 import { getActiveCategories, getActivePlans, getActiveTools } from "@/repositories/catalog";
 
 export const dynamic = "force-dynamic";
+
+export function OPTIONS() {
+  return corsOptions();
+}
 
 export async function GET(request: Request) {
   try {
@@ -18,7 +21,7 @@ export async function GET(request: Request) {
 
     const locale = await getLocaleByCode(localeCode);
     if (!locale) {
-      return NextResponse.json({ error: "LOCALE_NOT_SUPPORTED" }, { status: 400 });
+      return corsJson({ error: "LOCALE_NOT_SUPPORTED" }, { status: 400 });
     }
 
     const [appearance, locales, identity, messages, categories, tools, plans] =
@@ -32,7 +35,7 @@ export async function GET(request: Request) {
         getActivePlans(locale.code),
       ]);
 
-    return NextResponse.json({
+    return corsJson({
       locale,
       appearance,
       locales: locales.map((item) => ({
@@ -71,6 +74,6 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "MOBILE_BOOTSTRAP_FAILED";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return corsJson({ error: message }, { status: 500 });
   }
 }

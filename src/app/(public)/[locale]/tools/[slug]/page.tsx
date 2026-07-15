@@ -3,7 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DynamicToolForm } from "@/components/dynamic-tool-form";
-import { translate } from "@/localization/messages";
+import {
+  MediaToolWorkbench,
+  type MediaToolMode,
+} from "@/components/media-tools/media-tool-workbench";
 import {
   getActiveLocales,
   getLocaleByCode,
@@ -17,6 +20,7 @@ const copy = {
   ar: {
     instant: "أداة حساب فورية",
     smart: "أداة ذكية",
+    media: "أداة وسائط محلية",
     back: "العودة إلى مكتبة الأدوات",
     free: "مجاني",
     points: "نقطة",
@@ -30,10 +34,19 @@ const copy = {
     stepsBody: "أدخل القيم، شغّل الأداة، ثم راجع النتيجة والتفاصيل المقترحة.",
     note: "ملاحظة",
     noteBody: "راجع الأرقام والسياق قبل اتخاذ أي قرار مالي أو تجاري.",
+    mediaGuideBody:
+      "اختر ملفك أو أدخل رابطًا مباشرًا، واضبط الصيغة والجودة ثم ابدأ المعالجة المحلية.",
+    mediaWhenBody:
+      "عندما تحتاج إلى تنزيل ملف مباشر مصرح به أو تحويل وضغط وقص فيديو دون رفعه إلى خادم خارجي.",
+    mediaStepsBody:
+      "اختر الملف، حدد الإعدادات، انتظر اكتمال المعالجة ثم نزّل الملف الناتج.",
+    mediaNoteBody:
+      "استخدم فقط الملفات التي تملكها أو لديك تصريح بها. لا تدعم الأدوات تجاوز DRM أو حماية المنصات.",
   },
   en: {
     instant: "Instant calculator",
     smart: "Smart tool",
+    media: "Local media tool",
     back: "Back to tools library",
     free: "Free",
     points: "credits",
@@ -47,6 +60,14 @@ const copy = {
     stepsBody: "Enter values, run the tool, then review the result and supporting details.",
     note: "Note",
     noteBody: "Review the figures and context before making financial or business decisions.",
+    mediaGuideBody:
+      "Choose a file or enter a direct URL, select format and quality, then start local processing.",
+    mediaWhenBody:
+      "Use it to download an authorized direct file or convert, compress, and trim video without uploading it to an external server.",
+    mediaStepsBody:
+      "Choose the file, set the options, wait for processing, then download the generated file.",
+    mediaNoteBody:
+      "Use only files you own or are authorized to use. These tools do not bypass DRM or platform protections.",
   },
 };
 
@@ -58,6 +79,8 @@ function toolGlyph(slug: string, title: string): string {
   if (value.includes("slug") || value.includes("رابط مختصر")) return "/";
   if (value.includes("email") || value.includes("بريد")) return "@";
   if (value.includes("whatsapp") || value.includes("واتساب")) return "☏";
+  if (value.includes("download") || value.includes("تحميل")) return "⇩";
+  if (value.includes("video") || value.includes("فيديو") || value.includes("مقطع")) return "▶";
   if (value.includes("youtube") || value.includes("يوتيوب")) return "▶";
   if (value.includes("seo") || value.includes("keyword") || value.includes("كلمة مفتاحية")) return "⌕";
   if (value.includes("summar") || value.includes("ملخص")) return "≡";
@@ -129,14 +152,30 @@ export default async function ToolPage({
         ? `${Number(tool.fixed_points).toLocaleString(locale.locale_code)} ${t.points}`
         : `${Number(tool.minimum_points).toLocaleString(locale.locale_code)}+ ${t.points}`;
 
-  const engineLabel =
-    tool.engine_type === "formula" ? t.instant : t.smart;
+  const runtimeKind =
+    typeof tool.runtime_config.runtimeKind === "string"
+      ? tool.runtime_config.runtimeKind
+      : "";
+  const mediaModes: MediaToolMode[] = [
+    "video_downloader",
+    "video_converter",
+    "video_compressor",
+    "video_trimmer",
+  ];
+  const mediaMode = mediaModes.includes(runtimeKind as MediaToolMode)
+    ? (runtimeKind as MediaToolMode)
+    : null;
+  const engineLabel = mediaMode
+    ? t.media
+    : tool.engine_type === "formula"
+      ? t.instant
+      : t.smart;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: tool.title,
-    applicationCategory: "BusinessApplication",
+    applicationCategory: mediaMode ? "MultimediaApplication" : "BusinessApplication",
     operatingSystem: "Web",
     description: tool.localizedDescription,
     offers: {
@@ -181,37 +220,55 @@ export default async function ToolPage({
         </section>
 
         <section className={styles.workbench}>
-          <DynamicToolForm
-            engineType={tool.engine_type}
-            locale={locale.code}
-            messages={messages}
-            pricingMode={tool.pricing_mode}
-            runtimeConfig={tool.runtime_config}
-            schema={tool.localizedInputSchema}
-            slug={tool.slug}
-            toolTitle={tool.title}
-          />
+          {mediaMode ? (
+            <MediaToolWorkbench
+              locale={locale.code}
+              maxDownloadMb={
+                typeof tool.runtime_config.maxDownloadMb === "number"
+                  ? tool.runtime_config.maxDownloadMb
+                  : undefined
+              }
+              maxFileSizeMb={
+                typeof tool.runtime_config.maxFileSizeMb === "number"
+                  ? tool.runtime_config.maxFileSizeMb
+                  : undefined
+              }
+              mode={mediaMode}
+              toolTitle={tool.title}
+            />
+          ) : (
+            <DynamicToolForm
+              engineType={tool.engine_type}
+              locale={locale.code}
+              messages={messages}
+              pricingMode={tool.pricing_mode}
+              runtimeConfig={tool.runtime_config}
+              schema={tool.localizedInputSchema}
+              slug={tool.slug}
+              toolTitle={tool.title}
+            />
+          )}
         </section>
 
         <section className={styles.guide}>
           <div className={styles.guideHeader}>
             <p>{t.guide}</p>
             <h2>{t.guideTitle}</h2>
-            <span>{t.guideBody}</span>
+            <span>{mediaMode ? t.mediaGuideBody : t.guideBody}</span>
           </div>
 
           <div className={styles.guideGrid}>
             <article>
               <h3>{t.when}</h3>
-              <p>{t.whenBody}</p>
+              <p>{mediaMode ? t.mediaWhenBody : t.whenBody}</p>
             </article>
             <article>
               <h3>{t.steps}</h3>
-              <p>{t.stepsBody}</p>
+              <p>{mediaMode ? t.mediaStepsBody : t.stepsBody}</p>
             </article>
             <article>
               <h3>{t.note}</h3>
-              <p>{t.noteBody}</p>
+              <p>{mediaMode ? t.mediaNoteBody : t.noteBody}</p>
             </article>
           </div>
         </section>

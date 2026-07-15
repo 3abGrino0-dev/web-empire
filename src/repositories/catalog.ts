@@ -12,6 +12,7 @@ import { getLocaleByCode } from "@/localization/repository";
 
 interface ToolTranslationRow {
   tool_id: string;
+  locale_id: string;
   title: string;
   short_description: string;
   seo_title: string | null;
@@ -21,6 +22,7 @@ interface ToolTranslationRow {
 
 interface FieldTranslationRow {
   tool_id: string;
+  locale_id: string;
   field_key: string;
   label: string;
   placeholder: string | null;
@@ -68,22 +70,36 @@ async function localizeTools(tools: ToolRecord[], localeCode: string): Promise<L
   const localeIds = [locale.id];
   if (locale.fallback_locale_id) localeIds.unshift(locale.fallback_locale_id);
 
-  const [{ data: translations, error: translationError }, { data: fields, error: fieldError }] =
-    await Promise.all([
+  // PostgREST encodes `.in()` values into the request URL. Once the catalog
+  // contains hundreds of tools, sending every tool id in one request creates
+  // an oversized URL and Node fetch can fail before Supabase returns a response.
+  // Keep each request small and merge the results in memory.
+  const translations: ToolTranslationRow[] = [];
+  const fields: FieldTranslationRow[] = [];
+  const batchSize = 100;
+
+  for (let index = 0; index < toolIds.length; index += batchSize) {
+    const batchToolIds = toolIds.slice(index, index + batchSize);
+
+    const [translationResult, fieldResult] = await Promise.all([
       supabase
         .from("tool_translations")
         .select("tool_id, title, short_description, seo_title, seo_description, prompt_template_override, locale_id")
-        .in("tool_id", toolIds)
+        .in("tool_id", batchToolIds)
         .in("locale_id", localeIds),
       supabase
         .from("tool_field_translations")
         .select("tool_id, field_key, label, placeholder, help_text, options, locale_id")
-        .in("tool_id", toolIds)
+        .in("tool_id", batchToolIds)
         .in("locale_id", localeIds),
     ]);
 
-  if (translationError) throw new Error(translationError.message);
-  if (fieldError) throw new Error(fieldError.message);
+    if (translationResult.error) throw new Error(translationResult.error.message);
+    if (fieldResult.error) throw new Error(fieldResult.error.message);
+
+    translations.push(...((translationResult.data ?? []) as ToolTranslationRow[]));
+    fields.push(...((fieldResult.data ?? []) as FieldTranslationRow[]));
+  }
 
   const translationMap = new Map<string, ToolTranslationRow>();
   const fieldMap = new Map<string, FieldTranslationRow[]>();

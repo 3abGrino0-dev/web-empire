@@ -1,14 +1,17 @@
-import { NextResponse } from "next/server";
-
+import { corsJson, corsOptions } from "@/lib/api-cors";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getRequestUserId } from "@/lib/request-auth";
 
 export const dynamic = "force-dynamic";
 
+export function OPTIONS() {
+  return corsOptions();
+}
+
 export async function GET(request: Request) {
   try {
     const userId = await getRequestUserId(request);
-    if (!userId) return NextResponse.json({ error: "LOGIN_REQUIRED" }, { status: 401 });
+    if (!userId) return corsJson({ error: "LOGIN_REQUIRED" }, { status: 401 });
 
     const supabase = createSupabaseAdminClient();
     const [{ data: wallet }, { data: subscription }, { data: runs }, userResult] =
@@ -29,7 +32,7 @@ export async function GET(request: Request) {
         supabase.auth.admin.getUserById(userId),
       ]);
 
-    return NextResponse.json({
+    return corsJson({
       user: {
         id: userId,
         email: userResult.data.user?.email ?? null,
@@ -40,6 +43,6 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "MOBILE_ACCOUNT_FAILED";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return corsJson({ error: message }, { status: 500 });
   }
 }

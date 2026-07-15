@@ -22,7 +22,6 @@ const footerLabels = {
 export function SiteFooter({
   locale,
   identity,
-  messages,
 }: {
   locale?: LocaleRecord;
   identity: SiteIdentity;
